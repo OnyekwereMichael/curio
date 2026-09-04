@@ -32,11 +32,18 @@ export function SignupScreen() {
         onSubmit: async (values, { setSubmitting }) => {
             setFormError(null);
 
+            // Fallback to email if name is somehow empty, though it's required by validation
+            const seed = values.name || values.email;
+            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
+            
             const { data, error } = await supabase.auth.signUp({
                 email: values.email,
                 password: values.password,
                 options: {
-                    data: { full_name: values.name },
+                    data: { 
+                        full_name: values.name,
+                        avatar_url: avatarUrl 
+                    },
                     emailRedirectTo: `${window.location.origin}/install-nudge`,
                 },
             });

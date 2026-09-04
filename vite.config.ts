@@ -30,9 +30,9 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/icon.jpg',
+            src: '/icon.svg',
             sizes: '192x192 512x512 1024x1024',
-            type: 'image/jpeg',
+            type: 'image/svg+xml',
             purpose: 'any maskable'
           }
         ]
