@@ -31,6 +31,7 @@ export function NotificationPermission() {
 
   // Completion handoff
   const completeNotificationStep = () => {
+    localStorage.setItem('notification_prompted', 'true');
     navigate('/home', { replace: true });
   };
 

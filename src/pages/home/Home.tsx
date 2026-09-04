@@ -1,9 +1,11 @@
 import { User, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
 import { useTodaysWord, useOldButGold, useTodaysFact } from './hooks';
 import { InstallBanner } from '../../components/InstallBanner';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 import { EmailVerificationBanner } from '../../components/EmailVerificationBanner';
@@ -31,9 +33,20 @@ function FallbackCard({ message }: { message: string }) {
 
 export function HomeScreen() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const todaysWord = useTodaysWord();
   const oldButGold = useOldButGold();
   const todaysFact = useTodaysFact();
+
+  useEffect(() => {
+    // If we are in the PWA, and notifications haven't been asked yet, redirect to ask
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    const hasPrompted = localStorage.getItem('notification_prompted');
+    
+    if (isStandalone && !hasPrompted && 'Notification' in window && Notification.permission === 'default') {
+      navigate('/notification-permission', { replace: true });
+    }
+  }, [navigate]);
 
   async function handleLogout() {
     const { error } = await supabase.auth.signOut();
@@ -43,6 +56,8 @@ export function HomeScreen() {
     }
     navigate('/login');
   }
+
+  const avatarUrl = user?.user_metadata?.avatar_url;
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink flex flex-col">
@@ -54,8 +69,12 @@ export function HomeScreen() {
         <h1 className="font-display text-xl font-bold tracking-tight">Curio</h1>
         <div className="flex items-center gap-1">
           {/* Placeholder for Stage 14 settings/profile */}
-          <button className="text-ink/60 hover:text-ink transition-colors p-2 rounded-full hover:bg-ink/5">
-            <User size={20} />
+          <button className="text-ink/60 hover:text-ink transition-colors p-1 rounded-full hover:bg-ink/5">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Profile" className="w-8 h-8 rounded-full" />
+            ) : (
+              <User size={20} className="m-1" />
+            )}
           </button>
           <button
             onClick={handleLogout}
