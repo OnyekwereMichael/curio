@@ -2,12 +2,35 @@ import { useState, useEffect } from 'react';
 
 export type Platform = 'ios' | 'android' | 'other';
 
+export interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
+let cachedInstallPromptEvent: BeforeInstallPromptEvent | null = null;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e: Event) => {
+    e.preventDefault();
+    cachedInstallPromptEvent = e as BeforeInstallPromptEvent;
+    window.dispatchEvent(new Event('installPromptReady'));
+  });
+}
+
 export function usePlatform() {
   const [platform, setPlatform] = useState<Platform>('other');
   const [isStandalone, setIsStandalone] = useState<boolean>(false);
   const [isSafari, setIsSafari] = useState<boolean>(false);
+  const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(cachedInstallPromptEvent);
 
   useEffect(() => {
+    const handlePromptReady = () => setInstallPromptEvent(cachedInstallPromptEvent);
+    window.addEventListener('installPromptReady', handlePromptReady);
+
     // Detect Standalone mode
     const checkStandalone = () => {
       const matchMedia = window.matchMedia('(display-mode: standalone)').matches;
@@ -44,7 +67,11 @@ export function usePlatform() {
     } else {
       setPlatform('other');
     }
+
+    return () => {
+      window.removeEventListener('installPromptReady', handlePromptReady);
+    };
   }, []);
 
-  return { platform, isStandalone, isSafari };
+  return { platform, isStandalone, isSafari, installPromptEvent };
 }

@@ -6,12 +6,20 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(), 
+    react(),
     tailwindcss(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
+      injectManifest: {
+        swSrc: 'src/sw.ts',
+        swDest: 'dist/sw.js',
+      },
       devOptions: {
-        enabled: true // This allows the PWA to be tested in dev mode (npm run dev)
+        enabled: true, // This allows the PWA to be tested in dev mode (npm run dev)
+        type: 'module', // required so the dev server can load sw.ts's imports correctly
       },
       manifest: {
         name: 'Curio',
@@ -22,14 +30,10 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/icons.svg',
-            sizes: '192x192',
-            type: 'image/svg+xml'
-          },
-          {
-            src: '/icons.svg',
-            sizes: '512x512',
-            type: 'image/svg+xml'
+            src: '/icon.jpg',
+            sizes: '192x192 512x512 1024x1024',
+            type: 'image/jpeg',
+            purpose: 'any maskable'
           }
         ]
       }

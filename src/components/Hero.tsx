@@ -7,10 +7,10 @@ export function Hero() {
   const navigate = useNavigate();
   return (
     <section className="pt-32 pb-20 px-6 overflow-hidden">
-      <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         {/* Text Content */}
         <div className="flex flex-col items-start z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -20,8 +20,8 @@ export function Hero() {
               One word. One fact. Every day.
             </span>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -29,8 +29,8 @@ export function Hero() {
           >
             Learn something worth knowing, every single day.
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -38,7 +38,7 @@ export function Hero() {
           >
             A new word to use, a new fact to remember — two minutes a day, no pressure, no lessons.
           </motion.p>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -58,24 +58,25 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.2, type: "spring" }}
             className="absolute top-10 left-0 w-[85%] z-10"
           >
-            <WordCard 
+            <WordCard
+              id="hero-word"
               word="Ephemeral"
-              pronunciation="ih-fem-er-uhl"
               definition="Lasting for a very short time."
-              example="Fashions are ephemeral, but style is eternal."
+              exampleSentence="Fashions are ephemeral, but style is eternal."
               className="shadow-xl"
             />
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, rotate: 10, x: 50 }}
             animate={{ opacity: 1, rotate: 4, x: 0 }}
             transition={{ duration: 0.7, delay: 0.4, type: "spring" }}
             className="absolute top-40 right-0 w-[85%] z-0"
           >
-            <FactCard 
-              hook="octopuses have three hearts"
-              context="Octopuses are among the most intelligent invertebrates in the ocean."
+            <FactCard
+              imageUrl=""
+              hookLine="Octopuses have three hearts"
+              contextLine="Octopuses are among the most intelligent invertebrates in the ocean."
               bullets={[
                 "Two hearts pump blood to the gills, one pumps it to the rest of the body",
                 "They can change both color and texture to camouflage instantly",

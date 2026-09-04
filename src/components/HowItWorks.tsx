@@ -27,7 +27,7 @@ export function HowItWorks() {
           <div className="hidden md:block absolute top-6 left-[10%] right-[10%] h-px bg-ink/10" />
 
           {steps.map((step, idx) => (
-            <motion.div 
+            <motion.div
               key={step.num}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

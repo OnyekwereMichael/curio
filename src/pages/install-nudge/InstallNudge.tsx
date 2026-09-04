@@ -1,70 +1,54 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { usePlatform } from '../../lib/usePlatform';
-
-// We need to capture the beforeinstallprompt event for Android
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: string[];
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/superbase';
 
 const SafariShareIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-ember inline mx-1 translate-y-[-2px]">
-    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-    <polyline points="16 6 12 2 8 6"/>
-    <line x1="12" y1="2" x2="12" y2="15"/>
+    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+    <polyline points="16 6 12 2 8 6" />
+    <line x1="12" y1="2" x2="12" y2="15" />
   </svg>
 );
 
 export function InstallNudge() {
   const navigate = useNavigate();
-  const { platform, isStandalone, isSafari } = usePlatform();
-  const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const { user } = useAuth();
+  const { platform, installPromptEvent } = usePlatform();
 
-  // Step 7: Guard against repeat display
-  useEffect(() => {
-    if (isStandalone) {
-      navigate('/notification-permission', { replace: true });
-    }
-  }, [isStandalone, navigate]);
+  // Persists the installed flag to Supabase for this user
+  async function markInstalled(installed: boolean) {
+    if (!user) return;
+    const { error } = await supabase
+      .from('users')
+      .update({ installed })
+      .eq('id', user.id);
 
-  // Step 3: Listen globally for beforeinstallprompt event
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setInstallPromptEvent(e as BeforeInstallPromptEvent);
-    };
+    if (error) console.error('Failed to update installed status:', error.message);
+  }
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-  }, []);
-
-  // Step 6: Completion handoff
-  const completeOnboardingStep = () => {
-    // TODO: persist installed: true to users table in Supabase
+  // Next step in the onboarding flow -> Notification Permission
+  const completeOnboardingStep = async () => {
+    await markInstalled(true);
     navigate('/notification-permission');
   };
 
-  // Step 5: Skip handling
-  const handleSkipInstall = () => {
-    // TODO: persist installed=false to users table in Supabase — used later for email-digest fallback logic for users who never install
-    navigate('/notification-permission');
+  // Skip handling -> directly to Home
+  const handleSkipInstall = async () => {
+    await markInstalled(false);
+    navigate('/home');
   };
 
   const handleInstallClick = async () => {
-    if (platform === 'android' && installPromptEvent) {
+    if (installPromptEvent) {
       installPromptEvent.prompt();
       const choiceResult = await installPromptEvent.userChoice;
       if (choiceResult.outcome === 'accepted') {
-        completeOnboardingStep();
+        await completeOnboardingStep();
       }
-    } else if (platform === 'ios') {
-      completeOnboardingStep();
+    } else {
+      await completeOnboardingStep();
     }
   };
 
@@ -82,69 +66,107 @@ export function InstallNudge() {
             </p>
           </div>
 
-        {/* Content Area */}
-        <div className="mb-10 min-h-[120px] flex flex-col justify-center">
-          {platform === 'android' && installPromptEvent && (
-            <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-              <p className="text-ink font-medium">Tap Install to add Curio to your home screen.</p>
-            </div>
-          )}
-
-          {platform === 'android' && !installPromptEvent && (
-            <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-              <p className="text-faded-ink text-sm">Installation is handled by your browser.</p>
-            </div>
-          )}
-
-          {platform === 'ios' && isSafari && (
-            <div className="flex flex-col gap-5 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold">
-                  1
-                </div>
-                <p className="text-ink text-sm leading-tight pt-1.5 flex items-center flex-wrap gap-1">
-                  Tap the <SafariShareIcon /> Share icon in Safari.
-                </p>
+          {/* Content Area */}
+          <div className="mb-10 min-h-[120px] flex flex-col justify-center">
+            {platform === 'android' && installPromptEvent && (
+              <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
+                <p className="text-ink font-medium">Tap Install below to add Curio to your home screen.</p>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold">
-                  2
+            )}
+
+            {platform === 'android' && !installPromptEvent && (
+              <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
+                <div className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                    1
+                  </div>
+                  <p className="text-ink text-sm leading-snug pt-1">
+                    Tap the menu icon (<strong>⋮</strong>) in your browser.
+                  </p>
                 </div>
-                <p className="text-ink text-sm leading-tight pt-1.5">
-                  Scroll down and tap <strong>"Add to Home Screen."</strong>
-                </p>
+                <div className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                    2
+                  </div>
+                  <p className="text-ink text-sm leading-snug pt-1">
+                    Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {platform === 'ios' && !isSafari && (
-            <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-              <p className="text-ink font-medium">Open this page in Safari to install.</p>
-            </div>
-          )}
-          
-          {platform === 'other' && (
-            <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-              <p className="text-faded-ink text-sm">Install via your browser's menu to add to home screen.</p>
-            </div>
-          )}
-        </div>
+            {platform === 'ios' && (
+              <div className="flex flex-col gap-5 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold">
+                    1
+                  </div>
+                  <p className="text-black text-sm leading-tight pt-1.5 flex items-center flex-wrap gap-1">
+                    Tap the <SafariShareIcon /> Share icon in Safari.
+                  </p>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold">
+                    2
+                  </div>
+                  <p className="text-black text-sm leading-tight pt-1.5">
+                    Scroll down and tap <strong>"Add to Home Screen."</strong>
+                  </p>
+                </div>
+              </div>
+            )}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-4 mt-auto">
-          {((platform === 'android' && installPromptEvent) || (platform === 'ios' && isSafari)) && (
-            <Button onClick={handleInstallClick} className="w-full">
-              {platform === 'ios' ? 'Got it' : 'Install'}
-            </Button>
-          )}
+            {platform === 'other' && !installPromptEvent && (
+              <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
+                <div className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                    1
+                  </div>
+                  <p className="text-ink text-sm leading-snug pt-1">
+                    Click the <strong>Install icon (⊕)</strong> in your browser address bar or menu.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                    2
+                  </div>
+                  <p className="text-ink text-sm leading-snug pt-1">
+                    Click <strong>"Install"</strong> to add Curio to your device.
+                  </p>
+                </div>
+              </div>
+            )}
 
-          <button
-            onClick={handleSkipInstall}
-            className="text-faded-ink text-sm font-medium hover:text-ink transition-colors py-3"
-          >
-            Skip for now
-          </button>
-        </div>
+            {platform === 'other' && installPromptEvent && (
+              <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
+                <p className="text-ink font-medium">Click Install below to add Curio to your device.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-4 mt-auto">
+            {installPromptEvent ? (
+              <Button onClick={handleInstallClick} className="w-full">
+                Install
+              </Button>
+            ) : platform === 'ios' ? (
+              <Button onClick={completeOnboardingStep} className="w-full">
+                Got it
+              </Button>
+            ) : (
+              <Button onClick={completeOnboardingStep} className="w-full">
+                Continue
+              </Button>
+            )}
+
+            <button
+              onClick={handleSkipInstall}
+              className="text-faded-ink text-sm font-medium hover:text-ink transition-colors py-3"
+            >
+              Skip for now
+            </button>
+          </div>
         </div>
       </main>
     </div>

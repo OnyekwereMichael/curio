@@ -12,8 +12,8 @@ export function Navbar() {
 
   useEffect(() => {
     // Check initial preference
-    if (document.documentElement.classList.contains('dark') || 
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (document.documentElement.classList.contains('dark') ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setTheme('dark');
       document.documentElement.classList.add('dark');
     } else {
@@ -47,12 +47,12 @@ export function Navbar() {
         scrolled ? "bg-paper/80 backdrop-blur-md border-b border-ink/5 shadow-sm py-3" : "bg-transparent"
       )}
     >
-      <div className="max-w-5xl mx-auto px-6 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="font-display font-semibold text-xl text-ink tracking-tight flex items-center gap-2">
           Curio
         </Link>
         <div className="flex items-center gap-6">
-          <button 
+          <button
             onClick={toggleTheme}
             className="text-ink/70 hover:text-ink transition-colors p-2 rounded-full hover:bg-ink/5"
             aria-label="Toggle Theme"

@@ -5,10 +5,14 @@ import * as Yup from 'yup';
 import { Eye, EyeOff, X } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
+import { supabase } from '../../lib/superbase';
+
 
 export function SignupScreen() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -25,14 +29,49 @@ export function SignupScreen() {
                 .min(8, 'Password must be at least 8 characters')
                 .required('Password is required'),
         }),
-        onSubmit: async (values) => {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            console.log('Sign up attempt:', values);
-            // After success, we'd navigate to install nudge or dashboard
-            navigate('/install-nudge');
+        onSubmit: async (values, { setSubmitting }) => {
+            setFormError(null);
+
+            const { data, error } = await supabase.auth.signUp({
+                email: values.email,
+                password: values.password,
+                options: {
+                    data: { full_name: values.name },
+                    emailRedirectTo: `${window.location.origin}/install-nudge`,
+                },
+            });
+
+            if (error) {
+                setFormError(error.message);
+                setSubmitting(false);
+                return;
+            }
+
+            if (data.session) {
+                // Confirmation is off, or this account was pre-confirmed — go straight in.
+                navigate('/install-nudge');
+            } else {
+                // Confirmation is required — no session yet. Tell them to check email.
+                navigate('/check-email', { state: { email: values.email } });
+            }
         },
     });
+
+    async function handleGoogleSignUp() {
+        setFormError(null);
+        setGoogleLoading(true);
+
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: `${window.location.origin}/install-nudge` },
+        });
+
+        if (error) {
+            setFormError(error.message);
+            setGoogleLoading(false);
+        }
+        // On success, the browser redirects away — no further action needed here.
+    }
 
     return (
         <div className="min-h-screen bg-paper flex flex-col font-ui text-ink">
@@ -59,8 +98,21 @@ export function SignupScreen() {
                         <p className="text-faded-ink text-sm">Your first word is waiting.</p>
                     </div>
 
+                    {/* Form-level error banner */}
+                    {formError && (
+                        <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                            {formError}
+                        </div>
+                    )}
+
                     {/* Google Sign Up */}
-                    <Button variant="secondary" className="w-full mb-6">
+                    <Button
+                        variant="secondary"
+                        className="w-full mb-6"
+                        onClick={handleGoogleSignUp}
+                        isLoading={googleLoading}
+                        type="button"
+                    >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -79,9 +131,7 @@ export function SignupScreen() {
 
                     {/* Email/Password Form */}
                     <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
-                        {/* Name and Email Row */}
                         <div className="grid grid-cols-2 gap-4">
-                            {/* Name Field */}
                             <Input
                                 label="Name"
                                 id="name"
@@ -95,7 +145,6 @@ export function SignupScreen() {
                                 touched={formik.touched.name}
                             />
 
-                            {/* Email Field */}
                             <Input
                                 label="Email"
                                 id="email"
@@ -110,7 +159,6 @@ export function SignupScreen() {
                             />
                         </div>
 
-                        {/* Password Field */}
                         <Input
                             label="Password"
                             id="password"
@@ -134,7 +182,6 @@ export function SignupScreen() {
                             }
                         />
 
-                        {/* Submit Button */}
                         <Button
                             type="submit"
                             isLoading={formik.isSubmitting}
