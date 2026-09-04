@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Button } from '../../components/ui/Button';
 import { usePlatform } from '../../lib/usePlatform';
 import { useAuth } from '../../contexts/AuthContext';
@@ -15,7 +16,13 @@ const SafariShareIcon = () => (
 export function InstallNudge() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { platform, installPromptEvent } = usePlatform();
+  const { platform, installPromptEvent, isStandalone } = usePlatform();
+
+  useEffect(() => {
+    if (isStandalone) {
+      navigate('/notification-permission', { replace: true });
+    }
+  }, [isStandalone, navigate]);
 
   // Persists the installed flag to Supabase for this user
   async function markInstalled(installed: boolean) {
