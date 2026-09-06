@@ -12,10 +12,11 @@ interface FactCardProps {
   bullets: [string, string, string, string]; // Exactly 4 bullets
   className?: string;
   variant?: 'new' | 'old';
+  onSavedChange?: (saved: boolean) => void;
 }
 
-export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, className, variant = 'new' }: FactCardProps) {
-  const { isSaved, saveFlash, toggleSave } = useFactCardInteractions(id);
+export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, className, variant = 'new', onSavedChange }: FactCardProps) {
+  const { isSaved, saveFlash, toggleSave } = useFactCardInteractions(id, onSavedChange);
 
   return (
     <div className={cn(

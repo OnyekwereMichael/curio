@@ -9,6 +9,7 @@ import { HomeScreen } from './pages/home/Home';
 import { ToastProvider } from './components/ui/Toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { CollectionPage } from './pages/collections/CollectionPage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/install-nudge" element={<ProtectedRoute><InstallNudge /></ProtectedRoute>} />
             <Route path="/notification-permission" element={<ProtectedRoute><NotificationPermission /></ProtectedRoute>} />
             <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
+            <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
 
           </Routes>
         </Router>

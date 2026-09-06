@@ -112,7 +112,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             Learn
           </p>
           <NavItem to="/home" icon={Home} label="Home" onClick={onClose} />
-          <NavItem to="/saved" icon={BookOpen} label="Saved Words" onClick={onClose} />
+          <NavItem to="/collection" icon={BookOpen} label="My Collection" onClick={onClose} />
         </nav>
 
         {/* Bottom actions */}

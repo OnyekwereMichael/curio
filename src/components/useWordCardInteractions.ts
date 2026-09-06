@@ -3,7 +3,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 
-export function useWordCardInteractions(wordId: string, audioUrl?: string) {
+export function useWordCardInteractions(
+  wordId: string,
+  audioUrl?: string,
+  onSavedChange?: (saved: boolean) => void
+) {
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
   const [saveFlash, setSaveFlash] = useState(false);
@@ -55,16 +59,14 @@ export function useWordCardInteractions(wordId: string, audioUrl?: string) {
   const toggleSave = useCallback(async () => {
     if (!user || !wordId) return;
 
-    setIsSaved((prev) => {
-      const next = !prev;
-      if (next) {
-        setSaveFlash(true);
-        setTimeout(() => setSaveFlash(false), 300);
-      }
-      return next;
-    });
-
     const newSavedState = !isSaved;
+
+    setIsSaved(newSavedState);
+    if (newSavedState) {
+      setSaveFlash(true);
+      setTimeout(() => setSaveFlash(false), 300);
+    }
+    onSavedChange?.(newSavedState);
 
     const { error } = await supabase
       .from('user_word_progress')
@@ -75,9 +77,10 @@ export function useWordCardInteractions(wordId: string, audioUrl?: string) {
     if (error) {
       console.error('Failed to update saved state:', error.message);
       // Revert the optimistic update since the write failed
-      setIsSaved((prev) => !prev);
+      setIsSaved(!newSavedState);
+      onSavedChange?.(!newSavedState);
     }
-  }, [wordId, user, isSaved]);
+  }, [wordId, user, isSaved, onSavedChange]);
 
   const markKnown = useCallback(async () => {
     if (!user || !wordId) return;

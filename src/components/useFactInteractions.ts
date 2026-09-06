@@ -2,13 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 
-export function useFactCardInteractions(factId: string) {
+export function useFactCardInteractions(
+    factId: string,
+    onSavedChange?: (saved: boolean) => void
+) {
     const { user } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
     const [saveFlash, setSaveFlash] = useState(false);
 
-    // Load whatever's already saved for this fact/user pair on mount or when
-    // the fact changes — without this, a refresh would always show "unsaved."
     useEffect(() => {
         setSaveFlash(false);
 
@@ -47,16 +48,14 @@ export function useFactCardInteractions(factId: string) {
     const toggleSave = useCallback(async () => {
         if (!user || !factId) return;
 
-        setIsSaved((prev) => {
-            const next = !prev;
-            if (next) {
-                setSaveFlash(true);
-                setTimeout(() => setSaveFlash(false), 300);
-            }
-            return next;
-        });
-
         const newSavedState = !isSaved;
+
+        setIsSaved(newSavedState);
+        if (newSavedState) {
+            setSaveFlash(true);
+            setTimeout(() => setSaveFlash(false), 300);
+        }
+        onSavedChange?.(newSavedState);
 
         const { error } = await supabase
             .from('user_fact_progress')
@@ -66,9 +65,10 @@ export function useFactCardInteractions(factId: string) {
 
         if (error) {
             console.error('Failed to update saved state:', error.message);
-            setIsSaved((prev) => !prev); // revert on failure
+            setIsSaved(!newSavedState);
+            onSavedChange?.(!newSavedState);
         }
-    }, [factId, user, isSaved]);
+    }, [factId, user, isSaved, onSavedChange]);
 
     return { isSaved, saveFlash, toggleSave };
 }
