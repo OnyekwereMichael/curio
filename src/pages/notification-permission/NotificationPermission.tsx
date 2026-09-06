@@ -5,6 +5,7 @@ import { Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
 
+
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 const BellIcon = () => (
@@ -16,7 +17,10 @@ const BellIcon = () => (
 
 // VAPID keys come base64-encoded; pushManager.subscribe needs a Uint8Array
 function urlBase64ToUint8Array(base64String?: string) {
-  if (!base64String) return new Uint8Array();
+  if (!base64String) {
+    console.error('VITE_VAPID_PUBLIC_KEY is missing — check your .env / deployment env vars.');
+    return new Uint8Array();
+  }
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
@@ -63,16 +67,16 @@ export function NotificationPermission() {
         .from('users')
         .update({
           notifications_enabled: true,
-          notification_token: JSON.parse(JSON.stringify(subscription)),
+          notification_token: subscription.toJSON(),
         })
         .eq('id', user.id);
 
       if (error) console.error('Failed to save push subscription:', error.message);
     } catch (err) {
       // Permission was granted but the subscription itself failed (e.g. no
-      // active service worker yet). Still record that permission was granted
-      // so we don't silently lose that signal — the token just stays empty
-      // until a future visit successfully subscribes.
+      // active service worker yet, or a bad VAPID key). Still record that
+      // permission was granted so we don't silently lose that signal — the
+      // token just stays empty until a future visit successfully subscribes.
       console.error('Failed to create push subscription:', err);
       await updateNotificationPreference(true);
     }
