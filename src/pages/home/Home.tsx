@@ -109,6 +109,7 @@ export function HomeScreen() {
               <FallbackCard message="Today's fact is on its way — check back soon." />
             ) : (
               <FactCard
+                id={todaysFact.data.id}
                 imageUrl={todaysFact.data.image_url}
                 hookLine={todaysFact.data.hook_line}
                 contextLine={todaysFact.data.context_line}

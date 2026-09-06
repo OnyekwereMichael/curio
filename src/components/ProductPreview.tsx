@@ -37,6 +37,7 @@ export function ProductPreview() {
             className="flex flex-col gap-3"
           >
             <FactCard
+              id="preview-fact"
               imageUrl=""
               hookLine="Bananas are berries"
               contextLine="Botanically speaking, bananas are berries, but strawberries are not."
