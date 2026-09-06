@@ -51,7 +51,7 @@ export function useStreak() {
                     longest_streak: newLongest,
                     last_active_date: today,
                 })
-                .eq('id', user.id);
+                .eq('id', user?.id);
 
             if (updateError) {
                 console.error('Failed to update streak:', updateError.message);
