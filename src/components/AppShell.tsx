@@ -4,6 +4,9 @@ import { Sidebar, SidebarToggle } from './Sidebar';
 import { EmailVerificationBanner } from './EmailVerificationBanner';
 import { useAuth } from '../contexts/AuthContext';
 
+import { StreakCounter } from './StreakCounter';
+import { useStreak } from './useStreak';
+
 interface AppShellProps {
   children: React.ReactNode;
   /** Page title shown in the top nav bar */
@@ -12,6 +15,7 @@ interface AppShellProps {
 
 function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void }) {
   const { user } = useAuth();
+  const { currentStreak, justIncremented } = useStreak();
 
   const avatarUrl = user?.user_metadata?.avatar_url;
   const fullName =
@@ -53,6 +57,8 @@ function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void
 
       <div className="flex-1" />
 
+      <StreakCounter count={currentStreak} justIncremented={justIncremented} />
+
       <div className="hidden sm:flex items-center gap-1.5 bg-ink/[0.04] border border-ink/8 rounded-full px-4 py-1.5">
         <span className="text-xs font-medium text-faded-ink">{dateLabel}</span>
       </div>
@@ -77,6 +83,7 @@ function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void
   );
 }
 
+export { TopNav };
 export function AppShell({ children, title = 'Home' }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
