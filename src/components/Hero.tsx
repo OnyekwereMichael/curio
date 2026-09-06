@@ -74,6 +74,7 @@ export function Hero() {
             className="absolute top-40 right-0 w-[85%] z-0"
           >
             <FactCard
+              id="preview-fact"
               imageUrl=""
               hookLine="Octopuses have three hearts"
               contextLine="Octopuses are among the most intelligent invertebrates in the ocean."
