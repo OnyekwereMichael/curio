@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 
@@ -16,7 +15,7 @@ export function useStreak() {
             const { data, error } = await supabase
                 .from('users')
                 .select('current_streak, longest_streak, last_active_date')
-                .eq('id', user?.id)
+                .eq('id', user.id)
                 .single();
 
             if (error) {
@@ -51,7 +50,7 @@ export function useStreak() {
                     longest_streak: newLongest,
                     last_active_date: today,
                 })
-                .eq('id', user?.id);
+                .eq('id', user.id);
 
             if (updateError) {
                 console.error('Failed to update streak:', updateError.message);
