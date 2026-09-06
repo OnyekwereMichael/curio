@@ -44,7 +44,7 @@ export function LoginScreen() {
             // TODO (Stage 10): check last_active_date on the users row and
             // increment/reset current_streak accordingly before landing on Home.
 
-            navigate('/home');
+            navigate('/install-nudge');
         },
     });
 
@@ -54,7 +54,7 @@ export function LoginScreen() {
 
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: `${window.location.origin}/home` },
+            options: { redirectTo: `${window.location.origin}/install-nudge` },
         });
 
         if (error) {

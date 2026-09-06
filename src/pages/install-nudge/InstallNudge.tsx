@@ -20,9 +20,15 @@ export function InstallNudge() {
 
   useEffect(() => {
     if (isStandalone) {
-      navigate('/notification-permission', { replace: true });
+      if (user) {
+        supabase.from('users').update({ installed: true }).eq('id', user.id).then(() => {
+          navigate('/notification-permission', { replace: true });
+        });
+      } else {
+        navigate('/notification-permission', { replace: true });
+      }
     }
-  }, [isStandalone, navigate]);
+  }, [isStandalone, navigate, user]);
 
   // Persists the installed flag to Supabase for this user
   async function markInstalled(installed: boolean) {

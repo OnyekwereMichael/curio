@@ -63,7 +63,7 @@ export function NotificationPermission() {
         .from('users')
         .update({
           notifications_enabled: true,
-          notification_token: subscription.toJSON(),
+          notification_token: JSON.parse(JSON.stringify(subscription)),
         })
         .eq('id', user.id);
 

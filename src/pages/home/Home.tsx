@@ -1,4 +1,3 @@
-import { User, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { WordCard } from '../../components/WordCard';
@@ -33,31 +32,28 @@ function FallbackCard({ message }: { message: string }) {
 
 export function HomeScreen() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const todaysWord = useTodaysWord();
   const oldButGold = useOldButGold();
   const todaysFact = useTodaysFact();
+  const { user } = useAuth();
 
   useEffect(() => {
     // If we are in the PWA, and notifications haven't been asked yet, redirect to ask
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
     const hasPrompted = localStorage.getItem('notification_prompted');
-    
+
     if (isStandalone && !hasPrompted && 'Notification' in window && Notification.permission === 'default') {
-      navigate('/notification-permission', { replace: true });
+      supabase.from('users').update({ installed: true }).eq('id', user?.id).then(() => {
+        navigate('/notification-permission', { replace: true });
+      });
+    } else if (isStandalone) {
+      // Ensure installed flag is true if they open PWA and don't need notification prompt
+      supabase.from('users').update({ installed: true }).eq('id', user?.id);
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
-  async function handleLogout() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error.message);
-      return;
-    }
-    navigate('/login');
-  }
 
-  const avatarUrl = user?.user_metadata?.avatar_url;
+
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink flex flex-col">
@@ -65,33 +61,19 @@ export function HomeScreen() {
       <InstallBanner />
 
       {/* Top Bar */}
-      <header className="px-6 py-4 flex justify-between items-center border-b border-ink/5 bg-paper/80 backdrop-blur sticky top-0 z-50">
-        <h1 className="font-display text-xl font-bold tracking-tight">Curio</h1>
-        <div className="flex items-center gap-1">
-          {/* Placeholder for Stage 14 settings/profile */}
-          <button className="text-ink/60 hover:text-ink transition-colors p-1 rounded-full hover:bg-ink/5">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Profile" className="w-8 h-8 rounded-full" />
-            ) : (
-              <User size={20} className="m-1" />
-            )}
-          </button>
-          <button
-            onClick={handleLogout}
-            className="text-ink/60 hover:text-ember transition-colors p-2 -mr-2 rounded-full hover:bg-ink/5"
-            aria-label="Log out"
-            title="Log out"
-          >
-            <LogOut size={20} />
-          </button>
-        </div>
-      </header>
+
 
       {/* Main Content */}
-      <main className="grid grid-cols-2 gap-4 p-6 max-sm:grid-cols-1">
+      <main className="grid grid-cols-2 gap-6 max-sm:gap-4 p-6 max-sm:grid-cols-1">
 
         {/* Today's Word */}
         <section className="flex flex-col gap-4">
+          <div>
+            <h2 className="font-display text-2xl font-bold text-ink mb-2">Today's Word</h2>
+            <p className="text-faded-ink text-sm">
+              Vocabulary enrichment to elevate your conversations.
+            </p>
+          </div>
           {todaysWord.loading ? (
             <SkeletonCard />
           ) : !todaysWord.data ? (
@@ -111,6 +93,12 @@ export function HomeScreen() {
 
         {/* Today's Fact */}
         <section className="flex flex-col gap-4">
+          <div>
+            <h2 className="font-display text-2xl font-bold text-ink mb-2">Today's Fact</h2>
+            <p className="text-faded-ink text-sm">
+              Fascinating facts to expand your knowledge.
+            </p>
+          </div>
           {todaysFact.loading ? (
             <SkeletonCard />
           ) : !todaysFact.data ? (

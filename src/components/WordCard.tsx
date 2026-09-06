@@ -23,25 +23,25 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
       className
     )}>
       <div className="absolute top-4 right-4 z-10 flex items-center gap-3">
-        <button 
+        <button
           onClick={toggleSave}
           className="text-faded-ink hover:text-ink transition-colors"
           aria-label={isSaved ? "Unsave" : "Save"}
           type="button"
         >
-          <Bookmark 
-            size={20} 
+          <Bookmark
+            size={20}
             className={cn(
               "transition-all duration-300",
-              saveFlash ? "fill-current text-gold-stamp scale-110" : 
-              isSaved ? "fill-current text-ember scale-100" : "fill-transparent scale-100"
-            )} 
+              saveFlash ? "fill-current text-gold-stamp scale-110" :
+                isSaved ? "fill-current text-ember scale-100" : "fill-transparent scale-100"
+            )}
           />
         </button>
         <DailyStamp variant={variant} />
       </div>
 
-      <div className="absolute top-0 left-0 w-1 h-full bg-ember rounded-l-xl" />
+      {/* <div className="absolute top-0 left-0 w-1 h-full bg-ember rounded-l-xl" /> */}
 
       {label && (
         <div className="text-gold-stamp text-xs font-bold tracking-wider uppercase mb-1">
@@ -52,16 +52,16 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
       <div>
         <div className="flex items-center gap-3 mb-1">
           <h3 className="font-display text-3xl font-bold text-ink">{word}</h3>
-          <button 
+          <button
             onClick={play}
             disabled={!audioUrl}
             className={cn(
               "p-2 -ml-2 rounded-full transition-colors",
-              !audioUrl ? "text-faded-ink/50 cursor-not-allowed" : 
-              isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" : 
-              "text-ember hover:bg-ember/5 hover:text-ember/80"
+              !audioUrl ? "text-faded-ink/50 cursor-not-allowed" :
+                isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" :
+                  "text-ember hover:bg-ember/5 hover:text-ember/80"
             )}
-            aria-label="Play pronunciation" 
+            aria-label="Play pronunciation"
             type="button"
           >
             <Volume2 size={20} strokeWidth={2.5} />
@@ -80,7 +80,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
       {/* Quick Recall */}
       <div className="mt-2 pt-4 border-t border-ink/5">
         {!isKnown ? (
-          <button 
+          <button
             onClick={markKnown}
             className="text-sm font-bold text-ember hover:text-ember/80 transition-colors flex items-center gap-2"
             type="button"
