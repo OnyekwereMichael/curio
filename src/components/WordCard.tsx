@@ -52,7 +52,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
         )}
 
         <div className="flex items-center gap-2">
-          <h3 className="font-display text-3xl font-bold text-ink leading-tight">{word}</h3>
+          <h3 className="font-display text-2xl font-bold text-ink leading-tight">{word}</h3>
           <button
             onClick={play}
             disabled={!audioUrl}
@@ -73,11 +73,11 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
       <div>
         <p className="text-ink leading-relaxed mb-4">{definition}</p>
 
-        <div className="text-faded-ink text-xs font-bold tracking-wider uppercase mb-2">
-          In a sentence
+        <div className="text-faded-ink text-xs font-bold  uppercase mb-2">
+          How to use in a sentence
         </div>
         <div className="pl-4 border-l-2 border-ember/25">
-          <p className="text-ink/80 italic text-sm leading-relaxed">"{exampleSentence}"</p>
+          <p className="text-ink/80  text-sm leading-relaxed">"{exampleSentence}"</p>
         </div>
       </div>
 
