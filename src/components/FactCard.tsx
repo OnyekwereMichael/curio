@@ -1,7 +1,11 @@
+import { Bookmark } from 'lucide-react';
 import { DailyStamp } from './DailyStamp';
 import { cn } from '../lib/utils';
+import { useFactCardInteractions } from './useFactInteractions';
+
 
 interface FactCardProps {
+  id: string;
   imageUrl: string;
   hookLine: string;
   contextLine: string;
@@ -10,13 +14,30 @@ interface FactCardProps {
   variant?: 'new' | 'old';
 }
 
-export function FactCard({ imageUrl, hookLine, contextLine, bullets, className, variant = 'new' }: FactCardProps) {
+export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, className, variant = 'new' }: FactCardProps) {
+  const { isSaved, saveFlash, toggleSave } = useFactCardInteractions(id);
+
   return (
     <div className={cn(
       "bg-paper rounded-xl shadow-sm border border-ink/5 relative overflow-hidden flex flex-col font-ui",
       className
     )}>
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-3">
+        <button
+          onClick={toggleSave}
+          className="text-faded-ink hover:text-ink transition-colors"
+          aria-label={isSaved ? "Unsave" : "Save"}
+          type="button"
+        >
+          <Bookmark
+            size={20}
+            className={cn(
+              "transition-all duration-300",
+              saveFlash ? "fill-current text-gold-stamp scale-110" :
+                isSaved ? "fill-current text-moss scale-100" : "fill-transparent scale-100"
+            )}
+          />
+        </button>
         <DailyStamp variant={variant} />
       </div>
 
