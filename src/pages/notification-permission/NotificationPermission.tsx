@@ -17,6 +17,10 @@ const BellIcon = () => (
 
 // VAPID keys come base64-encoded; pushManager.subscribe needs a Uint8Array
 function urlBase64ToUint8Array(base64String?: string) {
+  // TEMPORARY DEBUG — remove once the key issue is confirmed fixed
+  console.log('VAPID key raw value:', JSON.stringify(base64String));
+  console.log('VAPID key length:', base64String?.length);
+
   if (!base64String) {
     console.error('VITE_VAPID_PUBLIC_KEY is missing — check your .env / deployment env vars.');
     return new Uint8Array();
