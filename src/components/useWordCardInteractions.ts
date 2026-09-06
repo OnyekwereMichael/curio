@@ -30,7 +30,7 @@ export function useWordCardInteractions(wordId: string, audioUrl?: string) {
       const { data, error } = await supabase
         .from('user_word_progress')
         .select('saved, marked_known')
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id)
         .eq('word_id', wordId)
         .maybeSingle();
 
