@@ -61,7 +61,7 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
-      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4">
+      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
 
         {/* Page header */}
         <div>
@@ -72,7 +72,7 @@ export function HomeScreen() {
         </div>
 
         {/* Primary grid: Word + Fact */}
-        <div className="grid grid-cols-2 gap-6 max-sm:grid-cols-1">
+        <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
 
           {/* Today's Word */}
           <section className="flex flex-col gap-4">

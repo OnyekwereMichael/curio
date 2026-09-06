@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
-// TODO (WIP): When Supabase is eventually connected, all real queries should respect Row-Level Security.
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/superbase';
 
 export interface Word {
   id: string;
@@ -28,35 +29,43 @@ export interface Fact {
 }
 
 export function useTodaysWord() {
+  const { user } = useAuth();
   const [data, setData] = useState<Word | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // TODO (WIP): replace with real Supabase query — select from words where publish_date = today
-    // TODO (WIP): upsert user_word_progress row on first view (first_seen_at = now())
+    if (!user) return;
+
     const fetchWord = async () => {
       try {
         setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Toggle this to test "no content today" state
-        const hasContentToday = true;
+        const today = new Date().toISOString().split('T')[0];
 
-        if (!hasContentToday) {
-          setData(null);
-        } else {
-          setData({
-            id: '1',
-            word: 'Petrichor',
-            definition: 'A pleasant smell that frequently accompanies the first rain after a long period of warm, dry weather.',
-            example_sentence: 'Other than the petrichor emanating from the rapidly drying grass, there was not a trace of evidence that it had rained at all.',
-            pronunciation_audio_url: '',
-            category: 'nature',
-            publish_date: new Date().toISOString().split('T')[0],
-            created_at: new Date().toISOString(),
-          });
+        const { data: word, error: fetchError } = await supabase
+          .from('words')
+          .select('*')
+          .eq('publish_date', today)
+          .maybeSingle();
+
+        if (fetchError) throw fetchError;
+
+        setData(word);
+
+        if (word) {
+          // Upsert progress row — first_seen_at only sets on first insert
+          // (the unique constraint + ignoreDuplicates means repeat visits
+          // just leave the existing row untouched).
+          const { error: upsertError } = await supabase
+            .from('user_word_progress')
+            .upsert(
+              { user_id: user.id, word_id: word.id },
+              { onConflict: 'user_id,word_id', ignoreDuplicates: true }
+            );
+
+          if (upsertError) {
+            console.error('Failed to upsert word progress:', upsertError.message);
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error'));
@@ -66,40 +75,54 @@ export function useTodaysWord() {
     };
 
     fetchWord();
-  }, []);
+  }, [user]);
 
   return { data, loading, error };
 }
 
 export function useOldButGold() {
+  const { user } = useAuth();
   const [data, setData] = useState<Word | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // TODO (WIP): replace with real query — select from user_word_progress where first_seen_at <= now() - 3 days, order by times_shown asc, limit 1, joined against words
-    // TODO (WIP): replace this manual toggle with real logic once first_seen_at data exists
+    if (!user) return;
+
     const fetchOldButGold = async () => {
       try {
         setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const threeDaysAgo = new Date();
+        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-        // Toggle this flag to test both "has a resurfaced word" and "new user, nothing to resurface yet" states
-        const hasOldButGold = true; 
+        const { data: progress, error: fetchError } = await supabase
+          .from('user_word_progress')
+          .select('*, words(*)')
+          .eq('user_id', user.id)
+          .lte('first_seen_at', threeDaysAgo.toISOString())
+          .order('times_shown', { ascending: true })
+          .limit(1)
+          .maybeSingle();
 
-        if (hasOldButGold) {
-          setData({
-            id: '2',
-            word: 'Ephemeral',
-            definition: 'Lasting for a very short time.',
-            example_sentence: 'Fashions are ephemeral.',
-            pronunciation_audio_url: '',
-            category: 'general',
-            publish_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 5 days ago
-            created_at: new Date().toISOString(),
-          });
+        if (fetchError) throw fetchError;
+
+        if (progress?.words) {
+          setData(progress.words as Word);
+
+          const { error: updateError } = await supabase
+            .from('user_word_progress')
+            .update({
+              last_resurfaced_at: new Date().toISOString(),
+              times_shown: (progress.times_shown ?? 0) + 1,
+            })
+            .eq('id', progress.id);
+
+          if (updateError) {
+            console.error('Failed to update resurfaced word:', updateError.message);
+          }
         } else {
+          // No word yet qualifies (e.g. brand-new user) — this is expected,
+          // not an error. The Home Screen simply won't render this card.
           setData(null);
         }
       } catch (err) {
@@ -110,44 +133,46 @@ export function useOldButGold() {
     };
 
     fetchOldButGold();
-  }, []);
+  }, [user]);
 
   return { data, loading, error };
 }
 
 export function useTodaysFact() {
+  const { user } = useAuth();
   const [data, setData] = useState<Fact | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // TODO (WIP): replace with real Supabase query — select from facts where publish_date = today
-    // TODO (WIP): upsert user_fact_progress row on first view (seen_at = now())
+    if (!user) return;
+
     const fetchFact = async () => {
       try {
         setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const today = new Date().toISOString().split('T')[0];
 
-        // Toggle this to test "no content today" state
-        const hasContentToday = true;
+        const { data: fact, error: fetchError } = await supabase
+          .from('facts')
+          .select('*')
+          .eq('publish_date', today)
+          .maybeSingle();
 
-        if (!hasContentToday) {
-          setData(null);
-        } else {
-          setData({
-            id: '1',
-            image_url: 'https://images.unsplash.com/photo-1549480017-d76466a4b7e8?auto=format&fit=crop&w=600&q=80',
-            hook_line: 'Octopuses have three hearts and blue blood.',
-            context_line: 'These fascinating cephalopods have evolved a highly unique cardiovascular system to survive in the deep ocean.',
-            bullet_1: 'Two branchial hearts pump blood through the gills, while one systemic heart pumps it through the rest of the body.',
-            bullet_2: 'Their blood is blue because it contains a copper-rich protein called hemocyanin, which is more efficient than hemoglobin in cold, low-oxygen conditions.',
-            bullet_3: 'When an octopus swims, the systemic heart stops beating, which explains why they prefer to crawl—swimming exhausts them.',
-            bullet_4: 'If they lose a limb, it can completely regenerate, including the complex neural networks inside.',
-            category: 'nature',
-            publish_date: new Date().toISOString().split('T')[0],
-            created_at: new Date().toISOString(),
-          });
+        if (fetchError) throw fetchError;
+
+        setData(fact);
+
+        if (fact) {
+          const { error: upsertError } = await supabase
+            .from('user_fact_progress')
+            .upsert(
+              { user_id: user.id, fact_id: fact.id },
+              { onConflict: 'user_id,fact_id', ignoreDuplicates: true }
+            );
+
+          if (upsertError) {
+            console.error('Failed to upsert fact progress:', upsertError.message);
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error'));
@@ -157,7 +182,7 @@ export function useTodaysFact() {
     };
 
     fetchFact();
-  }, []);
+  }, [user]);
 
   return { data, loading, error };
 }
