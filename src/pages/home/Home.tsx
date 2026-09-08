@@ -34,7 +34,6 @@ export function HomeScreen() {
   const { user } = useAuth();
 
   useEffect(() => {
-    // If we are in the PWA, and notifications haven't been asked yet, redirect to ask
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
     const hasPrompted = localStorage.getItem('notification_prompted');
 
