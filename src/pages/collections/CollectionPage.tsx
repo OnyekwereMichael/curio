@@ -3,10 +3,14 @@ import { useSavedFacts, useSavedWords } from '../../hooks/useSavedItems';
 import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
 import { AppShell } from '../../components/AppShell';
+import empty from '../../assets/empty.svg';
 
 function EmptyState({ message }: { message: string }) {
     return (
         <div className="text-center py-12 text-faded-ink text-sm">
+            <div className="mb-4 text-muted-foreground">
+                <img src={empty} width={248} height={248} className="mx-auto" />
+            </div>
             {message}
         </div>
     );

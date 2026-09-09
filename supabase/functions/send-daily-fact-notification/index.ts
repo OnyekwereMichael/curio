@@ -16,13 +16,14 @@ Deno.serve(async (req) => {
   try {
     const today = new Date().toISOString().split("T")[0];
 
+    // If you add an "image_url" column to facts, it'll automatically be included below.
     const { data: fact } = await supabase
       .from("facts")
-      .select("hook_line")
+      .select("hook_line, image_url")
       .eq("publish_date", today)
       .maybeSingle();
 
-    const notificationTitle = "Fact of the Day";
+    const notificationTitle = "Fact of the Day ✍";
     const notificationBody = fact
       ? fact.hook_line
       : "A new fact is waiting for you in Curio.";
@@ -38,6 +39,7 @@ Deno.serve(async (req) => {
     const payload = JSON.stringify({
       title: notificationTitle,
       body: notificationBody,
+      image: fact?.image_url || undefined, // optional wide banner (~900x450), shown below the text on supported devices
     });
 
     let sent = 0;

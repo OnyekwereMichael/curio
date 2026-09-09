@@ -14,7 +14,14 @@ export function StreakCounter({ count, justIncremented }: StreakCounterProps) {
                 justIncremented && "scale-110"
             )}
         >
-            <Flame size={16} className="text-gold-stamp" />
+            <span className="relative inline-flex items-center justify-center">
+                {/* soft glow pulsing behind the flame */}
+                <span className="absolute inset-0 rounded-full bg-gold-stamp/40 blur-sm animate-flame-glow" />
+                <Flame
+                    size={16}
+                    className="relative text-gold-stamp animate-flame-flicker origin-bottom"
+                />
+            </span>
             <span className="font-mono text-sm font-semibold text-ink">{count}</span>
         </div>
     );

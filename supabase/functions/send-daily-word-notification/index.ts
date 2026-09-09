@@ -22,10 +22,10 @@ Deno.serve(async (req) => {
       .eq("publish_date", today)
       .maybeSingle();
 
-    const notificationTitle = "Your daily word is ready";
+    const notificationTitle = "Your daily word is ready ✍";
     const notificationBody = word
-          ? `Today's word: ${word.word}. Tap to learn it.`
-            : "Open Curio to see what's new today.";
+      ? `Today's word: ${word.word}. Tap to learn it.`
+      : "Open Curio to see what's new today.";
 
     const { data: users, error } = await supabase
       .from("users")
