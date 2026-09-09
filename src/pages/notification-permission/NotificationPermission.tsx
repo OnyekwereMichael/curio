@@ -5,6 +5,7 @@ import { Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
 import { urlBase64ToUint8Array } from '../../lib/utils';
+import { usePlatform } from '../../lib/usePlatform';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -18,8 +19,13 @@ const BellIcon = () => (
 export function NotificationPermission() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { platform, isStandalone } = usePlatform();
   const [isGranted, setIsGranted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // iOS Safari (non-standalone) doesn't support the Notification API at all.
+  // The user must install the PWA to the Home Screen first.
+  const isIosNonStandalone = platform === 'ios' && !isStandalone;
 
   // Completion handoff
   const completeNotificationStep = () => {
@@ -87,6 +93,13 @@ export function NotificationPermission() {
 
   // Permission request logic
   const handleEnableClick = async () => {
+    // On iOS outside standalone mode the Notification API doesn't exist.
+    // Tell the user to install the app instead of silently bailing.
+    if (isIosNonStandalone) {
+      await handleNotificationDenied();
+      return;
+    }
+
     if (!('Notification' in window)) {
       await handleNotificationDenied();
       return;

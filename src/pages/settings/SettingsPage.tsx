@@ -5,12 +5,14 @@ import { supabase } from '../../lib/superbase';
 import { Bell, Loader2 } from 'lucide-react';
 import { urlBase64ToUint8Array } from '../../lib/utils';
 import { useToast } from '../../components/ui/Toast';
+import { usePlatform } from '../../lib/usePlatform';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 export function SettingsPage() {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { platform, isStandalone } = usePlatform();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState(false);
@@ -55,7 +57,11 @@ export function SettingsPage() {
       } else {
         // Turn ON
         if (!('Notification' in window)) {
-          showToast('Your browser does not support push notifications.');
+          if (platform === 'ios' && !isStandalone) {
+            showToast('To enable notifications on iPhone, add this app to your Home Screen first.');
+          } else {
+            showToast('Your browser does not support push notifications.');
+          }
           setToggling(false);
           return;
         }
