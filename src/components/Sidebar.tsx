@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, LogOut, Download, X, Menu, Sparkles } from 'lucide-react';
+import { Home, BookOpen, LogOut, Download, X, Menu, Sparkles, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { usePlatform } from '../lib/usePlatform';
@@ -113,6 +113,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </p>
           <NavItem to="/home" icon={Home} label="Home" onClick={onClose} />
           <NavItem to="/collection" icon={BookOpen} label="My Collection" onClick={onClose} />
+          <NavItem to="/settings" icon={Settings} label="Settings" onClick={onClose} />
         </nav>
 
         {/* Bottom actions */}

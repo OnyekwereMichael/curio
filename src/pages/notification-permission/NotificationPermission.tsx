@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
-
+import { urlBase64ToUint8Array } from '../../lib/utils';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -14,22 +14,6 @@ const BellIcon = () => (
     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
   </svg>
 );
-
-// VAPID keys come base64-encoded; pushManager.subscribe needs a Uint8Array
-function urlBase64ToUint8Array(base64String?: string) {
-  // TEMPORARY DEBUG — remove once the key issue is confirmed fixed
-  console.log('VAPID key raw value:', JSON.stringify(base64String));
-  console.log('VAPID key length:', base64String?.length);
-
-  if (!base64String) {
-    console.error('VITE_VAPID_PUBLIC_KEY is missing — check your .env / deployment env vars.');
-    return new Uint8Array();
-  }
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
-}
 
 export function NotificationPermission() {
   const navigate = useNavigate();
