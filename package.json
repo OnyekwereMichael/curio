@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sentry/react": "^10.74.0",
     "@supabase/supabase-js": "^2.112.4",
     "@tailwindcss/vite": "^4.3.3",
     "clsx": "^2.1.1",
     "formik": "^2.4.9",
     "framer-motion": "^13.1.1",
     "lucide-react": "^1.33.0",
+    "posthog-js": "^1.430.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
@@ -24,6 +26,7 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@sentry/vite-plugin": "^5.4.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

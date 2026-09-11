@@ -7,7 +7,7 @@ import empty from '../../assets/empty.svg';
 
 function EmptyState({ message }: { message: string }) {
     return (
-        <div className="text-center py-12 text-faded-ink text-sm">
+        <div className="text-center py-10 text-faded-ink text-sm">
             <div className="mb-4 text-muted-foreground">
                 <img src={empty} width={248} height={248} className="mx-auto" />
             </div>
@@ -41,7 +41,7 @@ export function CollectionPage() {
 
     return (
         <AppShell title="Collections">
-            <div className="px-6 py-8  mx-auto">
+            <div className="px-6 py-5  mx-auto">
                 <h1 className="font-display text-3xl font-bold text-ink mb-8">My Collection</h1>
 
                 <section className="mb-10">

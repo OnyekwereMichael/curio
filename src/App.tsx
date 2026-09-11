@@ -11,6 +11,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CollectionPage } from './pages/collections/CollectionPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
 
 function App() {
   return (
@@ -29,6 +30,9 @@ function App() {
             <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
+            {/* Hidden Admin Activity Portal */}
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/activity" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
         </Router>
       </AuthProvider>
