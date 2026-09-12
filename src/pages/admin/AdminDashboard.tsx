@@ -24,8 +24,8 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../../lib/superbase';
 import { AppShell } from '../../components/AppShell';
+import { supabase } from '../../lib/superbase';
 
 export interface UserRecord {
   id: string;
@@ -39,6 +39,15 @@ export interface UserRecord {
   notifications_enabled?: boolean | null;
   notification_token?: any | null;
   installed?: boolean | null;
+}
+
+interface FeedbackRecord {
+  id: string;
+  user_id: string;
+  message: string;
+  created_at: string;
+  user_email?: string;
+  user_name?: string;
 }
 
 type FilterStatus = 'all' | 'today' | 'week' | 'inactive' | 'notifications';
@@ -128,14 +137,9 @@ export function AdminDashboard() {
   const [setupError, setSetupError] = useState<string | null>(null);
 
   // Feedback state
-  const [feedbacks, setFeedbacks] = useState<Array<{
-    id: string;
-    user_id: string;
-    message: string;
-    created_at: string;
-    user_email?: string;
-    user_name?: string;
-  }>>([]);
+  const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(true);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
 
   async function fetchUserData() {
     try {
@@ -147,27 +151,6 @@ export function AdminDashboard() {
 
       if (!edgeErr && edgeData?.users && Array.isArray(edgeData.users)) {
         setUsers(edgeData.users);
-
-        // Build a quick lookup map for user names/emails from the edge data
-        const userMap = new Map<string, { email?: string; full_name?: string }>();
-        edgeData.users.forEach((u: any) => userMap.set(u.id, { email: u.email, full_name: u.full_name }));
-
-        // Fetch feedback separately (needs service role via edge function or direct select)
-        const { data: fbData } = await supabase
-          .from('feedback')
-          .select('id, user_id, message, created_at')
-          .order('created_at', { ascending: false });
-
-        if (fbData) {
-          setFeedbacks(fbData.map((fb: any) => {
-            const userData = userMap.get(fb.user_id);
-            return {
-              ...fb,
-              user_email: userData?.email,
-              user_name: userData?.full_name,
-            };
-          }));
-        }
         return;
       }
 
@@ -195,14 +178,38 @@ export function AdminDashboard() {
     }
   }
 
+  // Fetches feedback via a dedicated, service-role Edge Function. This runs
+  // independently of fetchUserData — the feedback table has no SELECT policy
+  // for regular users at all (by design, to keep it private), so the only
+  // way to read it is through this admin-only function, and it must not
+  // depend on get-admin-users succeeding first.
+  async function fetchFeedback() {
+    try {
+      setFeedbackError(null);
+      const { data, error } = await supabase.functions.invoke('get-admin-feedback');
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      setFeedbacks(data?.feedbacks ?? []);
+    } catch (err: any) {
+      console.error('Failed to fetch feedback:', err);
+      setFeedbackError(err.message || 'Failed to load feedback');
+    } finally {
+      setFeedbackLoading(false);
+    }
+  }
 
   useEffect(() => {
     fetchUserData();
+    fetchFeedback();
   }, []);
 
   function handleRefresh() {
     setRefreshing(true);
+    setFeedbackLoading(true);
     fetchUserData();
+    fetchFeedback();
   }
 
   // Calculate Metrics
@@ -905,7 +912,19 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          {feedbacks.length === 0 ? (
+          {feedbackLoading ? (
+            <div className="p-12 text-center text-faded-ink space-y-3">
+              <RefreshCw className="animate-spin mx-auto text-moss" size={24} />
+              <p className="text-sm font-medium">Loading feedback...</p>
+            </div>
+          ) : feedbackError ? (
+            <div className="p-6">
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3">
+                <AlertCircle className="shrink-0 text-rose-600" size={18} />
+                <p className="flex-1">{feedbackError}</p>
+              </div>
+            </div>
+          ) : feedbacks.length === 0 ? (
             <div className="text-center py-12 text-faded-ink text-sm">
               <MessageSquare size={28} className="mx-auto mb-3 opacity-20" />
               <p>No feedback submitted yet.</p>

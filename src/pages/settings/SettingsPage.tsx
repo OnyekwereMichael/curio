@@ -4,11 +4,12 @@ import { AppShell } from '../../components/AppShell';
 import { useAuth } from '../../contexts/AuthContext';
 import { motion } from "framer-motion";
 
-import { Bell, Loader2, Trash2, AlertTriangle, MessageSquare, Check } from 'lucide-react';
+import { Bell, Loader2, Trash2, AlertTriangle, MessageSquare, Check, Moon, Sun } from 'lucide-react';
 import { urlBase64ToUint8Array } from '../../lib/utils';
 import { useToast } from '../../components/ui/Toast';
 import { usePlatform } from '../../lib/usePlatform';
 import { supabase } from '../../lib/superbase';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -17,6 +18,7 @@ export function SettingsPage() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { platform, isStandalone } = usePlatform();
+  const { theme, toggleTheme } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState(false);
@@ -155,6 +157,45 @@ export function SettingsPage() {
         <div>
           <h1 className="font-display text-2xl font-bold text-ink mb-2">Preferences</h1>
           <p className="text-faded-ink text-sm">Manage your app experience and notifications.</p>
+        </div>
+
+        <div className="bg-paper border border-ink/5 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start gap-4 max-sm:flex-col">
+              <div className="w-10 h-10 rounded-full bg-ember/10 flex items-center justify-center text-ember flex-shrink-0 mt-0.5 ">
+                {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+              </div>
+              <div>
+                <h3 className="font-semibold text-ink ">Dark Mode</h3>
+                <p className="text-sm text-faded-ink mt-0.5">
+                  Toggle between light and dark themes.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className={`
+                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
+                  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ember focus:ring-offset-2
+                  ${theme === 'dark' ? 'bg-ember' : 'bg-ink/20'}
+                `}
+                role="switch"
+                aria-checked={theme === 'dark'}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`
+                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
+                    transition duration-200 ease-in-out flex items-center justify-center
+                    ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}
+                  `}
+                />
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="bg-paper border border-ink/5 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">

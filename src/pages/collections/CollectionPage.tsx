@@ -41,7 +41,7 @@ export function CollectionPage() {
 
     return (
         <AppShell title="Collections">
-            <div className="px-6 py-5  mx-auto">
+            <div className="px-4 py-4  mx-auto">
                 <h1 className="font-display text-3xl font-bold text-ink mb-8">My Collection</h1>
 
                 <section className="mb-10">
