@@ -299,9 +299,9 @@ export function SettingsPage() {
                   <MessageSquare size={20} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-ink">Send feedback</h3>
+                  <h3 className="font-semibold text-ink">Help us make Curi better.</h3>
                   <p className="text-sm text-faded-ink mt-0.5">
-                    What do you think can be improved or added, would love to hear from you.
+                    Found a bug, have an idea, or just want to say hello? Tell us what is working and what is not. We read every message.
                   </p>
                 </div>
               </div>

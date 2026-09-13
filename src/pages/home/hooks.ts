@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
 
+
 export interface Word {
   id: string;
   word: string;
@@ -53,9 +54,6 @@ export function useTodaysWord() {
         setData(word);
 
         if (word) {
-          // Upsert progress row — first_seen_at only sets on first insert
-          // (the unique constraint + ignoreDuplicates means repeat visits
-          // just leave the existing row untouched).
           const { error: upsertError } = await supabase
             .from('user_word_progress')
             .upsert(
@@ -92,14 +90,14 @@ export function useOldButGold() {
     const fetchOldButGold = async () => {
       try {
         setLoading(true);
-        const threeDaysAgo = new Date();
-        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
         const { data: progress, error: fetchError } = await supabase
           .from('user_word_progress')
           .select('*, words(*)')
           .eq('user_id', user.id)
-          .lte('first_seen_at', threeDaysAgo.toISOString())
+          .lte('first_seen_at', twoDaysAgo.toISOString())
           .order('times_shown', { ascending: true })
           .limit(1)
           .maybeSingle();
@@ -121,8 +119,6 @@ export function useOldButGold() {
             console.error('Failed to update resurfaced word:', updateError.message);
           }
         } else {
-          // No word yet qualifies (e.g. brand-new user) — this is expected,
-          // not an error. The Home Screen simply won't render this card.
           setData(null);
         }
       } catch (err) {
@@ -182,6 +178,64 @@ export function useTodaysFact() {
     };
 
     fetchFact();
+  }, [user]);
+
+  return { data, loading, error };
+}
+
+// Mirrors useOldButGold, but for facts — resurfaces a fact the user saw
+// 2+ days ago, least-resurfaced first, same pattern as the word version.
+export function useOldButGoldFact() {
+  const { user } = useAuth();
+  const [data, setData] = useState<Fact | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchOldButGoldFact = async () => {
+      try {
+        setLoading(true);
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+        const { data: progress, error: fetchError } = await supabase
+          .from('user_fact_progress')
+          .select('*, facts(*)')
+          .eq('user_id', user.id)
+          .lte('seen_at', twoDaysAgo.toISOString())
+          .order('times_shown', { ascending: true })
+          .limit(1)
+          .maybeSingle();
+
+        if (fetchError) throw fetchError;
+
+        if (progress?.facts) {
+          setData(progress.facts as Fact);
+
+          const { error: updateError } = await supabase
+            .from('user_fact_progress')
+            .update({
+              last_resurfaced_at: new Date().toISOString(),
+              times_shown: (progress.times_shown ?? 0) + 1,
+            })
+            .eq('id', progress.id);
+
+          if (updateError) {
+            console.error('Failed to update resurfaced fact:', updateError.message);
+          }
+        } else {
+          setData(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Unknown error'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOldButGoldFact();
   }, [user]);
 
   return { data, loading, error };

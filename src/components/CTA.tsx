@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export function CTA() {
   const navigate = useNavigate();
+  const { session } = useAuth();
   return (
     <section className="py-32 px-6 bg-paper relative overflow-hidden">
       {/* Decorative background elements */}
@@ -27,8 +29,8 @@ export function CTA() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-col items-center gap-4 w-full"
         >
-          <button onClick={() => navigate('/signup')} className="bg-ember text-paper font-semibold text-lg px-10 py-5 rounded-xl shadow-lg shadow-ember/20 hover:shadow-xl hover:-translate-y-0.5 hover:bg-ember/90 transition-all w-full sm:w-auto cursor-pointer">
-            Get Started — It's Free
+          <button onClick={() => navigate(session ? '/home' : '/signup')} className="bg-ember text-paper font-semibold text-lg px-10 py-5 rounded-xl shadow-lg shadow-ember/20 hover:shadow-xl hover:-translate-y-0.5 hover:bg-ember/90 transition-all w-full sm:w-auto cursor-pointer">
+            {session ? 'Go to home' : "Get Started — It's Free"}
           </button>
           <p className="text-sm font-medium text-faded-ink">
             No credit card. Takes 30 seconds.

@@ -2,9 +2,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { WordCard } from './WordCard';
 import { FactCard } from './FactCard';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Hero() {
   const navigate = useNavigate();
+  const { session } = useAuth();
   return (
     <section className="pt-32 pb-20 px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
@@ -44,8 +46,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <button onClick={() => navigate('/signup')} className="bg-ember text-paper font-semibold text-lg px-8 py-4 rounded-xl shadow-lg shadow-ember/20 hover:shadow-xl hover:-translate-y-0.5 hover:bg-ember/90 transition-all cursor-pointer">
-              Get Started — It's Free
+            <button onClick={() => navigate(session ? '/home' : '/signup')} className="bg-ember text-paper font-semibold text-lg px-8 py-4 rounded-xl shadow-lg shadow-ember/20 hover:shadow-xl hover:-translate-y-0.5 hover:bg-ember/90 transition-all cursor-pointer">
+              {session ? 'Go to home' : "Get Started — It's Free"}
             </button>
           </motion.div>
         </div>

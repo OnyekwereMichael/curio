@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   useEffect(() => {
     // Check initial preference
@@ -49,7 +51,7 @@ export function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="font-display font-semibold text-xl text-ink tracking-tight flex items-center gap-2">
-          Curio
+          Curi
         </Link>
         <div className="flex items-center gap-6">
           <button
@@ -59,16 +61,18 @@ export function Navbar() {
           >
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
           </button>
-          <Link to="/login" className="text-sm font-medium text-ink hover:text-ink/70 transition-colors hidden sm:block">
-            Log In
-          </Link>
+          {!session && (
+            <Link to="/login" className="text-sm font-medium text-ink hover:text-ink/70 transition-colors hidden sm:block">
+              Log In
+            </Link>
+          )}
           <motion.button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate(session ? '/home' : '/signup')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-ember text-paper font-medium text-sm px-5 py-2.5 rounded-lg shadow-sm hover:shadow-md hover:bg-ember/90 transition-all cursor-pointer"
           >
-            Get Started
+            {session ? 'Go to home' : 'Get Started'}
           </motion.button>
         </div>
       </div>
