@@ -67,7 +67,7 @@ function buildWelcomeEmailHtml(firstName: string): string {
             Welcome, ${firstName}! 🎉
           </p>
           <p style="margin:12px 0 0;font-size:15px;line-height:1.7;color:#7C8A93;">
-            You've just joined a community of curious minds. Every day, Curi delivers one new word and one mind-expanding fact — in under two minutes.
+            You've just joined a community of curious minds. Every day, Curi delivers one new word and one mind-expanding fact in a fun way.
           </p>
         </td></tr>
 
@@ -122,7 +122,7 @@ function buildWelcomeEmailHtml(firstName: string): string {
         <!-- Personal note -->
         <tr><td style="padding:24px 32px 0;">
           <p style="margin:0;font-size:14.5px;line-height:1.75;color:#1C2B3A;">
-            No pressure, no rigid courses, no guilt for missing a day. Just a small daily ritual of curiosity — the kind that stacks up quietly and makes you a more interesting person over time.
+            No pressure, no rigid courses, no guilt for missing a day. Just a small daily habit of curiosity, the kind that stacks up quietly and makes you a more interesting person over time.
           </p>
           <p style="margin:14px 0 0;font-size:14.5px;line-height:1.75;color:#1C2B3A;">
             Your first word is already waiting. 👇

@@ -57,7 +57,7 @@ function buildEmailHtml(firstName: string, missingInstall: boolean, missingNotif
 
         <!-- Header -->
         <tr><td style="background:linear-gradient(135deg,#D8492F 0%,#C23F27 100%);padding:36px 32px 32px;">
-          <p style="margin:0;color:#fff;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Curio</p>
+          <p style="margin:0;color:#fff;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Curi</p>
           <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;letter-spacing:0.2px;">Your daily word &amp; fact journal</p>
         </td></tr>
 
@@ -68,13 +68,13 @@ function buildEmailHtml(firstName: string, missingInstall: boolean, missingNotif
         <tr><td style="padding:36px 32px 8px;">
           <p style="margin:0 0 10px;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:23px;font-weight:700;color:#1C2B3A;letter-spacing:-0.3px;">Hi ${firstName},</p>
           <p style="margin:0 0 18px;font-size:14.5px;line-height:1.6;color:#7C8A93;">
-            I noticed you recently signed up for Curio, but your account isn't quite ready to start delivering daily discoveries yet.
+            I noticed you recently signed up for Curi, but your account isn't quite ready to start delivering daily discoveries yet.
           </p>
 
           <table cellpadding="0" cellspacing="0" width="100%" style="background:#FBF7F1;border:1px solid #F0EADD;border-radius:14px;margin:0 0 26px;">
             <tr><td style="padding:18px 20px;">
               <p style="margin:0;font-size:14px;line-height:1.6;color:#1C2B3A;">
-                To get the most out of Curio and start receiving your daily words, please make sure to <strong style="color:#D8492F;">${actionText}</strong>.
+                To get the most out of Curi and start receiving your daily words, please make sure to <strong style="color:#D8492F;">${actionText}</strong>.
               </p>
             </td></tr>
           </table>
@@ -91,8 +91,8 @@ function buildEmailHtml(firstName: string, missingInstall: boolean, missingNotif
           <table width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px solid #F0EDE7;"></td></tr></table>
 
           <p style="margin:20px 0 0;font-size:12px;line-height:1.6;color:#A9B2B8;">
-            You're receiving this because you signed up for Curio.<br/>
-            ✦ Curio · Learn something new, one day at a time.
+            You're receiving this because you signed up for Curi.<br/>
+            ✦ Curi · Learn something new, one day at a time.
           </p>
         </td></tr>
 

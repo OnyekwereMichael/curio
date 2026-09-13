@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     const payload = JSON.stringify({
       title: notificationTitle,
       body: notificationBody,
-      image: fact?.image_url || undefined, // optional wide banner (~900x450), shown below the text on supported devices
+      image: fact?.image_url || undefined, 
     });
 
     let sent = 0;
