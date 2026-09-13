@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, LogOut, Download, X, Menu, Sparkles, Settings } from 'lucide-react';
+import { Home, BookOpen, LogOut, Download, X, Menu, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { usePlatform } from '../lib/usePlatform';

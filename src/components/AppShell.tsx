@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Sparkles } from 'lucide-react';
 import { Sidebar, SidebarToggle } from './Sidebar';
 import { EmailVerificationBanner } from './EmailVerificationBanner';
 import { useAuth } from '../contexts/AuthContext';
