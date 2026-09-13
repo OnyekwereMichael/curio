@@ -294,7 +294,7 @@ export function SettingsPage() {
             </motion.div>
           ) : (
             <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 max-sm:flex-col  max-sm:items-start">
                 <div className="w-10 h-10 rounded-full bg-ember/10 flex items-center justify-center text-ember flex-shrink-0">
                   <MessageSquare size={20} />
                 </div>
