@@ -45,7 +45,7 @@ export function CollectionPage() {
                 <h1 className="font-display text-3xl font-bold text-ink mb-8">My Collection</h1>
 
                 <section className="mb-10">
-                    <h2 className="text-xs font-bold tracking-wider uppercase text-ember mb-4">
+                    <h2 className="text-xs font-display font-bold tracking-wider uppercase text-ember mb-4">
                         Saved Words
                     </h2>
                     {savedWords.loading ? (
@@ -71,7 +71,7 @@ export function CollectionPage() {
                 </section>
 
                 <section>
-                    <h2 className="text-xs font-bold tracking-wider uppercase text-moss mb-4">
+                    <h2 className="text-xs font-display font-bold tracking-wider uppercase text-moss mb-4">
                         Saved Facts
                     </h2>
                     {savedFacts.loading ? (

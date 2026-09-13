@@ -166,8 +166,8 @@ export function SettingsPage() {
                 {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
               </div>
               <div>
-                <h3 className="font-semibold text-ink ">Dark Mode</h3>
-                <p className="text-sm text-faded-ink mt-0.5">
+                <h3 className="font-semibold text-ink font-display">Dark Mode</h3>
+                <p className="text-sm text-faded-ink mt-0.5 font-display">
                   Toggle between light and dark themes.
                 </p>
               </div>
@@ -205,8 +205,8 @@ export function SettingsPage() {
                 <Bell size={20} />
               </div>
               <div>
-                <h3 className="font-semibold text-ink ">Daily Word Push Notifications</h3>
-                <p className="text-sm text-faded-ink mt-0.5">
+                <h3 className="font-semibold text-ink font-display">Daily Word Push Notifications</h3>
+                <p className="text-sm text-faded-ink mt-0.5 font-display">
                   Receive a push notification every day when your new word is ready.
                 </p>
               </div>
@@ -278,19 +278,19 @@ export function SettingsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.25 }}
-                className="text-base text-ink font-medium mb-1"
+                className="text-base text-ink font-display mb-1"
               >
                 Thanks for the feedback
               </motion.p>
 
-              <motion.p
+              {/* <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.38, duration: 0.25 }}
                 className="text-sm text-faded-ink"
               >
                 Would definitely look into it.
-              </motion.p>
+              </motion.p> */}
             </motion.div>
           ) : (
             <div className="flex flex-col gap-3">
@@ -299,8 +299,8 @@ export function SettingsPage() {
                   <MessageSquare size={20} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-ink">Help us make Curi better.</h3>
-                  <p className="text-sm text-faded-ink mt-0.5">
+                  <h3 className="font-semibold text-ink font-display">Help us make Curi better.</h3>
+                  <p className="text-sm text-faded-ink  font-display mt-0.5">
                     Found a bug, have an idea, or just want to say hello? Tell us what is working and what is not. We read every message.
                   </p>
                 </div>
@@ -327,7 +327,7 @@ export function SettingsPage() {
 
         <div className="w-full mx-auto bg-paper border border-red-100 rounded-2xl shadow-sm overflow-hidden mt-4">
           <div className="px-4 sm:px-6 py-4 border-b border-red-100">
-            <h2 className="text-xs font-bold  uppercase text-red-500">Danger zone</h2>
+            <h2 className="text-xs font-bold font-display  uppercase text-red-500">Danger zone</h2>
           </div>
 
           {!deleteConfirming ? (
@@ -336,12 +336,12 @@ export function SettingsPage() {
               className="w-full flex items-center gap-3 px-4 sm:px-6 py-4 text-left hover:bg-red-50/50 transition-colors"
             >
               <Trash2 size={18} className="text-red-500" />
-              <span className="text-sm font-medium text-red-600">Delete account</span>
+              <span className="text-sm font-medium text-red-600 font-display">Delete account</span>
             </button>
           ) : (
             <div className="px-4 sm:px-6 py-4 flex flex-col gap-3">
-              <div className="flex items-start gap-2 text-sm text-ink">
-                <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2 text-sm text-ink font-display">
+                <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5 font-display" />
                 <span>
                   This permanently deletes your account, streak, and saved words. This can't be undone.
                 </span>
@@ -351,14 +351,14 @@ export function SettingsPage() {
                 <button
                   onClick={() => setDeleteConfirming(false)}
                   disabled={deleting}
-                  className="flex-1 py-2.5 rounded-lg border border-ink/10 text-sm font-medium text-ink hover:bg-ink/[0.02] transition-colors disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-lg border border-ink/10 text-sm font-medium text-ink hover:bg-ink/[0.02] transition-colors disabled:opacity-50 font-display"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteAccount}
                   disabled={deleting}
-                  className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50 font-display"
                 >
                   {deleting ? 'Deleting...' : 'Yes, delete my account'}
                 </button>

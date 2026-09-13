@@ -14,20 +14,20 @@ export function FounderNote() {
           <div className="w-12 h-12 rounded-full bg-ink/10 flex items-center justify-center text-xl overflow-hidden mb-2">
             👋
           </div>
-          <h3 className="font-display text-2xl font-bold text-ink">Why we built this</h3>
+          <h3 className="font-display text-2xl font-bold text-ink">Why I built this</h3>
           <div className="space-y-4 text-faded-ink leading-relaxed text-lg">
             <p>
               I love learning, but I found myself burning out on language course apps that demanded too much time and made me feel guilty for missing a "lesson."
             </p>
             <p>
-              I just wanted something lighter — a small, daily habit of curiosity, something closer to a physical field journal than a classroom syllabus.
+              I just wanted something lighter. A small, daily habit of curiosity, something closer to a physical field journal than a classroom syllabus.
             </p>
             <p>
-              That’s why we created Curi. No pressure, no rigid courses. Just one word and one quick fact every morning.
+              That’s why I created Curi. No pressure, no rigid courses. Just one word and one quick fact every morning.
             </p>
           </div>
           <div className="mt-4 pt-6 border-t border-ink/10">
-            <p className="font-medium text-ink">The Curi Team</p>
+            <p className="font-medium text-ink">Michael</p>
           </div>
         </motion.div>
       </div>

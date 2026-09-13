@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="bg-paper py-12 px-6 border-t border-ink/5">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex flex-col items-center md:items-start gap-1">
-          <span className="font-display font-semibold text-lg text-ink">Daily Discover</span>
+          <span className="font-display font-semibold text-lg text-ink">Curi</span>
           <span className="text-sm text-faded-ink">One word. One fact. Every day.</span>
         </div>
 
@@ -22,7 +22,7 @@ export function Footer() {
         </div>
 
         <div className="text-sm text-faded-ink/80">
-          &copy; {new Date().getFullYear()} Daily Discover.
+          &copy; {new Date().getFullYear()} Curio.
         </div>
       </div>
     </footer>
