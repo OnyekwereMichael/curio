@@ -32,7 +32,6 @@ function App() {
               <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
-              {/* Hidden Admin Activity Portal */}
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/activity" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             </Routes>

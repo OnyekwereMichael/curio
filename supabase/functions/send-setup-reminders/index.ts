@@ -32,51 +32,71 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
 }
 
 function buildEmailHtml(firstName: string, missingInstall: boolean, missingNotifications: boolean): string {
-    let actionText = "";
-    if (missingInstall && missingNotifications) {
-        actionText = "install the app and enable notifications";
-    } else if (missingInstall) {
-        actionText = "install the app";
-    } else {
-        actionText = "enable notifications";
-    }
+  let actionText = "";
+  if (missingInstall && missingNotifications) {
+    actionText = "install the app and enable notifications";
+  } else if (missingInstall) {
+    actionText = "install the app";
+  } else {
+    actionText = "enable notifications";
+  }
 
-    return `
+  return `
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#F6F4EF;font-family:'Helvetica Neue',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 16px;">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <!--[if !mso]><!-->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!--<![endif]-->
+</head>
+<body style="margin:0;padding:0;background:#F6F4EF;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:48px 16px;">
     <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;border:1px solid #e8e4dc;overflow:hidden;">
-        
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:20px;border:1px solid #ece7dd;overflow:hidden;box-shadow:0 4px 24px rgba(28,43,58,0.06);">
+
         <!-- Header -->
-        <tr><td style="background:#D8492F;padding:28px 32px;">
-          <p style="margin:0;color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">✦ Curio</p>
-          <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">Your daily word & fact journal</p>
+        <tr><td style="background:linear-gradient(135deg,#D8492F 0%,#C23F27 100%);padding:36px 32px 32px;">
+          <p style="margin:0;color:#fff;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Curio</p>
+          <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;letter-spacing:0.2px;">Your daily word &amp; fact journal</p>
         </td></tr>
 
+        <!-- Accent divider -->
+        <tr><td style="height:4px;background:#F0A18A;"></td></tr>
+
         <!-- Body -->
-        <tr><td style="padding:32px;">
-          <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#1C2B3A;">Hi ${firstName},</p>
-          <p style="margin:0 0 16px;font-size:14px;color:#7C8A93;">I noticed you recently signed up for Curio, but you haven't fully set up your account yet.</p>
-          
-          <p style="margin:0 0 24px;font-size:14px;color:#1C2B3A;">To get the most out of Curio and start receiving your daily words, please make sure to <strong>${actionText}</strong>.</p>
+        <tr><td style="padding:36px 32px 8px;">
+          <p style="margin:0 0 10px;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:23px;font-weight:700;color:#1C2B3A;letter-spacing:-0.3px;">Hi ${firstName},</p>
+          <p style="margin:0 0 18px;font-size:14.5px;line-height:1.6;color:#7C8A93;">
+            I noticed you recently signed up for Curio, but your account isn't quite ready to start delivering daily discoveries yet.
+          </p>
+
+          <table cellpadding="0" cellspacing="0" width="100%" style="background:#FBF7F1;border:1px solid #F0EADD;border-radius:14px;margin:0 0 26px;">
+            <tr><td style="padding:18px 20px;">
+              <p style="margin:0;font-size:14px;line-height:1.6;color:#1C2B3A;">
+                To get the most out of Curio and start receiving your daily words, please make sure to <strong style="color:#D8492F;">${actionText}</strong>.
+              </p>
+            </td></tr>
+          </table>
 
           <!-- CTA Button -->
-          <table cellpadding="0" cellspacing="0" style="margin:0 0 28px">
-            <tr><td style="background:#D8492F;border-radius:10px;padding:14px 28px;">
-              <a href="https://curio.app/home" style="color:#fff;font-weight:700;font-size:15px;text-decoration:none;display:block;">
+          <table cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
+            <tr><td style="background:#D8492F;border-radius:12px;">
+              <a href="https://www.trycuri.app/settings" style="color:#fff;font-weight:700;font-size:15px;text-decoration:none;display:block;padding:15px 30px;letter-spacing:0.2px;">
                 Complete your setup →
               </a>
             </td></tr>
           </table>
 
-          <p style="margin:0;font-size:12px;color:#7C8A93;border-top:1px solid #f0ede7;padding-top:20px;">
-            You're receiving this because you signed up for Curio. 
+          <table width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px solid #F0EDE7;"></td></tr></table>
+
+          <p style="margin:20px 0 0;font-size:12px;line-height:1.6;color:#A9B2B8;">
+            You're receiving this because you signed up for Curio.<br/>
+            ✦ Curio · Learn something new, one day at a time.
           </p>
         </td></tr>
 
+        <tr><td style="height:28px;"></td></tr>
       </table>
     </td></tr>
   </table>

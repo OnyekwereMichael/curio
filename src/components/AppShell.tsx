@@ -6,6 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 import { StreakCounter } from './StreakCounter';
 import { useStreak } from './useStreak';
+import logo from '../../public/icon-192.png'
+
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -45,9 +47,9 @@ function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void
       </div>
       <div className="flex items-center gap-2 lg:hidden">
         <div className="w-6 h-6 rounded-md bg-ember flex items-center justify-center">
-          <Sparkles size={12} className="text-white" strokeWidth={2.5} />
+          <img src={logo} alt="Curio Logo" className="" />
         </div>
-        <span className="font-display font-bold text-lg text-ink tracking-tight">Curio</span>
+        <span className="font-display font-bold text-lg text-ink tracking-tight">Curi</span>
       </div>
 
       <div className="hidden lg:flex flex-col">

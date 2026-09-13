@@ -20,14 +20,14 @@ export function FounderNote() {
               I love learning, but I found myself burning out on language course apps that demanded too much time and made me feel guilty for missing a "lesson."
             </p>
             <p>
-              I just wanted something lighter — a small, daily ritual of curiosity, something closer to a physical field journal than a classroom syllabus.
+              I just wanted something lighter — a small, daily habit of curiosity, something closer to a physical field journal than a classroom syllabus.
             </p>
             <p>
-              That’s why we created Curio. No pressure, no rigid courses. Just one word and one quick fact every morning.
+              That’s why we created Curi. No pressure, no rigid courses. Just one word and one quick fact every morning.
             </p>
           </div>
           <div className="mt-4 pt-6 border-t border-ink/10">
-            <p className="font-medium text-ink">The Curio Team</p>
+            <p className="font-medium text-ink">The Curi Team</p>
           </div>
         </motion.div>
       </div>

@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { usePlatform } from '../lib/usePlatform';
 import { cn } from '../lib/utils';
+import logo from '../../public/icon-192.png'
 
 interface SidebarProps {
   isOpen: boolean;
@@ -92,9 +93,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center">
-              <Sparkles size={16} className="text-white" strokeWidth={2.5} />
+              {/* <Sparkles size={16} className="text-white" strokeWidth={2.5} /> */}
+              <img src={logo} alt="Curio Logo" className="w-8 h-8" />
             </div>
-            <span className="font-display font-bold text-xl text-ink tracking-tight">Curio</span>
+            <span className="font-display font-bold text-xl text-ink tracking-tight">Curi</span>
           </div>
           {/* Mobile close button */}
           <button

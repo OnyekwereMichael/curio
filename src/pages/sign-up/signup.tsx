@@ -34,15 +34,15 @@ export function SignupScreen() {
 
             // Fallback to email if name is somehow empty, though it's required by validation
             const seed = values.name || values.email;
-            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
-            
+            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&mouth=smile,twinkle,default`;
+
             const { data, error } = await supabase.auth.signUp({
                 email: values.email,
                 password: values.password,
                 options: {
-                    data: { 
+                    data: {
                         full_name: values.name,
-                        avatar_url: avatarUrl 
+                        avatar_url: avatarUrl
                     },
                     emailRedirectTo: `${window.location.origin}/install-nudge`,
                 },
@@ -52,6 +52,16 @@ export function SignupScreen() {
                 setFormError(error.message);
                 setSubmitting(false);
                 return;
+            }
+
+            if (data.user) {
+                supabase.functions.invoke('send-welcome-email', {
+                    body: {
+                        userId: data.user.id,
+                        email: values.email,
+                        firstName: values.name,
+                    },
+                }).catch(console.error);
             }
 
             if (data.session) {
