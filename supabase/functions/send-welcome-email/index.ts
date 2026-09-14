@@ -4,8 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
-const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "hello@trycuri.app";
-
+const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") ?? "hello@mail.trycuri.app";
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 const corsHeaders = {
@@ -13,7 +12,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
+// Now returns the actual error message instead of just true/false,
+// so the caller (and your logs) can see exactly why a send failed.
+async function sendEmail(
+  to: string,
+  subject: string,
+  html: string
+): Promise<{ ok: boolean; error?: string }> {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -30,10 +35,10 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
 
   if (!res.ok) {
     const err = await res.text();
-    console.error(`Resend error for ${to}:`, err);
-    return false;
+    console.error(`Resend error for ${to} (status ${res.status}):`, err);
+    return { ok: false, error: err };
   }
-  return true;
+  return { ok: true };
 }
 
 function buildWelcomeEmailHtml(firstName: string): string {
@@ -190,11 +195,17 @@ Deno.serve(async (req) => {
     }
 
     // Idempotency: skip if we already sent for this user
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("users")
       .select("welcome_email_sent_at")
       .eq("id", userId)
       .maybeSingle();
+
+    if (profileError) {
+      console.error(`Failed to look up profile for ${userId}:`, profileError.message);
+      // Don't block sending just because the idempotency check failed —
+      // better to risk a duplicate than to silently skip a real welcome email.
+    }
 
     if (profile?.welcome_email_sent_at) {
       return new Response(
@@ -207,13 +218,22 @@ Deno.serve(async (req) => {
     const html = buildWelcomeEmailHtml(firstName);
     const subject = `Welcome to Curi, ${firstName}! Your first word is waiting 📖`;
 
-    const ok = await sendEmail(email, subject, html);
+    const { ok, error: sendError } = await sendEmail(email, subject, html);
 
     if (ok) {
-      await supabase
+      const { error: updateError } = await supabase
         .from("users")
         .update({ welcome_email_sent_at: new Date().toISOString() })
         .eq("id", userId);
+
+      if (updateError) {
+        // Email sent fine, but we couldn't record that it was sent —
+        // log it clearly so it doesn't go unnoticed and cause a duplicate send later.
+        console.error(
+          `Email sent to ${email} but failed to update welcome_email_sent_at:`,
+          updateError.message
+        );
+      }
 
       return new Response(
         JSON.stringify({ sent: true, to: email }),
@@ -221,7 +241,7 @@ Deno.serve(async (req) => {
       );
     } else {
       return new Response(
-        JSON.stringify({ sent: false, error: "Email delivery failed" }),
+        JSON.stringify({ sent: false, error: sendError ?? "Email delivery failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

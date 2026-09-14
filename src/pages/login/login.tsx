@@ -75,7 +75,7 @@ export function LoginScreen() {
             {/* Minimal Header */}
             <header className="p-6 flex items-center justify-between max-w-lg mx-auto w-full">
                 <Link to="/" className="font-display font-semibold text-xl text-ink tracking-tight">
-                    Curio
+                    Curi
                 </Link>
                 <button
                     onClick={() => navigate('/')}
