@@ -18,6 +18,19 @@ export function InstallNudge() {
   const { user } = useAuth();
   const { platform, installPromptEvent, isStandalone } = usePlatform();
 
+  // Fire welcome email for all signup paths (email+password AND Google OAuth).
+  // The edge function's idempotency guard (welcome_email_sent_at) prevents double-sends.
+  useEffect(() => {
+    if (!user) return;
+    supabase.functions.invoke('send-welcome-email', {
+      body: {
+        userId: user.id,
+        email: user.email,
+        firstName: user.user_metadata?.full_name ?? user.user_metadata?.name ?? '',
+      },
+    }).catch(console.error);
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (isStandalone) {
       if (user) {

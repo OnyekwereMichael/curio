@@ -83,7 +83,7 @@ function buildEmailHtml(firstName: string, missingInstall: boolean, missingNotif
           <table cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
             <tr><td style="background:#D8492F;border-radius:12px;">
               <a href="https://www.trycuri.app/settings" style="color:#fff;font-weight:700;font-size:15px;text-decoration:none;display:block;padding:15px 30px;letter-spacing:0.2px;">
-                Complete your setup →
+                Complete your setup
               </a>
             </td></tr>
           </table>
