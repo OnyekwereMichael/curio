@@ -72,7 +72,7 @@ export function InstallNudge() {
           {/* Step 1: Static screen shell */}
           <div className="text-center mb-8">
             <h1 className="font-display text-3xl font-bold text-ink mb-2 leading-tight">
-              Install Curio to get your daily word and fact
+              Install Curi to get your daily word and fact
             </h1>
             <p className="text-faded-ink text-sm font-display">
               So your streak — and your reminders — actually work.
@@ -85,7 +85,7 @@ export function InstallNudge() {
             {platform === 'android' && installPromptEvent && (
               <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <p className="text-ink font-medium font-display">
-                  Tap Install below to add Curio to your home screen.
+                  Tap Install below to add Curi to your home screen.
                 </p>
               </div>
             )}
@@ -162,7 +162,7 @@ export function InstallNudge() {
                     2
                   </div>
                   <p className="text-ink text-sm leading-snug pt-1">
-                    Click <strong>"Install"</strong> to add Curio to your device.
+                    Click <strong>"Install"</strong> to add Curi to your device.
                   </p>
                 </div>
               </div>
@@ -172,7 +172,7 @@ export function InstallNudge() {
             {platform === 'other' && installPromptEvent && (
               <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <p className="text-ink font-medium font-display">
-                  Click Install below to add Curio to your device.
+                  Click Install below to add Curi to your device.
                 </p>
               </div>
             )}
