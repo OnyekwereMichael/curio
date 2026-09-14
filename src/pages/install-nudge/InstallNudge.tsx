@@ -80,7 +80,7 @@ export function InstallNudge() {
           </div>
 
           {/* Content Area */}
-          <div className="mb-10 min-h-screen flex flex-col justify-center max-w-md mx-auto px-4">
+          <div className="mb-10 min-h-full flex flex-col justify-center max-w-md mx-auto px-4">
             {/* Android - Automatic PWA Prompt Available */}
             {platform === 'android' && installPromptEvent && (
               <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
