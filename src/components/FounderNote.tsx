@@ -24,6 +24,7 @@ export function FounderNote() {
             </p>
             <p>
               That’s why I created Curi. No pressure, no rigid courses. Just one word and one quick fact every morning.
+
             </p>
           </div>
           <div className="mt-4 pt-6 border-t border-ink/10">
