@@ -117,28 +117,28 @@ export function InstallNudge() {
             {platform === 'ios' && (
               <div className="flex flex-col gap-5 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink  font-semibold text-sm font-display">
                     1
                   </div>
-                  <p className="text-ink text-sm leading-relaxed pt-1 flex items-center flex-wrap gap-1 font-display">
+                  <p className="text-faded-ink text-sm leading-relaxed pt-1 flex items-center flex-wrap gap-1 font-display">
                     Tap the <SafariShareIcon /> Share icon in Safari.
                   </p>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink  font-semibold text-sm font-display">
                     2
                   </div>
-                  <p className="text-ink text-sm leading-relaxed pt-1 font-display">
+                  <p className="text-faded-ink text-sm leading-relaxed pt-1 font-display">
                     Scroll down and tap <strong>"Add to Home Screen"</strong>.
                   </p>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink font-semibold text-sm font-display">
                     3
                   </div>
-                  <p className="text-ink text-sm leading-relaxed pt-1 font-display">
+                  <p className="text-faded-ink text-sm leading-relaxed pt-1 font-display">
                     Tap <strong>"Add"</strong> in the top-right corner to finish.
                   </p>
                 </div>
@@ -149,19 +149,19 @@ export function InstallNudge() {
             {platform === 'other' && !installPromptEvent && (
               <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink font-semibold text-sm font-display">
                     1
                   </div>
-                  <p className="text-ink text-sm leading-snug pt-1">
+                  <p className="text-faded-ink text-sm leading-snug pt-1">
                     Click the <strong>Install icon (⊕)</strong> in your browser address bar or menu.
                   </p>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink  font-semibold text-sm font-display">
                     2
                   </div>
-                  <p className="text-ink text-sm leading-snug pt-1">
+                  <p className="text-faded-ink text-sm leading-snug pt-1">
                     Click <strong>"Install"</strong> to add Curi to your device.
                   </p>
                 </div>
@@ -171,8 +171,9 @@ export function InstallNudge() {
             {/* Desktop / Other - Automatic PWA Prompt Available */}
             {platform === 'other' && installPromptEvent && (
               <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <p className="text-ink font-medium font-display">
+                <p className="text-faded-ink font-medium font-display">
                   Click Install below to add Curi to your device.
+                  Takes less than a minute.
                 </p>
               </div>
             )}

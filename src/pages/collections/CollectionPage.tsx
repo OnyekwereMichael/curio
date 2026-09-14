@@ -71,7 +71,7 @@ export function CollectionPage() {
                 </section>
 
                 <section>
-                    <h2 className="text-xs font-display font-bold tracking-wider uppercase text-moss mb-4">
+                    <h2 className="text-xs font-display font-bold tracking-wider uppercase text-faded-ink  mb-4">
                         Saved Facts
                     </h2>
                     {savedFacts.loading ? (

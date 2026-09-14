@@ -127,7 +127,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {!isStandalone && (
             <button
               onClick={() => { navigate('/install-nudge'); onClose(); }}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-moss hover:bg-moss/8 transition-all duration-200 w-full text-left"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-faded-ink hover:bg-moss/8 transition-all duration-200 w-full text-left"
             >
               <Download size={18} strokeWidth={2} />
               <span>Install App</span>
