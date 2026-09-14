@@ -47,117 +47,70 @@ function buildWelcomeEmailHtml(firstName: string): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <!--[if !mso]><!-->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!--<![endif]-->
 </head>
 <body style="margin:0;padding:0;background:#F6F4EF;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:48px 16px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 16px;">
     <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:20px;border:1px solid #ece7dd;overflow:hidden;box-shadow:0 4px 24px rgba(28,43,58,0.06);">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;border:1px solid #ece7dd;overflow:hidden;">
 
-        <!-- Header -->
-        <tr><td style="background:linear-gradient(135deg,#D8492F 0%,#C23F27 100%);padding:36px 32px 32px;">
-          <p style="margin:0;color:#fff;font-family:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Curi</p>
-          <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;letter-spacing:0.2px;">Your daily word &amp; fact journal</p>
+        <!-- Header: simple wordmark, no gradient -->
+        <tr><td style="padding:32px 32px 0;">
+          <p style="margin:0;color:#1C2B3A;font-size:18px;font-weight:700;letter-spacing:-0.3px;">Curi</p>
         </td></tr>
 
-        <!-- Accent divider -->
-        <tr><td style="height:4px;background:#F0A18A;"></td></tr>
-
-        <!-- Hero text -->
-        <tr><td style="padding:36px 32px 0;">
-          <p style="margin:0 0 6px;font-size:26px;font-weight:800;color:#1C2B3A;letter-spacing:-0.5px;line-height:1.2;">
-            Welcome, ${firstName}! 🎉
-          </p>
-          <p style="margin:12px 0 0;font-size:15px;line-height:1.7;color:#7C8A93;">
-            You've just joined a community of curious minds. Every day, Curi delivers one new word and one mind-expanding fact in a fun way.
-          </p>
-        </td></tr>
-
-        <!-- What to expect card -->
+        <!-- Body -->
         <tr><td style="padding:24px 32px 0;">
-          <table cellpadding="0" cellspacing="0" width="100%" style="background:#FBF7F1;border:1px solid #F0EADD;border-radius:14px;">
-            <tr><td style="padding:20px 22px;">
-              <p style="margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#D8492F;">What to expect</p>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1C2B3A;">
+            Hi ${firstName},
+          </p>
+          <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#3E4C56;">
+            Thanks for signing up for Curi. Starting tomorrow, you'll get one new word and one interesting fact each morning — short enough to read in under a minute.
+          </p>
+          <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#3E4C56;">
+            Here's what to expect:
+          </p>
 
-              <!-- Word -->
-              <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:14px;">
-                <tr>
-                  <td width="30" valign="top">
-                    <p style="margin:0;font-size:18px;line-height:1;">📖</p>
-                  </td>
-                  <td style="padding-left:10px;">
-                    <p style="margin:0;font-size:14px;font-weight:700;color:#1C2B3A;">One word, every morning</p>
-                    <p style="margin:3px 0 0;font-size:13px;color:#7C8A93;line-height:1.5;">Definition, pronunciation, and an example sentence you'll actually remember.</p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Fact -->
-              <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:14px;">
-                <tr>
-                  <td width="30" valign="top">
-                    <p style="margin:0;font-size:18px;line-height:1;">💡</p>
-                  </td>
-                  <td style="padding-left:10px;">
-                    <p style="margin:0;font-size:14px;font-weight:700;color:#1C2B3A;">One fact that'll blow your mind</p>
-                    <p style="margin:3px 0 0;font-size:13px;color:#7C8A93;line-height:1.5;">Science, history, nature — something genuinely interesting to share at dinner.</p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Streak -->
-              <table cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td width="30" valign="top">
-                    <p style="margin:0;font-size:18px;line-height:1;">🔥</p>
-                  </td>
-                  <td style="padding-left:10px;">
-                    <p style="margin:0;font-size:14px;font-weight:700;color:#1C2B3A;">Build a streak</p>
-                    <p style="margin:3px 0 0;font-size:13px;color:#7C8A93;line-height:1.5;">Come back daily, save favourites, and watch your collection grow quietly over time.</p>
-                  </td>
-                </tr>
-              </table>
+          <!-- Simple list, no icon boxes -->
+          <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 20px;">
+            <tr><td style="padding:6px 0;font-size:14.5px;line-height:1.6;color:#3E4C56;">
+              <strong style="color:#1C2B3A;">A word every morning</strong> — definition, pronunciation, and an example sentence.
+            </td></tr>
+            <tr><td style="padding:6px 0;font-size:14.5px;line-height:1.6;color:#3E4C56;">
+              <strong style="color:#1C2B3A;">A fact worth sharing</strong> — science, history, or nature, picked to be genuinely interesting.
+            </td></tr>
+            <tr><td style="padding:6px 0;font-size:14.5px;line-height:1.6;color:#3E4C56;">
+              <strong style="color:#1C2B3A;">A streak you build over time</strong> — no pressure, just a small daily habit.
             </td></tr>
           </table>
-        </td></tr>
 
-        <!-- Personal note -->
-        <tr><td style="padding:24px 32px 0;">
-          <p style="margin:0;font-size:14.5px;line-height:1.75;color:#1C2B3A;">
-            No pressure, no rigid courses, no guilt for missing a day. Just a small daily habit of curiosity, the kind that stacks up quietly and makes you a more interesting person over time.
-          </p>
-          <p style="margin:14px 0 0;font-size:14.5px;line-height:1.75;color:#1C2B3A;">
-            Your first word is already waiting. 👇
+          <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#3E4C56;">
+            Your first word is already waiting for you.
           </p>
         </td></tr>
 
-        <!-- CTA -->
-        <tr><td style="padding:24px 32px 0;">
-          <table cellpadding="0" cellspacing="0">
-            <tr><td style="background:#D8492F;border-radius:12px;">
-              <a href="https://www.trycuri.app/home" style="color:#fff;font-weight:700;font-size:15px;text-decoration:none;display:block;padding:15px 32px;letter-spacing:0.2px;">
-                Start Learning Today &rarr;
-              </a>
-            </td></tr>
-          </table>
+        <!-- CTA: text-style link, not a button -->
+        <tr><td style="padding:0 32px 28px;">
+          <a href="https://www.trycuri.app/home" style="color:#D8492F;font-weight:600;font-size:15px;text-decoration:none;border-bottom:1px solid #D8492F;padding-bottom:1px;">
+            Open Curi &rarr;
+          </a>
         </td></tr>
 
         <!-- Sign-off -->
-        <tr><td style="padding:28px 32px 0;">
+        <tr><td style="padding:0 32px 8px;">
           <table width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px solid #F0EDE7;"></td></tr></table>
-          <p style="margin:20px 0 0;font-size:14px;line-height:1.7;color:#7C8A93;">
+          <p style="margin:20px 0 0;font-size:14px;line-height:1.7;color:#3E4C56;">
             Glad you're here,<br/>
-            <strong style="color:#1C2B3A;">Michael</strong><br/>
-            <span style="font-size:12px;">Founder, Curi</span>
+            Michael<br/>
+            <span style="font-size:12.5px;color:#7C8A93;">Founder, Curi</span>
           </p>
         </td></tr>
 
         <!-- Footer -->
-        <tr><td style="padding:20px 32px 32px;">
-          <p style="margin:0;font-size:12px;line-height:1.6;color:#A9B2B8;">
-            You're receiving this because you created a Curi account.<br/>
-            &#10022; Curi &middot; Learn something new, one day at a time.
+        <tr><td style="padding:24px 32px 28px;">
+          <p style="margin:0;font-size:11.5px;line-height:1.6;color:#A9B2B8;">
+            You're receiving this because you created a Curi account.
           </p>
         </td></tr>
 
@@ -166,6 +119,26 @@ function buildWelcomeEmailHtml(firstName: string): string {
   </table>
 </body>
 </html>`;
+}
+
+function buildWelcomeEmailText(firstName: string): string {
+  return `Hi ${firstName},
+
+Thanks for signing up for Curi. Starting tomorrow, you'll get one new word and one interesting fact each morning — short enough to read in under a minute.
+
+Here's what to expect:
+- A word every morning — definition, pronunciation, and an example sentence.
+- A fact worth sharing — science, history, or nature, picked to be genuinely interesting.
+- A streak you build over time — no pressure, just a small daily habit.
+
+Your first word is already waiting for you: https://www.trycuri.app/home
+
+Glad you're here,
+Michael
+Founder, Curi
+
+—
+You're receiving this because you created a Curi account.`;
 }
 
 Deno.serve(async (req) => {
