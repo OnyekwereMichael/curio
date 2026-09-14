@@ -9,7 +9,7 @@ interface FactCardProps {
   imageUrl: string;
   hookLine: string;
   contextLine: string;
-  bullets: [string, string, string, string]; // Exactly 4 bullets
+  bullets: [string, string, string, string];
   className?: string;
   variant?: 'new' | 'old';
   onSavedChange?: (saved: boolean) => void;

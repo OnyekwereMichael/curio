@@ -74,73 +74,91 @@ export function InstallNudge() {
             <h1 className="font-display text-3xl font-bold text-ink mb-2 leading-tight">
               Install Curio to get your daily word and fact
             </h1>
-            <p className="text-faded-ink text-sm">
+            <p className="text-faded-ink text-sm font-display">
               So your streak — and your reminders — actually work.
             </p>
           </div>
 
           {/* Content Area */}
-          <div className="mb-10 min-h-[120px] flex flex-col justify-center">
+          <div className="mb-10 min-h-screen flex flex-col justify-center max-w-md mx-auto px-4">
+            {/* Android - Automatic PWA Prompt Available */}
             {platform === 'android' && installPromptEvent && (
               <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <p className="text-ink font-medium">Tap Install below to add Curio to your home screen.</p>
+                <p className="text-ink font-medium font-display">
+                  Tap Install below to add Curio to your home screen.
+                </p>
               </div>
             )}
 
+            {/* Android - Manual Installation Instructions */}
             {platform === 'android' && !installPromptEvent && (
               <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
                     1
                   </div>
                   <p className="text-ink text-sm leading-snug pt-1">
                     Tap the menu icon (<strong>⋮</strong>) in your browser.
                   </p>
                 </div>
+
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
                     2
                   </div>
-                  <p className="text-ink text-sm leading-snug pt-1">
+                  <p className="text-ink text-sm leading-snug pt-1 font-display">
                     Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
                   </p>
                 </div>
               </div>
             )}
 
+            {/* iOS - Step-by-Step Safari Instructions */}
             {platform === 'ios' && (
               <div className="flex flex-col gap-5 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
                     1
                   </div>
-                  <p className="text-black text-sm leading-tight pt-1.5 flex items-center flex-wrap gap-1">
+                  <p className="text-ink text-sm leading-relaxed pt-1 flex items-center flex-wrap gap-1 font-display">
                     Tap the <SafariShareIcon /> Share icon in Safari.
                   </p>
                 </div>
+
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
                     2
                   </div>
-                  <p className="text-black text-sm leading-tight pt-1.5">
-                    Scroll down and tap <strong>"Add to Home Screen."</strong>
+                  <p className="text-ink text-sm leading-relaxed pt-1 font-display">
+                    Scroll down and tap <strong>"Add to Home Screen"</strong>.
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
+                    3
+                  </div>
+                  <p className="text-ink text-sm leading-relaxed pt-1 font-display">
+                    Tap <strong>"Add"</strong> in the top-right corner to finish.
                   </p>
                 </div>
               </div>
             )}
 
+            {/* Desktop / Other - Manual Installation Instructions */}
             {platform === 'other' && !installPromptEvent && (
               <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
                     1
                   </div>
                   <p className="text-ink text-sm leading-snug pt-1">
                     Click the <strong>Install icon (⊕)</strong> in your browser address bar or menu.
                   </p>
                 </div>
+
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm">
+                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
                     2
                   </div>
                   <p className="text-ink text-sm leading-snug pt-1">
@@ -150,9 +168,12 @@ export function InstallNudge() {
               </div>
             )}
 
+            {/* Desktop / Other - Automatic PWA Prompt Available */}
             {platform === 'other' && installPromptEvent && (
               <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <p className="text-ink font-medium">Click Install below to add Curio to your device.</p>
+                <p className="text-ink font-medium font-display">
+                  Click Install below to add Curio to your device.
+                </p>
               </div>
             )}
           </div>
@@ -160,11 +181,11 @@ export function InstallNudge() {
           {/* Action Buttons */}
           <div className="flex flex-col gap-4 mt-auto">
             {installPromptEvent ? (
-              <Button onClick={handleInstallClick} className="w-full">
+              <Button onClick={handleInstallClick} className="w-full font-display">
                 Install
               </Button>
             ) : platform === 'ios' ? (
-              <Button onClick={completeOnboardingStep} className="w-full">
+              <Button onClick={completeOnboardingStep} className="w-full font-display">
                 Got it
               </Button>
             ) : (
