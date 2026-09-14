@@ -20,7 +20,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
             Authorization: `Bearer ${RESEND_API_KEY}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ from: `Michael from Curio <${FROM_EMAIL}>`, to, subject, html }),
+        body: JSON.stringify({ from: `Michael from Curi <${FROM_EMAIL}>`, to, subject, html }),
     });
 
     if (!res.ok) {
@@ -156,7 +156,7 @@ Deno.serve(async (req) => {
             const missingNotifications = profile.notifications_enabled === false;
             
             const html = buildEmailHtml(firstName, missingInstall, missingNotifications);
-            const subject = "Complete your Curio setup";
+            const subject = "Complete your Curi setup";
 
             const ok = await sendEmail(userEmail, subject, html);
 

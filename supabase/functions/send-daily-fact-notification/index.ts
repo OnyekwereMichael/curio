@@ -17,16 +17,22 @@ Deno.serve(async (req) => {
     const today = new Date().toISOString().split("T")[0];
 
     // If you add an "image_url" column to facts, it'll automatically be included below.
-    const { data: fact } = await supabase
-      .from("facts")
-      .select("hook_line, image_url")
-      .eq("publish_date", today)
-      .maybeSingle();
+  const { data: fact, error: factError } = await supabase
+  .from("facts")
+  .select("hook_line, image_url")
+  .eq("publish_date", today)
+  .order("created_at", { ascending: true })
+  .limit(1)
+  .maybeSingle();
+
+if (factError) {
+  console.error("Failed to fetch today's fact:", factError.message);
+}
 
     const notificationTitle = "Fact of the Day ✍";
     const notificationBody = fact
       ? fact.hook_line
-      : "A new fact is waiting for you in Curio.";
+      : "A new fact is waiting for you in Curi.";
 
     const { data: users, error } = await supabase
       .from("users")

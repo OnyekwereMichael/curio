@@ -20,7 +20,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
             Authorization: `Bearer ${RESEND_API_KEY}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ from: `Michael from Curio <${FROM_EMAIL}>`, to, subject, html }),
+        body: JSON.stringify({ from: `Michael from Curi <${FROM_EMAIL}>`, to, subject, html }),
     });
 
     if (!res.ok) {
@@ -33,8 +33,8 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
 
 function buildEmailHtml(firstName: string, todayWord?: string): string {
     const wordSection = todayWord
-        ? `<p style="margin:0 0 16px;font-size:14px;color:#1C2B3A;">While you were away, today's word on Curio is <strong>"${todayWord}"</strong>. Don't miss it!</p>`
-        : `<p style="margin:0 0 16px;font-size:14px;color:#1C2B3A;">New words and facts have been dropping daily on Curio &mdash; come back and catch up!</p>`;
+        ? `<p style="margin:0 0 16px;font-size:14px;color:#1C2B3A;">While you were away, today's word on Curi is <strong>"${todayWord}"</strong>. Don't miss it!</p>`
+        : `<p style="margin:0 0 16px;font-size:14px;color:#1C2B3A;">New words and facts have been dropping daily on Curi &mdash; come back and catch up!</p>`;
 
     return `
 <!DOCTYPE html>
@@ -47,21 +47,21 @@ function buildEmailHtml(firstName: string, todayWord?: string): string {
 
         <!-- Header Banner -->
         <tr><td style="background:#D8492F;padding:28px 32px;">
-          <p style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">✦ Curio</p>
+          <p style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">Curi</p>
           <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">Your daily word &amp; fact journal</p>
         </td></tr>
 
         <!-- Body Content -->
         <tr><td style="padding:36px 32px 28px;">
           <p style="margin:0 0 6px;font-size:24px;font-weight:700;color:#1C2B3A;">Hey ${firstName}, we miss you 👋</p>
-          <p style="margin:0 0 24px;font-size:14px;color:#7C8A93;line-height:1.6;">It's been a while since we've seen you on Curio.</p>
+          <p style="margin:0 0 24px;font-size:14px;color:#7C8A93;line-height:1.6;">It's been a while since we've seen you on Curi.</p>
           ${wordSection}
           <p style="margin:0 0 28px;font-size:14px;color:#1C2B3A;line-height:1.7;">Your learning streak is waiting. Every day you come back, you&rsquo;re one step closer to building a real habit around curiosity.</p>
 
           <!-- CTA Button -->
           <table cellpadding="0" cellspacing="0">
             <tr><td style="background:#D8492F;border-radius:10px;">
-              <a href="https://curio.app/home" style="display:block;padding:14px 28px;color:#ffffff;font-weight:700;font-size:15px;text-decoration:none;">Come back to Curio &rarr;</a>
+              <a href="https://www.trycuri.app/home" style="display:block;padding:14px 28px;color:#ffffff;font-weight:700;font-size:15px;text-decoration:none;">Come back to Curi &rarr;</a>
             </td></tr>
           </table>
         </td></tr>
@@ -69,7 +69,7 @@ function buildEmailHtml(firstName: string, todayWord?: string): string {
         <!-- Footer -->
         <tr><td style="padding:0 32px 28px;">
           <p style="margin:0;font-size:11px;color:#A0AAB4;border-top:1px solid #f0ede7;padding-top:20px;line-height:1.6;">
-            You&rsquo;re receiving this because you signed up for Curio.
+            You&rsquo;re receiving this because you signed up for Curi.
             You can manage your notification preferences in the app settings.
           </p>
         </td></tr>
@@ -144,8 +144,8 @@ Deno.serve(async (req) => {
             const firstName = profile.first_name || authUser?.user_metadata?.first_name || profile.full_name?.split(" ")[0] || authUser?.user_metadata?.full_name?.split(" ")[0] || "there";
             const html = buildEmailHtml(firstName, word?.word);
             const subject = word?.word
-                ? `"${word.word}" is waiting for you on Curio 📖`
-                : "Come back to Curio — new words are waiting for you";
+                ? `"${word.word}" is waiting for you on Curi 📖`
+                : "Come back to Curi — new words are waiting for you";
 
             const ok = await sendEmail(userEmail, subject, html);
 

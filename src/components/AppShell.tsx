@@ -46,7 +46,7 @@ function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void
       </div>
       <div className="flex items-center gap-2 lg:hidden">
         <div className="w-6 h-6 rounded-md bg-ember flex items-center justify-center">
-          <img src={logo} alt="Curio Logo" className="" />
+          <img src={logo} alt="Curi Logo" className="" />
         </div>
         <span className="font-display font-bold text-lg text-ink tracking-tight">Curi</span>
       </div>

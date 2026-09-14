@@ -29,7 +29,7 @@ export function StreakCounter({ count, justIncremented }: StreakCounterProps) {
             {/* Tooltip */}
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-3 bg-paper border border-ink/10 text-ink text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 shadow-lg pointer-events-none">
                 <p className="font-semibold mb-1 text-sm">Learning Streak</p>
-                <p className="text-faded-ink">Your streak increases for each consecutive day you visit Curio. Keep it up!</p>
+                <p className="text-faded-ink">Your streak increases for each consecutive day you visit Curi. Keep it up!</p>
             </div>
         </div>
     );

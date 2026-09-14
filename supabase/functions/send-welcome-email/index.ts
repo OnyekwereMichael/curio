@@ -12,8 +12,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Now returns the actual error message instead of just true/false,
-// so the caller (and your logs) can see exactly why a send failed.
 async function sendEmail(
   to: string,
   subject: string,

@@ -37,10 +37,10 @@ Deno.serve(async (req) => {
             .eq("publish_date", today)
             .maybeSingle();
 
-        const notificationTitle = "We miss you on Curio 👋";
+        const notificationTitle = "We miss you on Curi 👋";
         const notificationBody = word
             ? `Today's word is "${word.word}" — come back and discover it!`
-            : "You've been away a while. Open Curio to catch up on new words and facts.";
+            : "You've been away a while. Open Curi to catch up on new words and facts.";
 
         // Target only users who:
         //  1. Have push notifications enabled

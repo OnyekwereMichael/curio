@@ -94,7 +94,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center">
               {/* <Sparkles size={16} className="text-white" strokeWidth={2.5} /> */}
-              <img src={logo} alt="Curio Logo" className="w-8 h-8" />
+              <img src={logo} alt="Curi Logo" className="w-8 h-8" />
             </div>
             <span className="font-display font-bold text-xl text-ink tracking-tight">Curi</span>
           </div>

@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
         const notificationTitle = "Your daily word is ready";
         const notificationBody = word
             ? `Today's word: ${word.word}. Tap to learn it.`
-            : "Open Curio to see what's new today.";
+            : "Open Curi to see what's new today.";
 
         // Get every user who opted in and has a real subscription saved
         const { data: users, error } = await supabase

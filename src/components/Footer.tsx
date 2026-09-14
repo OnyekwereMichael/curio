@@ -22,7 +22,7 @@ export function Footer() {
         </div>
 
         <div className="text-sm text-faded-ink/80">
-          &copy; {new Date().getFullYear()} Curio.
+          &copy; {new Date().getFullYear()} Curi.
         </div>
       </div>
     </footer>

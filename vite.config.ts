@@ -26,8 +26,8 @@ export default defineConfig({
         type: 'module', // required so the dev server can load sw.ts's imports correctly
       },
       manifest: {
-        name: 'Curio',
-        short_name: 'Curio',
+        name: 'Curi',
+        short_name: 'Curi',
         description: 'Your daily habit app themed like a field journal',
         theme_color: '#F6F4EF',
         background_color: '#F6F4EF',

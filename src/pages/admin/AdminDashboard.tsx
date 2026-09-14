@@ -324,7 +324,7 @@ export function AdminDashboard() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `curio_user_activity_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `curi_user_activity_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
