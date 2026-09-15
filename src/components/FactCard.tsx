@@ -33,7 +33,7 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
           <Bookmark
             size={20}
             className={cn(
-              "transition-all duration-300",
+              "transition-all duration-300 cursor-pointer",
               saveFlash ? "fill-current text-gold-stamp scale-110" :
                 isSaved ? "fill-current text-faded-ink  scale-100" : "fill-transparent scale-100"
             )}

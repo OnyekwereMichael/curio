@@ -35,7 +35,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
           <Bookmark
             size={20}
             className={cn(
-              "transition-all duration-300",
+              "transition-all duration-300 cursor-pointer",
               saveFlash ? "fill-current text-gold-stamp scale-110" :
                 isSaved ? "fill-current text-ember scale-100" : "fill-transparent scale-100"
             )}
