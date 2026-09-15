@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
 import { urlBase64ToUint8Array } from '../../lib/utils';
 import { usePlatform } from '../../lib/usePlatform';
+import { useToast } from '../../components/ui/Toast';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -22,6 +23,7 @@ export function NotificationPermission() {
   const { platform, isStandalone } = usePlatform();
   const [isGranted, setIsGranted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   // iOS Safari (non-standalone) doesn't support the Notification API at all.
   // The user must install the PWA to the Home Screen first.
@@ -96,12 +98,12 @@ export function NotificationPermission() {
     // On iOS outside standalone mode the Notification API doesn't exist.
     // Tell the user to install the app instead of silently bailing.
     if (isIosNonStandalone) {
-      await handleNotificationDenied();
+      showToast('To enable notifications on iPhone, add this app to your Home Screen first.');
       return;
     }
 
     if (!('Notification' in window)) {
-      await handleNotificationDenied();
+      showToast('Your browser does not support push notifications.');
       return;
     }
 
@@ -109,17 +111,19 @@ export function NotificationPermission() {
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
+        showToast('Push notifications enabled!');
         await handleNotificationGranted();
       } else {
-        await handleNotificationDenied();
+        showToast('Notification permission denied by browser.');
       }
     } catch {
       // Fallback for older browsers that use callbacks
       Notification.requestPermission((permission) => {
         if (permission === 'granted') {
+          showToast('Push notifications enabled!');
           handleNotificationGranted();
         } else {
-          handleNotificationDenied();
+          showToast('Notification permission denied by browser.');
         }
       });
     } finally {
