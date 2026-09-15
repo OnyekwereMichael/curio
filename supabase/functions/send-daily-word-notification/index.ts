@@ -1,4 +1,3 @@
-// supabase/functions/send-daily-word-notification/index.ts
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -22,14 +21,14 @@ Deno.serve(async (req) => {
       .eq("publish_date", today)
       .maybeSingle();
 
-    const notificationTitle = "Your daily word is ready ✍";
+    const notificationTitle = "Curio · Word of the Day";
     const notificationBody = word
-      ? `Today's word: ${word.word}. Tap to learn it.`
-      : "Open Curi to see what's new today.";
+      ? `${word.word} is waiting for you — tap to learn it.`
+      : "A new word is waiting for you in Curio.";
 
     const { data: users, error } = await supabase
       .from("users")
-      .select("id, notification_token")
+      .select("id, notification_token, notification_fail_count")
       .eq("notifications_enabled", true)
       .not("notification_token", "is", null);
 
@@ -48,16 +47,39 @@ Deno.serve(async (req) => {
       try {
         await webpush.sendNotification(user.notification_token, payload);
         sent++;
+
+        if (user.notification_fail_count && user.notification_fail_count > 0) {
+          await supabase
+            .from("users")
+            .update({ notification_fail_count: 0 })
+            .eq("id", user.id);
+        }
       } catch (err: any) {
         failed++;
+
         if (err.statusCode === 404 || err.statusCode === 410) {
           await supabase
             .from("users")
-            .update({ notifications_enabled: false, notification_token: null })
+            .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
             .eq("id", user.id);
           cleaned++;
         } else {
-          console.error(`Failed to notify user ${user.id}:`, err.message);
+          const newFailCount = (user.notification_fail_count ?? 0) + 1;
+
+          if (newFailCount >= 3) {
+            await supabase
+              .from("users")
+              .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
+              .eq("id", user.id);
+            cleaned++;
+            console.error(`Disabled notifications for user ${user.id} after 3 consecutive failures.`);
+          } else {
+            await supabase
+              .from("users")
+              .update({ notification_fail_count: newFailCount })
+              .eq("id", user.id);
+            console.error(`Failed to notify user ${user.id} (attempt ${newFailCount}/3):`, err.message);
+          }
         }
       }
     }

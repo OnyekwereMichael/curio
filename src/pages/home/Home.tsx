@@ -4,8 +4,9 @@ import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
 import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/superbase';
 import { AppShell } from '../../components/AppShell';
+import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
+import { supabase } from '../../lib/superbase';
 
 function SkeletonCard() {
   return (
@@ -44,7 +45,6 @@ export function HomeScreen() {
         navigate('/notification-permission', { replace: true });
       });
     } else if (isStandalone) {
-      // Ensure installed flag is true if they open PWA and don't need notification prompt
       supabase.from('users').update({ installed: true }).eq('id', user?.id);
     }
   }, [navigate, user]);
@@ -62,9 +62,10 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
+      <NotificationReEnableBanner />
       <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
         <div>
-          <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
+          <p className="text-faded-ink text-base font-medium mb-1 font-display">{greeting} 👋</p>
           <h1 className="font-display text-3xl font-bold text-ink leading-tight">
             {firstName}, here's your daily dose.
           </h1>

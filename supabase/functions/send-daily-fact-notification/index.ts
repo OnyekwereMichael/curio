@@ -1,4 +1,3 @@
-// supabase/functions/send-daily-fact-notification/index.ts
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -16,27 +15,20 @@ Deno.serve(async (req) => {
   try {
     const today = new Date().toISOString().split("T")[0];
 
-    // If you add an "image_url" column to facts, it'll automatically be included below.
-  const { data: fact, error: factError } = await supabase
-  .from("facts")
-  .select("hook_line, image_url")
-  .eq("publish_date", today)
-  .order("created_at", { ascending: true })
-  .limit(1)
-  .maybeSingle();
+    const { data: fact } = await supabase
+      .from("facts")
+      .select("hook_line, image_url")
+      .eq("publish_date", today)
+      .maybeSingle();
 
-if (factError) {
-  console.error("Failed to fetch today's fact:", factError.message);
-}
-
-    const notificationTitle = "Fact of the Day ✍";
+    const notificationTitle = "Curio · Fact of the Day";
     const notificationBody = fact
       ? fact.hook_line
-      : "A new fact is waiting for you in Curi.";
+      : "A new fact is waiting for you in Curio.";
 
     const { data: users, error } = await supabase
       .from("users")
-      .select("id, notification_token")
+      .select("id, notification_token, notification_fail_count")
       .eq("notifications_enabled", true)
       .not("notification_token", "is", null);
 
@@ -45,7 +37,7 @@ if (factError) {
     const payload = JSON.stringify({
       title: notificationTitle,
       body: notificationBody,
-      image: fact?.image_url || undefined, 
+      image: fact?.image_url || undefined,
     });
 
     let sent = 0;
@@ -56,16 +48,39 @@ if (factError) {
       try {
         await webpush.sendNotification(user.notification_token, payload);
         sent++;
+
+        if (user.notification_fail_count && user.notification_fail_count > 0) {
+          await supabase
+            .from("users")
+            .update({ notification_fail_count: 0 })
+            .eq("id", user.id);
+        }
       } catch (err: any) {
         failed++;
+
         if (err.statusCode === 404 || err.statusCode === 410) {
           await supabase
             .from("users")
-            .update({ notifications_enabled: false, notification_token: null })
+            .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
             .eq("id", user.id);
           cleaned++;
         } else {
-          console.error(`Failed to notify user ${user.id}:`, err.message);
+          const newFailCount = (user.notification_fail_count ?? 0) + 1;
+
+          if (newFailCount >= 3) {
+            await supabase
+              .from("users")
+              .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
+              .eq("id", user.id);
+            cleaned++;
+            console.error(`Disabled notifications for user ${user.id} after 3 consecutive failures.`);
+          } else {
+            await supabase
+              .from("users")
+              .update({ notification_fail_count: newFailCount })
+              .eq("id", user.id);
+            console.error(`Failed to notify user ${user.id} (attempt ${newFailCount}/3):`, err.message);
+          }
         }
       }
     }

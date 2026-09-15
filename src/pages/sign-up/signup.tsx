@@ -202,7 +202,7 @@ export function SignupScreen() {
                         <Button
                             type="submit"
                             isLoading={formik.isSubmitting}
-                            className="mt-2 w-full"
+                            className="mt-2 w-full font-display"
                         >
                             {formik.isSubmitting ? "Creating account..." : "Create account"}
                         </Button>

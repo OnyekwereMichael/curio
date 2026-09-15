@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
-import { Check } from 'lucide-react';
+import { AlertCircleIcon, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/superbase';
+
 import { urlBase64ToUint8Array } from '../../lib/utils';
 import { usePlatform } from '../../lib/usePlatform';
 import { useToast } from '../../components/ui/Toast';
+import { supabase } from '../../lib/superbase';
+import logo from '../../../public/icon-192.png'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-
-const BellIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-ember mx-auto mb-6">
-    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-  </svg>
-);
 
 export function NotificationPermission() {
   const navigate = useNavigate();
@@ -25,17 +20,13 @@ export function NotificationPermission() {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
-  // iOS Safari (non-standalone) doesn't support the Notification API at all.
-  // The user must install the PWA to the Home Screen first.
   const isIosNonStandalone = platform === 'ios' && !isStandalone;
 
-  // Completion handoff
   const completeNotificationStep = () => {
     localStorage.setItem('notification_prompted', 'true');
     navigate('/home', { replace: true });
   };
 
-  // Persists notification preference only (used for the denied/not-now path)
   async function updateNotificationPreference(enabled: boolean) {
     if (!user) return;
     const { error } = await supabase
@@ -46,8 +37,6 @@ export function NotificationPermission() {
     if (error) console.error('Failed to update notifications preference:', error.message);
   }
 
-  // Creates a real push subscription and saves both the preference and the
-  // subscription token together, in one write.
   async function createAndSavePushSubscription() {
     if (!user) return;
 
@@ -69,16 +58,11 @@ export function NotificationPermission() {
 
       if (error) console.error('Failed to save push subscription:', error.message);
     } catch (err) {
-      // Permission was granted but the subscription itself failed (e.g. no
-      // active service worker yet, or a bad VAPID key). Still record that
-      // permission was granted so we don't silently lose that signal — the
-      // token just stays empty until a future visit successfully subscribes.
       console.error('Failed to create push subscription:', err);
       await updateNotificationPreference(true);
     }
   }
 
-  // Handle "granted"
   const handleNotificationGranted = async () => {
     setIsGranted(true);
     await createAndSavePushSubscription();
@@ -87,16 +71,12 @@ export function NotificationPermission() {
     }, 1200);
   };
 
-  // Handle "denied" or "Not now"
   const handleNotificationDenied = async () => {
     await updateNotificationPreference(false);
     completeNotificationStep();
   };
 
-  // Permission request logic
   const handleEnableClick = async () => {
-    // On iOS outside standalone mode the Notification API doesn't exist.
-    // Tell the user to install the app instead of silently bailing.
     if (isIosNonStandalone) {
       showToast('To enable notifications on iPhone, add this app to your Home Screen first.');
       return;
@@ -117,7 +97,6 @@ export function NotificationPermission() {
         showToast('Notification permission denied by browser.');
       }
     } catch {
-      // Fallback for older browsers that use callbacks
       Notification.requestPermission((permission) => {
         if (permission === 'granted') {
           showToast('Push notifications enabled!');
@@ -133,40 +112,80 @@ export function NotificationPermission() {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col font-ui text-ink">
-      <main className="flex-1 flex flex-col justify-center items-center px-6 pb-20 pt-12">
-        <div className="w-full max-w-md flex flex-col h-full text-center">
+      <main className="flex-1 flex flex-col justify-center items-center pb-14 pt-14 max-sm:px-6">
+        <div className="w-full max-w-xl flex flex-col h-full">
 
-          {/* Main content */}
           <div className="flex-1 flex flex-col justify-center">
-            <BellIcon />
-            <div className="mb-8">
-              <h1 className="font-display text-3xl font-bold text-ink mb-2 leading-tight">
-                Never miss your daily word
-              </h1>
-              <p className="text-faded-ink text-sm">
-                We'll send one gentle reminder a day — nothing more.
-              </p>
-            </div>
 
-            {isGranted && (
-              <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl flex items-center justify-center gap-2 border border-emerald-100 animate-in fade-in zoom-in duration-300">
-                <Check size={20} />
-                <span className="font-medium text-sm">Notifications enabled</span>
+            {!isGranted ? (
+              <>
+                <div className="mb-10">
+                  <div className="bg-white rounded-2xl border border-ink/10 shadow-sm p-4 mx-auto  animate-in fade-in slide-in-from-top-2 duration-500">
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-ember flex items-center justify-center flex-shrink-0 text-white font-display font-bold text-sm">
+                        <img src={logo} alt="Curi Logo" className="w-9 h-9 rounded-lg" />
+                      </div>
+                      <div className="min-w-0 flex-1 font-display">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span className="text-xs font-semibold text-black ">Curi</span>
+                          <span className="text-[11px] text-black/50 flex-shrink-0">now</span>
+                        </div>
+                        <p className="text-sm font-medium text-black mt-0.5 leading-snug">
+                          Today's word is ready: sonder
+                        </p>
+                        <p className="text-xs text-black mt-0.5 leading-snug">
+                          Tap to read it, takes about a minute.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center mb-5 font-display">
+                  <h1 className="font-display text-[20px] font-bold text-ink mb-3 leading-8 max-sm:text-[17px]">
+                    This is what you'll see, once a day, right when your word and facts are ready.
+                  </h1>
+                  <p className="font-display text-[20px] leading-tight font-bold text-ink mb-3 flex items-center justify-center gap-2 text-center max-sm:text-[17px]">
+                    <AlertCircleIcon className="w-5 h-5 text-red-500 shrink-0" />
+                    <span>Just one reminder a day, not more.</span><AlertCircleIcon className="w-5 h-5 text-red-500 shrink-0" />
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 mb-2 mx-auto w-full">
+                  <div className="flex items-start gap-3 text-base text-ink font-display">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ink flex-shrink-0 mt-1.5" />
+                    <span>It's the easiest way to actually keep your streak and also stay consistent</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-base text-ink font-display">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ink flex-shrink-0 mt-1.5" />
+                    <span>You can turn it off anytime in Settings, no hard feelings</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center text-center">
+                <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl flex items-center justify-center gap-2 border border-emerald-100 animate-in fade-in zoom-in duration-300 mb-4">
+                  <Check size={20} />
+                  <span className="font-medium text-sm">Notifications enabled</span>
+                </div>
+                <p className="text-ink text-sm px-4">
+                  You're set — your next word will find you.
+                </p>
               </div>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col gap-4 mt-auto">
+          <div className="flex flex-col gap-4 mt-10">
             {!isGranted ? (
               <>
-                <Button onClick={handleEnableClick} isLoading={loading} className="w-full">
-                  Enable Notifications
+                <Button onClick={handleEnableClick} isLoading={loading} className="w-full font-display text-ink">
+                  Turn on my daily reminder
                 </Button>
 
                 <button
                   onClick={handleNotificationDenied}
-                  className="text-faded-ink text-sm font-medium hover:text-ink transition-colors py-3"
+                  className="text-faded-ink text-sm font-display font-medium hover:text-ink transition-colors py-3"
                 >
                   Not now
                 </button>
