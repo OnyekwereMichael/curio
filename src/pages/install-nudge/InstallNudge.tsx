@@ -60,10 +60,10 @@ export function InstallNudge() {
     navigate('/notification-permission');
   };
 
-  // Skip handling -> directly to Home
+  // Skip handling -> directly to Notification Permission
   const handleSkipInstall = async () => {
     await markInstalled(false);
-    navigate('/home');
+    navigate('/notification-permission');
   };
 
   const handleInstallClick = async () => {
