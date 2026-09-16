@@ -17,7 +17,7 @@ export function NotificationReEnableBanner() {
             const { data } = await supabase
                 .from('users')
                 .select('notifications_enabled')
-                .eq('id', user.id)
+                .eq('id', user?.id)
                 .maybeSingle();
 
             if (data && data.notifications_enabled === false) {
