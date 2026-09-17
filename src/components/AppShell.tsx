@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Sidebar, SidebarToggle } from './Sidebar';
 import { EmailVerificationBanner } from './EmailVerificationBanner';
+import { NotificationReEnableBanner } from './NotificationReEnableBanner';
 import { useAuth } from '../contexts/AuthContext';
 
 import { StreakCounter } from './StreakCounter';
@@ -99,6 +100,7 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
 
         {/* Verification banner */}
         <EmailVerificationBanner />
+        <NotificationReEnableBanner />
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
