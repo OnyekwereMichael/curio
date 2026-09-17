@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { AlertCircleIcon, Check } from 'lucide-react';
@@ -26,6 +26,22 @@ export function NotificationPermission() {
     localStorage.setItem('notification_prompted', 'true');
     navigate('/home', { replace: true });
   };
+
+  useEffect(() => {
+    async function checkExistingStatus() {
+      if (!user) return;
+      const { data } = await supabase
+        .from('users')
+        .select('notifications_enabled')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (data && data.notifications_enabled === true) {
+        completeNotificationStep();
+      }
+    }
+    checkExistingStatus();
+  }, [user]);
 
   async function updateNotificationPreference(enabled: boolean) {
     if (!user) return;
@@ -72,6 +88,7 @@ export function NotificationPermission() {
   };
 
   const handleNotificationDenied = async () => {
+    // Reverted back to safe behavior: don't ask browser, just update DB to false
     await updateNotificationPreference(false);
     completeNotificationStep();
   };
@@ -113,85 +130,97 @@ export function NotificationPermission() {
   return (
     <div className="min-h-screen bg-paper flex flex-col font-ui text-ink">
       <main className="flex-1 flex flex-col justify-center items-center pb-14 pt-14 max-sm:px-6">
-        <div className="w-full max-w-xl flex flex-col h-full">
+        <div className="w-full max-w-md flex flex-col h-full">
 
           <div className="flex-1 flex flex-col justify-center">
 
             {!isGranted ? (
               <>
-                <div className="mb-10">
-                  <div className="bg-white rounded-2xl border border-ink/10 shadow-sm p-4 mx-auto  animate-in fade-in slide-in-from-top-2 duration-500">
+                {/* Visual Lock Screen Mockup */}
+                <div className="mb-8 relative perspective-1000">
+                  <div className="absolute inset-0 bg-gradient-to-br from-ember/20 to-gold-stamp/20 blur-3xl -z-10 rounded-full animate-pulse" />
+                  
+                  <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out hover:scale-[1.02] transition-transform">
                     <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-ember flex items-center justify-center flex-shrink-0 text-white font-display font-bold text-sm">
-                        <img src={logo} alt="Curi Logo" className="w-9 h-9 rounded-lg" />
+                      <div className="w-10 h-10 rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img src={logo} alt="Curi Logo" className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0 flex-1 font-display">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs font-semibold text-black ">Curi</span>
-                          <span className="text-[11px] text-black/50 flex-shrink-0">now</span>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[13px] font-semibold text-ink">Curi</span>
+                          <span className="text-[11px] text-faded-ink">now</span>
                         </div>
-                        <p className="text-sm font-medium text-black mt-0.5 leading-snug">
-                          Today's word is ready: sonder
+                        <p className="text-[14px] font-semibold text-ink leading-snug">
+                          Your daily word is ready: Sonder
                         </p>
-                        <p className="text-xs text-black mt-0.5 leading-snug">
-                          Tap to read it, takes about a minute.
+                        <p className="text-[13px] text-faded-ink mt-0.5 leading-snug truncate">
+                          the realization that each random passerby has a life as vivid and complex as your own.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-center mb-5 font-display">
-                  <h1 className="font-display text-[20px] font-bold text-ink mb-3 leading-8 max-sm:text-[17px]">
-                    This is what you'll see, once a day, right when your word and facts are ready.
+                <div className="text-center mb-8">
+                  <h1 className="font-display text-[26px] font-bold text-ink mb-3 leading-tight tracking-tight">
+                    Never miss your daily spark
                   </h1>
-                  <p className="font-display text-[20px] leading-tight font-bold text-ink mb-3 flex items-center justify-center gap-2 text-center max-sm:text-[17px]">
-                    <AlertCircleIcon className="w-5 h-5 text-red-500 shrink-0" />
-                    <span>Just one reminder a day, not more.</span><AlertCircleIcon className="w-5 h-5 text-red-500 shrink-0" />
+                  <p className="font-display text-[16px] text-faded-ink leading-relaxed px-4">
+                    Allow notifications so we can remind you when your daily word and facts are ready. 
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-3 mb-2 mx-auto w-full">
-                  <div className="flex items-start gap-3 text-base text-ink font-display">
-                    <span className="w-1.5 h-1.5 rounded-full bg-ink flex-shrink-0 mt-1.5" />
-                    <span>It's the easiest way to actually keep your streak and also stay consistent</span>
+                <div className="flex flex-col gap-4 mb-4 mx-auto w-full bg-white rounded-2xl p-5 border border-ink/5 shadow-sm">
+                  <div className="flex items-start gap-3 text-ink font-display">
+                    <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check size={14} strokeWidth={3} />
+                    </div>
+                    <div>
+                      <span className="block font-semibold text-[15px]">Keep your streak alive</span>
+                      <span className="block text-[13px] text-faded-ink mt-0.5">The easiest way to stay consistent and build a learning habit.</span>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-3 text-base text-ink font-display">
-                    <span className="w-1.5 h-1.5 rounded-full bg-ink flex-shrink-0 mt-1.5" />
-                    <span>You can turn it off anytime in Settings, no hard feelings</span>
+                  <div className="flex items-start gap-3 text-ink font-display">
+                    <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <AlertCircleIcon size={14} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <span className="block font-semibold text-[15px]">Zero spam. Just one reminder.</span>
+                      <span className="block text-[13px] text-faded-ink mt-0.5">We only send you one notification a day, right when it's ready.</span>
+                    </div>
                   </div>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center">
-                <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl flex items-center justify-center gap-2 border border-emerald-100 animate-in fade-in zoom-in duration-300 mb-4">
-                  <Check size={20} />
-                  <span className="font-medium text-sm">Notifications enabled</span>
+                <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center animate-in zoom-in duration-500 mb-6 shadow-sm border border-emerald-100">
+                  <Check size={32} strokeWidth={2.5} />
                 </div>
-                <p className="text-ink text-sm px-4">
-                  You're set — your next word will find you.
+                <h2 className="font-display text-[24px] font-bold text-ink mb-2">You're all set!</h2>
+                <p className="text-faded-ink text-[16px] px-4 font-display">
+                  Your daily reminder is scheduled. Your next word will find you.
                 </p>
               </div>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col gap-4 mt-10">
+          <div className="flex flex-col gap-3 mt-10">
             {!isGranted ? (
               <>
-                <Button onClick={handleEnableClick} isLoading={loading} className="w-full font-display text-ink">
-                  Turn on my daily reminder
+                <Button onClick={handleEnableClick} isLoading={loading} className="w-full font-display text-[16px] py-4 shadow-md hover:shadow-lg transition-all">
+                  Allow Notifications
                 </Button>
 
                 <button
                   onClick={handleNotificationDenied}
-                  className="text-faded-ink text-sm font-display font-medium hover:text-ink transition-colors py-3"
+                  className="text-faded-ink text-[14px] font-display font-medium hover:text-ink transition-colors py-3"
                 >
-                  Not now
+                  Skip for now
                 </button>
               </>
             ) : (
-              <Button onClick={completeNotificationStep} className="w-full">
+              <Button onClick={completeNotificationStep} className="w-full font-display py-4">
                 Continue to Home
               </Button>
             )}
