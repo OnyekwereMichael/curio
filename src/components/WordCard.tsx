@@ -1,4 +1,4 @@
-import { Volume2, Bookmark, Check } from 'lucide-react';
+import { Volume2, Check } from 'lucide-react';
 import { DailyStamp } from './DailyStamp';
 import { cn } from '../lib/utils';
 import { useWordCardInteractions } from './useWordCardInteractions';
@@ -25,26 +25,11 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
       "bg-paper rounded-xl p-6 shadow-sm border border-ink/5 relative overflow-hidden flex flex-col gap-4 font-ui",
       className
     )}>
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-3">
-        <button
-          onClick={toggleSave}
-          className="text-faded-ink hover:text-ink transition-colors"
-          aria-label={isSaved ? "Unsave" : "Save"}
-          type="button"
-        >
-          <Bookmark
-            size={20}
-            className={cn(
-              "transition-all duration-300 cursor-pointer",
-              saveFlash ? "fill-current text-gold-stamp scale-110" :
-                isSaved ? "fill-current text-ember scale-100" : "fill-transparent scale-100"
-            )}
-          />
-        </button>
+      <div className="absolute top-4 right-4 z-10">
         <DailyStamp variant={variant} />
       </div>
 
-      <div className="pr-16">
+      <div className="pr-14">
         {label && (
           <div className={cn("text-xs font-bold tracking-wider uppercase mb-2", labelColor)}>
             {label}
@@ -81,8 +66,8 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
         </div>
       </div>
 
-      {/* Quick Recall */}
-      <div className="pt-4 border-t border-ink/8">
+      {/* Quick Recall + Save, side by side */}
+      <div className="pt-4 border-t border-ink/8 flex items-center justify-between">
         {!isKnown ? (
           <button
             onClick={markKnown}
@@ -98,6 +83,20 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
             <span>Marked as known</span>
           </div>
         )}
+
+        <button
+          onClick={toggleSave}
+          className={cn(
+            "text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer",
+            saveFlash ? "border-gold-stamp bg-gold-stamp/10 text-gold-stamp scale-105" :
+              isSaved ? "border-ember/30 bg-ember/5 text-ember" :
+                "border-ink/15 text-ink hover:border-ink/30 hover:text-ink"
+          )}
+          aria-label={isSaved ? "Remove from collection" : "Save to collection"}
+          type="button"
+        >
+          {isSaved ? "Remove from Collection" : "Add To Collection"}
+        </button>
       </div>
     </div>
   );

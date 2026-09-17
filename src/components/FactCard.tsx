@@ -1,4 +1,3 @@
-import { Bookmark } from 'lucide-react';
 import { DailyStamp } from './DailyStamp';
 import { cn } from '../lib/utils';
 import { useFactCardInteractions } from './useFactInteractions';
@@ -23,22 +22,7 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
       "bg-paper rounded-xl shadow-sm border border-ink/5 relative overflow-hidden flex flex-col font-ui",
       className
     )}>
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-3">
-        <button
-          onClick={toggleSave}
-          className="text-faded-ink hover:text-ink transition-colors"
-          aria-label={isSaved ? "Unsave" : "Save"}
-          type="button"
-        >
-          <Bookmark
-            size={20}
-            className={cn(
-              "transition-all duration-300 cursor-pointer",
-              saveFlash ? "fill-current text-gold-stamp scale-110" :
-                isSaved ? "fill-current text-faded-ink  scale-100" : "fill-transparent scale-100"
-            )}
-          />
-        </button>
+      <div className="absolute top-4 right-4 z-10">
         <DailyStamp variant={variant} />
       </div>
 
@@ -53,7 +37,6 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
             </svg>
           </div>
         )}
-        {/* Subtle gradient so the category label below reads cleanly against any image */}
         <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-paper/60 to-transparent" />
       </div>
 
@@ -80,6 +63,23 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
             </li>
           ))}
         </ul>
+
+        {/* Save, tucked below the reading content as a closing action */}
+        <div className="pt-4 border-t border-ink/8 flex justify-end">
+          <button
+            onClick={toggleSave}
+            className={cn(
+              "text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer",
+              saveFlash ? "border-gold-stamp bg-gold-stamp/10 text-gold-stamp scale-105" :
+                isSaved ? "border-ember/30 bg-ember/5 text-ember" :
+                  "border-ink/15 text-ink hover:border-ink/30 hover:text-ink"
+            )}
+            aria-label={isSaved ? "Remove from collection" : "Save to collection"}
+            type="button"
+          >
+            {isSaved ? "Remove from Collection" : "Add To Collection"}
+          </button>
+        </div>
       </div>
     </div>
   );

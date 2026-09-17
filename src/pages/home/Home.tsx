@@ -61,7 +61,7 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
-      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-6 max-sm:px-4 max-md:p-4 max-lg:p-4">
         <div>
           <p className="text-faded-ink text-base font-medium mb-1 font-display">{greeting} 👋</p>
           <h1 className="font-display text-3xl font-bold text-ink leading-tight">
@@ -69,8 +69,45 @@ export function HomeScreen() {
           </h1>
         </div>
 
-        {/* Primary grid: Word + Fact */}
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="font-display text-2xl font-bold text-ink mb-1.5">Review &amp; Retain</h2>
+            <p className="text-faded-ink text-sm">
+              You've seen this word & fact before, but going through it again will help you retain it better.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
+            {!oldButGold.loading && oldButGold.data && (
+              <section className="flex flex-col gap-4">
+                <WordCard
+                  id={oldButGold.data.id}
+                  word={oldButGold.data.word}
+                  definition={oldButGold.data.definition}
+                  exampleSentence={oldButGold.data.example_sentence}
+                  audioUrl={oldButGold.data.pronunciation_audio_url}
+                  variant="old"
+                  label="Old but Gold"
+                />
+              </section>
+            )}
+
+            {!oldButGoldFact.loading && oldButGoldFact.data && (
+              <section className="flex flex-col gap-4">
+                <FactCard
+                  id={oldButGoldFact.data.id}
+                  imageUrl={oldButGoldFact.data.image_url}
+                  hookLine={oldButGoldFact.data.hook_line}
+                  contextLine={oldButGoldFact.data.context_line}
+                  bullets={[oldButGoldFact.data.bullet_1, oldButGoldFact.data.bullet_2, oldButGoldFact.data.bullet_3, oldButGoldFact.data.bullet_4]}
+                  variant="old"
+                />
+              </section>
+            )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
+
 
           {/* Today's Word */}
           <section className="flex flex-col gap-4">
@@ -124,45 +161,6 @@ export function HomeScreen() {
 
         </div>
 
-        {/* Old but Gold */}
-        {!oldButGold.loading && oldButGold.data && (
-          <section className="flex flex-col gap-4">
-            <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1">Review &amp; Retain</h2>
-              <p className="text-faded-ink text-sm">
-                You've seen this before — going through it again reinforces memory.
-              </p>
-            </div>
-            <WordCard
-              id={oldButGold.data.id}
-              word={oldButGold.data.word}
-              definition={oldButGold.data.definition}
-              exampleSentence={oldButGold.data.example_sentence}
-              audioUrl={oldButGold.data.pronunciation_audio_url}
-              variant="old"
-              label="Old but Gold"
-            />
-          </section>
-        )}
-
-        {!oldButGoldFact.loading && oldButGoldFact.data && (
-          <section className="flex flex-col gap-4  pb-8">
-            <div>
-              <h2 className="font-display text-2xl font-bold text-ink mb-2">Fact Recap</h2>
-              <p className="text-faded-ink text-sm">
-                Here's a fact from a couple days ago — worth another look.
-              </p>
-            </div>
-            <FactCard
-              id={oldButGoldFact.data.id}
-              imageUrl={oldButGoldFact.data.image_url}
-              hookLine={oldButGoldFact.data.hook_line}
-              contextLine={oldButGoldFact.data.context_line}
-              bullets={[oldButGoldFact.data.bullet_1, oldButGoldFact.data.bullet_2, oldButGoldFact.data.bullet_3, oldButGoldFact.data.bullet_4]}
-              variant="old"
-            />
-          </section>
-        )}
 
       </div>
     </AppShell>
