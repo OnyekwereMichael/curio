@@ -3,6 +3,7 @@ import type { Session, User } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/react';
 import posthog from 'posthog-js';
 import { supabase } from '../lib/superbase';
+import { usePushSubscriptionSync } from '../lib/usePushSubscriptionSync';
 
 
 type AuthContextType = {
@@ -43,6 +44,10 @@ function handleUserIdentity(session: Session | null) {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Silently re-syncs the push subscription token whenever the user opens
+    // the app — fixes stale tokens that cause silent notification failures.
+    usePushSubscriptionSync(session?.user ?? null);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {

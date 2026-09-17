@@ -75,7 +75,9 @@ export function NotificationPermission() {
       if (error) console.error('Failed to save push subscription:', error.message);
     } catch (err) {
       console.error('Failed to create push subscription:', err);
-      await updateNotificationPreference(true);
+      // Do NOT mark notifications_enabled=true without a token —
+      // that causes the user to appear opted-in but never receive anything.
+      // Just silently skip; the user can retry from Settings.
     }
   }
 
