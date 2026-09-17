@@ -86,6 +86,7 @@ export function SettingsPage() {
         if (error) throw error;
         setNotificationsEnabled(false);
         showToast('Push notifications disabled');
+        window.dispatchEvent(new Event('notification_pref_changed'));
       } else {
         if (!('Notification' in window)) {
           if (platform === 'ios' && !isStandalone) {
@@ -122,6 +123,7 @@ export function SettingsPage() {
 
         setNotificationsEnabled(true);
         showToast('Push notifications enabled!');
+        window.dispatchEvent(new Event('notification_pref_changed'));
       }
     } catch (err: any) {
       console.error('Failed to toggle notifications:', err);

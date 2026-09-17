@@ -22,12 +22,17 @@ export function NotificationReEnableBanner() {
                 .eq('id', user?.id)
                 .maybeSingle();
 
-            if (data && data.notifications_enabled === false) {
-                setShow(true);
+            if (data) {
+                setShow(data.notifications_enabled === false);
             }
         }
 
         checkStatus();
+
+        const handleUpdate = () => checkStatus();
+        window.addEventListener('notification_pref_changed', handleUpdate);
+
+        return () => window.removeEventListener('notification_pref_changed', handleUpdate);
     }, [user]);
 
     if (!show) return null;
