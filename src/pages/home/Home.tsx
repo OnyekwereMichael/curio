@@ -6,7 +6,7 @@ import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from '
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { supabase } from '../../lib/superbase';
-import { BookOpenText, Lightbulb } from 'lucide-react';
+import { BookOpenText, Feather, Lightbulb } from 'lucide-react';
 
 function SkeletonCard() {
   return (
@@ -70,56 +70,9 @@ export function HomeScreen() {
           </h1>
         </div>
 
-        <div className="flex flex-col gap-4 mt-5">
-          {!oldButGold.loading && oldButGold.data && (
-            <div>
-              <h2 className="font-display text-2xl font-bold text-ink mb-1.5 flex items-center gap-2">
-                Review &amp; Retain
-                <span
-                  className="inline-block text-2xl origin-bottom animate-book-flip"
-                  role="img"
-                  aria-label="books"
-                >
-                  📚
-                </span>
-              </h2>
-              <p className="text-faded-ink text-sm">
-                You've seen this word & fact before, but going through it again will help you retain it better.
-              </p>
-            </div>
-          )}
 
-          <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
-            {!oldButGold.loading && oldButGold.data && (
-              <section className="flex flex-col gap-4">
-                <WordCard
-                  id={oldButGold.data.id}
-                  word={oldButGold.data.word}
-                  definition={oldButGold.data.definition}
-                  exampleSentence={oldButGold.data.example_sentence}
-                  audioUrl={oldButGold.data.pronunciation_audio_url}
-                  variant="old"
-                  label="Old but Gold"
-                />
-              </section>
-            )}
 
-            {!oldButGoldFact.loading && oldButGoldFact.data && (
-              <section className="flex flex-col gap-4 pb-8">
-                <FactCard
-                  id={oldButGoldFact.data.id}
-                  imageUrl={oldButGoldFact.data.image_url}
-                  hookLine={oldButGoldFact.data.hook_line}
-                  contextLine={oldButGoldFact.data.context_line}
-                  bullets={[oldButGoldFact.data.bullet_1, oldButGoldFact.data.bullet_2, oldButGoldFact.data.bullet_3, oldButGoldFact.data.bullet_4]}
-                  variant="old"
-                />
-              </section>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
+        <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1 mt-6">
 
 
           {/* Today's Word */}
@@ -129,9 +82,9 @@ export function HomeScreen() {
             <div>
               <h2 className="font-display text-xl font-bold text-ink mb-1 flex items-center gap-2">
                 Today's Word
-                <BookOpenText
+                <Feather
                   size={18}
-                  className="text-ember animate-book-open"
+                  className="text-ember animate-feather-float"
                   aria-hidden="true"
                 />
               </h2>
@@ -190,6 +143,55 @@ export function HomeScreen() {
             )}
           </section>
 
+        </div>
+
+        <div className="flex flex-col gap-4 mt-5">
+          {!oldButGold.loading && oldButGold.data && (
+            <div>
+              <h2 className="font-display text-2xl font-bold text-ink mb-1.5 flex items-center gap-2">
+                Review &amp; Retain
+                <span
+                  className="inline-block text-2xl origin-bottom animate-book-flip"
+                  role="img"
+                  aria-label="books"
+                >
+                  📚
+                </span>
+              </h2>
+              <p className="text-faded-ink text-sm">
+                You've seen this word & fact before, but going through it again will help you retain it better.
+              </p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
+            {!oldButGold.loading && oldButGold.data && (
+              <section className="flex flex-col gap-4">
+                <WordCard
+                  id={oldButGold.data.id}
+                  word={oldButGold.data.word}
+                  definition={oldButGold.data.definition}
+                  exampleSentence={oldButGold.data.example_sentence}
+                  audioUrl={oldButGold.data.pronunciation_audio_url}
+                  variant="old"
+                  label="Old but Gold"
+                />
+              </section>
+            )}
+
+            {!oldButGoldFact.loading && oldButGoldFact.data && (
+              <section className="flex flex-col gap-4 pb-8">
+                <FactCard
+                  id={oldButGoldFact.data.id}
+                  imageUrl={oldButGoldFact.data.image_url}
+                  hookLine={oldButGoldFact.data.hook_line}
+                  contextLine={oldButGoldFact.data.context_line}
+                  bullets={[oldButGoldFact.data.bullet_1, oldButGoldFact.data.bullet_2, oldButGoldFact.data.bullet_3, oldButGoldFact.data.bullet_4]}
+                  variant="old"
+                />
+              </section>
+            )}
+          </div>
         </div>
 
 

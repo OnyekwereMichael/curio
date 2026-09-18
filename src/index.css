@@ -60,6 +60,11 @@
 
 
 
+@keyframes feather-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(-8deg); }
+}
+
 .animate-feather-float {
   animation: feather-float 2.6s ease-in-out infinite;
   animation-delay: 0.3s;
