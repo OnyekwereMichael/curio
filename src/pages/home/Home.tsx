@@ -6,6 +6,7 @@ import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from '
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { supabase } from '../../lib/superbase';
+import { BookOpenText, Lightbulb } from 'lucide-react';
 
 function SkeletonCard() {
   return (
@@ -61,21 +62,33 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
-      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-6 max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col  max-sm:px-4 max-md:p-4 max-lg:p-4">
         <div>
           <p className="text-faded-ink text-base font-medium mb-1 font-display">{greeting} 👋</p>
-          <h1 className="font-display text-3xl font-bold text-ink leading-tight">
+          <h1 className="font-display text-3xl max-sm:text-2xl font-bold text-ink leading-tight">
             {firstName}, here's your daily dose.
           </h1>
         </div>
 
-        <div className="flex flex-col gap-4">
-          <div>
-            <h2 className="font-display text-2xl font-bold text-ink mb-1.5">Review &amp; Retain</h2>
-            <p className="text-faded-ink text-sm">
-              You've seen this word & fact before, but going through it again will help you retain it better.
-            </p>
-          </div>
+        <div className="flex flex-col gap-4 mt-5">
+          {!oldButGold.loading && oldButGold.data && (
+            <div>
+              <h2 className="font-display text-2xl font-bold text-ink mb-1.5 flex items-center gap-2">
+                Review &amp; Retain
+                <span
+                  className="inline-block text-2xl origin-bottom animate-book-flip"
+                  role="img"
+                  aria-label="books"
+                >
+                  📚
+                </span>
+              </h2>
+              <p className="text-faded-ink text-sm">
+                You've seen this word & fact before, but going through it again will help you retain it better.
+              </p>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
             {!oldButGold.loading && oldButGold.data && (
               <section className="flex flex-col gap-4">
@@ -92,7 +105,7 @@ export function HomeScreen() {
             )}
 
             {!oldButGoldFact.loading && oldButGoldFact.data && (
-              <section className="flex flex-col gap-4">
+              <section className="flex flex-col gap-4 pb-8">
                 <FactCard
                   id={oldButGoldFact.data.id}
                   imageUrl={oldButGoldFact.data.image_url}
@@ -110,9 +123,18 @@ export function HomeScreen() {
 
 
           {/* Today's Word */}
+
+
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1">Today's Word</h2>
+              <h2 className="font-display text-xl font-bold text-ink mb-1 flex items-center gap-2">
+                Today's Word
+                <BookOpenText
+                  size={18}
+                  className="text-ember animate-book-open"
+                  aria-hidden="true"
+                />
+              </h2>
               <p className="text-faded-ink text-sm">Vocabulary to elevate your conversations.</p>
             </div>
             {todaysWord.loading ? (
@@ -133,9 +155,18 @@ export function HomeScreen() {
           </section>
 
           {/* Today's Fact */}
+
+
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1">Today's Fact</h2>
+              <h2 className="font-display text-xl font-bold text-ink mb-1 flex items-center gap-2">
+                Today's Fact
+                <Lightbulb
+                  size={18}
+                  className="text-ember animate-lightbulb-glow"
+                  aria-hidden="true"
+                />
+              </h2>
               <p className="text-faded-ink text-sm">Fascinating facts to expand your knowledge.</p>
             </div>
             {todaysFact.loading ? (

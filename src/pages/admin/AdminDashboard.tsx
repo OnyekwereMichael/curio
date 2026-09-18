@@ -677,72 +677,64 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        {/* Filter Controls & Search */}
-        <div className="bg-paper rounded-2xl border border-ink/10 p-4 shadow-sm space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Main Tabs for User Activity */}
+        <div className="flex border-b border-ink/10 overflow-x-auto scrollbar-none">
+          {[
+            { id: 'all', label: `All Users (${users.length})` },
+            { id: 'today', label: `Returned Today (${metrics.activeToday})` },
+            { id: 'week', label: `Active This Week (${metrics.activeWeek})` },
+            { id: 'inactive', label: `Inactive (${metrics.inactive})` },
+            { id: 'notifications', label: `Push Enabled (${metrics.notificationsCount})` },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setFilterStatus(tab.id as FilterStatus)}
+              className={`px-5 py-3.5 text-sm font-bold whitespace-nowrap border-b-[3px] transition-colors ${
+                filterStatus === tab.id
+                  ? 'border-moss text-moss'
+                  : 'border-transparent text-faded-ink hover:text-ink hover:border-ink/20'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-            {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faded-ink" size={16} />
-              <input
-                type="text"
-                placeholder="Search user by name, email, or ID..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-ink/15 bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss transition"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-faded-ink hover:text-ink"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-2 self-end md:self-auto">
-              <span className="text-xs font-medium text-faded-ink shrink-0">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="text-xs font-medium bg-white/70 border border-ink/15 rounded-lg px-3 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-moss/30 cursor-pointer"
+        {/* Search & Sort */}
+        <div className="bg-paper rounded-2xl border border-ink/10 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Search Input */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faded-ink" size={16} />
+            <input
+              type="text"
+              placeholder="Search user by name, email, or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-ink/15 bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss transition"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-faded-ink hover:text-ink"
               >
-                <option value="last_seen_desc">Most Recently Active</option>
-                <option value="last_seen_asc">Oldest Last Active</option>
-                <option value="created_desc">Newly Joined First</option>
-                <option value="name_asc">Name (A - Z)</option>
-              </select>
-            </div>
-
+                <X size={14} />
+              </button>
+            )}
           </div>
 
-          {/* Filter Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none">
-            <span className="text-xs font-semibold text-faded-ink shrink-0 mr-1 flex items-center gap-1">
-              <Filter size={12} />
-              Filter:
-            </span>
-
-            {[
-              { id: 'all', label: `All Users (${users.length})` },
-              { id: 'today', label: `Active Today (${metrics.activeToday})` },
-              { id: 'week', label: `Active This Week (${metrics.activeWeek})` },
-              { id: 'inactive', label: `Inactive (${metrics.inactive})` },
-              { id: 'notifications', label: `Push Enabled (${metrics.notificationsCount})` },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setFilterStatus(tab.id as FilterStatus)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition cursor-pointer ${filterStatus === tab.id
-                  ? 'bg-ink text-paper shadow-sm'
-                  : 'bg-ink/5 text-faded-ink hover:bg-ink/10 hover:text-ink'
-                  }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          {/* Sort Dropdown */}
+          <div className="flex items-center gap-2 self-end md:self-auto">
+            <span className="text-xs font-medium text-faded-ink shrink-0">Sort by:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="text-xs font-medium bg-white/70 border border-ink/15 rounded-lg px-3 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-moss/30 cursor-pointer"
+            >
+              <option value="last_seen_desc">Most Recently Active</option>
+              <option value="last_seen_asc">Oldest Last Active</option>
+              <option value="created_desc">Newly Joined First</option>
+              <option value="name_asc">Name (A - Z)</option>
+            </select>
           </div>
         </div>
 

@@ -37,3 +37,50 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+
+@keyframes book-flip {
+  0% { transform: rotate(0deg) scale(1); }
+  15% { transform: rotate(-8deg) scale(1.05); }
+  30% { transform: rotate(6deg) scale(1.05); }
+  45% { transform: rotate(-4deg) scale(1); }
+  60% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.animate-book-flip {
+  animation: book-flip 2.4s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.15) rotate(15deg); opacity: 0.7; }
+}
+
+
+
+.animate-feather-float {
+  animation: feather-float 2.6s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes lightbulb-glow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 0px currentColor); }
+  50% { opacity: 0.75; filter: drop-shadow(0 0 4px currentColor); }
+}
+
+.animate-lightbulb-glow {
+  animation: lightbulb-glow 2.4s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes book-open {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+
+.animate-book-open {
+  animation: book-open 2.4s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
