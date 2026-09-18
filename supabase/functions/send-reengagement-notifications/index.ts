@@ -72,7 +72,6 @@ Deno.serve(async (req) => {
 
         for (const user of users ?? []) {
             // Skip if we already sent a re-engagement push within the last 24 hours
-            // (prevents hammering a single user if the cron fires multiple times)
             if (user.reengagement_push_sent_at) {
                 const lastSent = new Date(user.reengagement_push_sent_at).getTime();
                 const hoursAgo = (Date.now() - lastSent) / (1000 * 3600);
@@ -82,27 +81,51 @@ Deno.serve(async (req) => {
                 }
             }
 
-            try {
-                await webpush.sendNotification(user.notification_token, payload);
+            const tokens = Array.isArray(user.notification_token) 
+              ? user.notification_token 
+              : (user.notification_token ? [user.notification_token] : []);
+              
+            if (tokens.length === 0) continue;
 
-                // Mark this user as having received a re-engagement push
+            let hasSuccess = false;
+            const deadEndpoints = new Set<string>();
+
+            for (const token of tokens) {
+                try {
+                    await webpush.sendNotification(token, payload);
+                    sent++;
+                    hasSuccess = true;
+                } catch (err: any) {
+                    failed++;
+                    if (err.statusCode === 404 || err.statusCode === 410) {
+                        deadEndpoints.add(token.endpoint);
+                        cleaned++;
+                    } else {
+                        console.error(`Re-engagement push failed for ${user.id} on endpoint ${token.endpoint}:`, err.message);
+                    }
+                }
+            }
+            
+            if (hasSuccess) {
                 await supabase
                     .from("users")
                     .update({ reengagement_push_sent_at: new Date().toISOString() })
                     .eq("id", user.id);
+            }
 
-                sent++;
-            } catch (err: any) {
-                failed++;
-                // Dead subscription — self-heal
-                if (err.statusCode === 404 || err.statusCode === 410) {
+            if (deadEndpoints.size > 0) {
+                const newTokens = tokens.filter((t: any) => !deadEndpoints.has(t.endpoint));
+                
+                if (newTokens.length === 0) {
                     await supabase
                         .from("users")
                         .update({ notifications_enabled: false, notification_token: null })
                         .eq("id", user.id);
-                    cleaned++;
                 } else {
-                    console.error(`Re-engagement push failed for ${user.id}:`, err.message);
+                    await supabase
+                        .from("users")
+                        .update({ notification_token: newTokens })
+                        .eq("id", user.id);
                 }
             }
         }

@@ -52,15 +52,21 @@ export function usePushSubscriptionSync(user: User | null) {
 
                 if (!dbUser || !dbUser.notifications_enabled) return;
 
-                const currentEndpoint = existingSubscription.toJSON().endpoint;
-                const storedEndpoint = dbUser.notification_token?.endpoint;
+                const dbTokens = Array.isArray(dbUser.notification_token) 
+                    ? dbUser.notification_token 
+                    : (dbUser.notification_token ? [dbUser.notification_token] : []);
 
-                // If the subscription endpoint has changed, update the DB
-                if (currentEndpoint !== storedEndpoint) {
-                    console.log('[PushSync] Subscription changed, updating DB...');
+                const subJson = existingSubscription.toJSON();
+                const currentEndpoint = subJson.endpoint;
+
+                // If this browser's endpoint is not in the array, append it
+                const endpointExists = dbTokens.some((t: any) => t.endpoint === currentEndpoint);
+
+                if (!endpointExists) {
+                    console.log('[PushSync] New device/subscription detected, appending to DB...');
                     await supabase
                         .from('users')
-                        .update({ notification_token: existingSubscription.toJSON() })
+                        .update({ notification_token: [...dbTokens, subJson] })
                         .eq('id', user!.id);
                 }
             } catch (err) {
@@ -87,11 +93,26 @@ export async function subscribeToPush(userId: string): Promise<boolean> {
             applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
         });
 
+        // Get existing tokens to append to them
+        const { data: dbUser } = await supabase
+            .from('users')
+            .select('notification_token')
+            .eq('id', userId)
+            .single();
+
+        const dbTokens = Array.isArray(dbUser?.notification_token) 
+            ? dbUser!.notification_token 
+            : (dbUser?.notification_token ? [dbUser.notification_token] : []);
+
+        const subJson = subscription.toJSON();
+        const endpointExists = dbTokens.some((t: any) => t.endpoint === subJson.endpoint);
+        const newTokens = endpointExists ? dbTokens : [...dbTokens, subJson];
+
         const { error } = await supabase
             .from('users')
             .update({
                 notifications_enabled: true,
-                notification_token: subscription.toJSON(),
+                notification_token: newTokens,
             })
             .eq('id', userId);
 
@@ -102,3 +123,4 @@ export async function subscribeToPush(userId: string): Promise<boolean> {
         return false;
     }
 }
+

@@ -111,11 +111,25 @@ export function SettingsPage() {
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
         });
 
+        const { data: dbUser } = await supabase
+          .from('users')
+          .select('notification_token')
+          .eq('id', user.id)
+          .single();
+
+        const dbTokens = Array.isArray(dbUser?.notification_token) 
+            ? dbUser!.notification_token 
+            : (dbUser?.notification_token ? [dbUser.notification_token] : []);
+
+        const subJson = subscription.toJSON();
+        const endpointExists = dbTokens.some((t: any) => t.endpoint === subJson.endpoint);
+        const newTokens = endpointExists ? dbTokens : [...dbTokens, subJson];
+
         const { error } = await supabase
           .from('users')
           .update({
             notifications_enabled: true,
-            notification_token: subscription.toJSON(),
+            notification_token: newTokens,
           })
           .eq('id', user.id);
 

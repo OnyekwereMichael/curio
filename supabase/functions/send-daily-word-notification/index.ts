@@ -44,43 +44,59 @@ Deno.serve(async (req) => {
     let cleaned = 0;
 
     for (const user of users ?? []) {
-      try {
-        await webpush.sendNotification(user.notification_token, payload);
-        sent++;
+      const tokens = Array.isArray(user.notification_token) 
+        ? user.notification_token 
+        : (user.notification_token ? [user.notification_token] : []);
+        
+      if (tokens.length === 0) continue;
 
-        if (user.notification_fail_count && user.notification_fail_count > 0) {
-          await supabase
-            .from("users")
-            .update({ notification_fail_count: 0 })
-            .eq("id", user.id);
-        }
-      } catch (err: any) {
-        failed++;
+      let hasSuccess = false;
+      const deadEndpoints = new Set<string>();
+      let userFailedCount = 0;
 
-        if (err.statusCode === 404 || err.statusCode === 410) {
-          await supabase
-            .from("users")
-            .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
-            .eq("id", user.id);
-          cleaned++;
-        } else {
-          const newFailCount = (user.notification_fail_count ?? 0) + 1;
-
-          if (newFailCount >= 3) {
-            await supabase
-              .from("users")
-              .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
-              .eq("id", user.id);
-            cleaned++;
-            console.error(`Disabled notifications for user ${user.id} after 3 consecutive failures.`);
-          } else {
-            await supabase
-              .from("users")
-              .update({ notification_fail_count: newFailCount })
-              .eq("id", user.id);
-            console.error(`Failed to notify user ${user.id} (attempt ${newFailCount}/3):`, err.message);
+      for (const token of tokens) {
+          try {
+            await webpush.sendNotification(token, payload);
+            sent++;
+            hasSuccess = true;
+          } catch (err: any) {
+            failed++;
+            if (err.statusCode === 404 || err.statusCode === 410) {
+              deadEndpoints.add(token.endpoint);
+              cleaned++;
+            } else {
+              userFailedCount++;
+              console.error(`Failed to notify user ${user.id} on endpoint ${token.endpoint}:`, err.message);
+            }
           }
-        }
+      }
+      
+      // Cleanup dead tokens
+      if (deadEndpoints.size > 0 || (!hasSuccess && userFailedCount > 0)) {
+         const newTokens = tokens.filter((t: any) => !deadEndpoints.has(t.endpoint));
+         const newFailCount = (!hasSuccess && userFailedCount > 0) ? (user.notification_fail_count ?? 0) + 1 : 0;
+         
+         if (newTokens.length === 0 || newFailCount >= 3) {
+            // All tokens dead, or failed too many times
+            await supabase
+                .from("users")
+                .update({ notifications_enabled: false, notification_token: null, notification_fail_count: 0 })
+                .eq("id", user.id);
+            if (newFailCount >= 3) {
+               console.error(`Disabled notifications for user ${user.id} after 3 consecutive failures.`);
+            }
+         } else {
+            await supabase
+                .from("users")
+                .update({ notification_token: newTokens, notification_fail_count: newFailCount })
+                .eq("id", user.id);
+         }
+      } else if (hasSuccess && user.notification_fail_count && user.notification_fail_count > 0) {
+         // Reset fail count on success
+         await supabase
+             .from("users")
+             .update({ notification_fail_count: 0 })
+             .eq("id", user.id);
       }
     }
 

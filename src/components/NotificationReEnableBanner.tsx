@@ -55,24 +55,37 @@ export function NotificationReEnableBanner() {
               userVisibleOnly: true,
               applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
             });
+            const dbTokens = Array.isArray(data.notification_token)
+              ? data.notification_token
+              : (data.notification_token ? [data.notification_token] : []);
+
+            const subJson = newSubscription.toJSON();
+            const endpointExists = dbTokens.some((t: any) => t.endpoint === subJson.endpoint);
+            const newTokens = endpointExists ? dbTokens : [...dbTokens, subJson];
+
             await supabase
               .from('users')
-              .update({ notification_token: newSubscription.toJSON() })
+              .update({ notification_token: newTokens })
               .eq('id', user?.id);
-            console.log('[NotifBanner] Re-subscribed and token updated silently.');
+            console.log('[NotifBanner] Re-subscribed and token appended silently.');
             return;
           }
 
           // Check if the stored endpoint matches this browser's subscription
-          const storedEndpoint = data.notification_token?.endpoint;
           const currentEndpoint = existingSubscription.toJSON().endpoint;
+          
+          const dbTokens = Array.isArray(data.notification_token)
+            ? data.notification_token
+            : (data.notification_token ? [data.notification_token] : []);
 
-          if (storedEndpoint && storedEndpoint !== currentEndpoint) {
-            // Endpoint changed — update DB with this browser's current token
-            console.log('[NotifBanner] Token mismatch, updating DB silently...');
+          const endpointExists = dbTokens.some((t: any) => t.endpoint === currentEndpoint);
+
+          if (!endpointExists) {
+            // Endpoint not in array — update DB with this browser's current token
+            console.log('[NotifBanner] Token missing from array, appending silently...');
             await supabase
               .from('users')
-              .update({ notification_token: existingSubscription.toJSON() })
+              .update({ notification_token: [...dbTokens, existingSubscription.toJSON()] })
               .eq('id', user?.id);
           }
         } catch (err) {

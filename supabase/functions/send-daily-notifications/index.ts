@@ -50,22 +50,42 @@ Deno.serve(async (req) => {
         let cleaned = 0;
 
         for (const user of users ?? []) {
-            try {
-                await webpush.sendNotification(user.notification_token, payload);
-                sent++;
-            } catch (err: any) {
-                failed++;
-                // 404/410 means the subscription is dead (browser data cleared,
-                // app uninstalled, etc.) — self-heal by clearing it so we stop
-                // trying to notify someone who can never receive it again.
-                if (err.statusCode === 404 || err.statusCode === 410) {
+            const tokens = Array.isArray(user.notification_token) 
+              ? user.notification_token 
+              : (user.notification_token ? [user.notification_token] : []);
+              
+            if (tokens.length === 0) continue;
+
+            const deadEndpoints = new Set<string>();
+
+            for (const token of tokens) {
+                try {
+                    await webpush.sendNotification(token, payload);
+                    sent++;
+                } catch (err: any) {
+                    failed++;
+                    if (err.statusCode === 404 || err.statusCode === 410) {
+                        deadEndpoints.add(token.endpoint);
+                        cleaned++;
+                    } else {
+                        console.error(`Failed to notify user ${user.id} on endpoint ${token.endpoint}:`, err.message);
+                    }
+                }
+            }
+
+            if (deadEndpoints.size > 0) {
+                const newTokens = tokens.filter((t: any) => !deadEndpoints.has(t.endpoint));
+                
+                if (newTokens.length === 0) {
                     await supabase
                         .from("users")
                         .update({ notifications_enabled: false, notification_token: null })
                         .eq("id", user.id);
-                    cleaned++;
                 } else {
-                    console.error(`Failed to notify user ${user.id}:`, err.message);
+                    await supabase
+                        .from("users")
+                        .update({ notification_token: newTokens })
+                        .eq("id", user.id);
                 }
             }
         }
