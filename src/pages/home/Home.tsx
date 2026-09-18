@@ -6,7 +6,7 @@ import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from '
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { supabase } from '../../lib/superbase';
-import { BookOpenText, Feather, Lightbulb } from 'lucide-react';
+import { Feather, Lightbulb } from 'lucide-react';
 
 function SkeletonCard() {
   return (
