@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
         // Target ALL users
         const { data: profiles, error: profileError } = await supabase
             .from("users")
-            .select("id, email, first_name, full_name, notif_fix_email_sent_at, notifications_enabled");
+            .select("id, email, full_name, notif_fix_email_sent_at, notifications_enabled");
 
 
         if (profileError) throw profileError;

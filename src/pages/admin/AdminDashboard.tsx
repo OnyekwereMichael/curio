@@ -15,7 +15,6 @@ import {
   Copy,
   Check,
   Download,
-  Filter,
   ShieldCheck,
   TrendingUp,
   Activity,
@@ -689,11 +688,10 @@ export function AdminDashboard() {
             <button
               key={tab.id}
               onClick={() => setFilterStatus(tab.id as FilterStatus)}
-              className={`px-5 py-3.5 text-sm font-bold whitespace-nowrap border-b-[3px] transition-colors ${
-                filterStatus === tab.id
+              className={`px-5 py-3.5 text-sm font-bold whitespace-nowrap border-b-[3px] transition-colors ${filterStatus === tab.id
                   ? 'border-moss text-moss'
                   : 'border-transparent text-faded-ink hover:text-ink hover:border-ink/20'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
