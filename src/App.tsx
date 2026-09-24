@@ -13,6 +13,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { CollectionPage } from './pages/collections/CollectionPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { DictionaryPage } from './pages/dictionary/DictionaryPage';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/notification-permission" element={<ProtectedRoute><NotificationPermission /></ProtectedRoute>} />
               <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
               <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
+              <Route path="/dictionary" element={<ProtectedRoute><DictionaryPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
