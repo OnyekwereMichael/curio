@@ -9,6 +9,15 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  server: {
+    proxy: {
+      '/api/dictionary': {
+        target: 'https://api.dictionaryapi.dev/api/v2/entries/en',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/dictionary/, '')
+      }
+    }
+  },
   plugins: [
     react(),
     tailwindcss(),
