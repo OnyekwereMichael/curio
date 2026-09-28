@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar, SidebarToggle } from './Sidebar';
 import { EmailVerificationBanner } from './EmailVerificationBanner';
 import { NotificationReEnableBanner } from './NotificationReEnableBanner';
@@ -7,6 +7,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { StreakCounter } from './StreakCounter';
 import { useStreak } from './useStreak';
 import logo from '../../public/icon-192.png'
+import { Search } from 'lucide-react';
+import { DictionaryModal } from './DictionaryModal';
 
 
 interface AppShellProps {
@@ -15,7 +17,7 @@ interface AppShellProps {
   title?: string;
 }
 
-function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void }) {
+function TopNav({ title, onMenuClick, onOpenDictionary }: { title: string; onMenuClick: () => void; onOpenDictionary: () => void }) {
   const { user } = useAuth();
   const { currentStreak, justIncremented } = useStreak();
 
@@ -59,6 +61,15 @@ function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void
 
       <div className="flex-1" />
 
+      <button
+        onClick={onOpenDictionary}
+        className="p-2 rounded-full text-faded-ink hover:text-ink hover:bg-ink/5 transition-colors mr-2 sm:mr-4"
+        aria-label="Open Dictionary"
+        title="Lookup a word (Cmd+K)"
+      >
+        <Search size={22} />
+      </button>
+
       <StreakCounter count={currentStreak} justIncremented={justIncremented} />
 
       <div className="hidden sm:flex items-center gap-1.5 bg-ink/[0.04] border border-ink/8 rounded-full px-4 py-1.5">
@@ -88,6 +99,19 @@ function TopNav({ title, onMenuClick }: { title: string; onMenuClick: () => void
 export { TopNav };
 export function AppShell({ children, title = 'Home' }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dictionaryOpen, setDictionaryOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setDictionaryOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink flex">
@@ -96,7 +120,7 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
 
       {/* Main content column */}
       <div className="flex-1 flex flex-col min-w-0">
-        <TopNav title={title} onMenuClick={() => setSidebarOpen(true)} />
+        <TopNav title={title} onMenuClick={() => setSidebarOpen(true)} onOpenDictionary={() => setDictionaryOpen(true)} />
 
         {/* Verification banner */}
         <EmailVerificationBanner />
@@ -107,6 +131,8 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
           {children}
         </main>
       </div>
+
+      <DictionaryModal isOpen={dictionaryOpen} onClose={() => setDictionaryOpen(false)} />
     </div>
   );
 }
