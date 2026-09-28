@@ -169,7 +169,7 @@ export function SettingsPage() {
 
   return (
     <AppShell title="Settings">
-      <div className="px-4 py-6 max-w-4xl mx-auto w-full flex flex-col gap-6">
+      <div className="px-4 py-4 mx-auto w-full flex flex-col gap-6">
         <div>
           <h1 className="font-display text-2xl font-bold text-ink mb-2">Preferences</h1>
           <p className="text-faded-ink text-sm">Manage your app experience and notifications.</p>

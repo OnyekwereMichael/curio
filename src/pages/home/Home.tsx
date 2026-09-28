@@ -62,7 +62,7 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
-      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col  max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <div className="px-4 py-4 mx-auto w-full flex flex-col">
         <div>
           <p className="text-faded-ink text-base font-medium mb-1 font-display">{greeting} 👋</p>
           <h1 className="font-display text-3xl max-sm:text-2xl font-bold text-ink leading-tight">

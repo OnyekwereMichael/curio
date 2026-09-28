@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { getWordData } from '../lib/wordLookup';
 
 export interface DictionaryDefinition {
   definition: string;
@@ -24,8 +25,6 @@ export interface DictionaryState {
   /** True only when a search has been attempted at least once */
   searched: boolean;
 }
-
-const API_BASE = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 
 const searchCache = new Map<string, { data: DictionaryEntry | null; error: string | null }>();
 
@@ -55,9 +54,9 @@ export function useDictionary() {
     setState({ data: null, loading: true, error: null, searched: true });
 
     try {
-      const res = await fetch(`${API_BASE}/${encodeURIComponent(trimmed)}`);
+      const result = await getWordData(trimmed);
 
-      if (res.status === 404) {
+      if (!result) {
         const errorMsg = `No definition found for "${trimmed}". Check the spelling and try again.`;
         searchCache.set(trimmed, { data: null, error: errorMsg });
         setState({
@@ -69,41 +68,23 @@ export function useDictionary() {
         return;
       }
 
-      if (!res.ok) {
-        throw new Error(`Request failed (${res.status})`);
-      }
-
-      const json = await res.json();
-      const first = json[0];
-
-      // Extract the best phonetic string — prefer one with text, fallback through array
-      const phoneticText =
-        first.phonetic ||
-        first.phonetics?.find((p: any) => p.text)?.text ||
-        '';
-
-      // Extract the first available audio URL
-      const phoneticAudioUrl =
-        first.phonetics?.find((p: any) => p.audio && p.audio.length > 0)
-          ?.audio || undefined;
-
       // Map meanings, limiting to top 2 definitions per part of speech
-      const meanings: DictionaryMeaning[] = (first.meanings || []).map(
+      const meanings: DictionaryMeaning[] = (result.meanings || []).map(
         (m: any) => ({
           partOfSpeech: m.partOfSpeech,
           definitions: (m.definitions || [])
             .slice(0, 2)
             .map((d: any) => ({
-              definition: d.definition,
+              definition: d.meaning,
               example: d.example || undefined,
             })),
         })
       );
 
       const responseData = {
-        word: first.word,
-        phonetic: phoneticText,
-        phoneticAudioUrl,
+        word: result.word,
+        phonetic: result.phonetic || '',
+        phoneticAudioUrl: undefined,
         meanings,
       };
 
