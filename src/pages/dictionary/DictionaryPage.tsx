@@ -9,7 +9,7 @@ export function DictionaryPage() {
 
   return (
     <AppShell title="Dictionary">
-      <div className="px-2 py-5 max-w-2xl mx-auto w-full flex flex-col gap-6 max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <div className="px-4 py-4 mx-auto w-full flex flex-col gap-6">
         {/* Section header */}
         <div>
           <h1 className="font-display text-3xl max-sm:text-2xl font-bold text-ink leading-tight flex items-center gap-2">

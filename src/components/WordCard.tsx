@@ -1,7 +1,9 @@
-import { Volume2, Check } from 'lucide-react';
+import { useState } from 'react';
+import { Volume2, Check, Share2 } from 'lucide-react';
 import { DailyStamp } from './DailyStamp';
 import { cn } from '../lib/utils';
 import { useWordCardInteractions } from './useWordCardInteractions';
+import { ShareCardModal } from './ShareCardModal';
 
 interface WordCardProps {
   id: string;
@@ -17,87 +19,112 @@ interface WordCardProps {
 
 export function WordCard({ id, word, definition, exampleSentence, audioUrl, className, variant = 'new', label, onSavedChange }: WordCardProps) {
   const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnown, play } = useWordCardInteractions(id, audioUrl, onSavedChange);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const labelColor = variant === 'new' ? 'text-ember' : 'text-faded-ink';
 
   return (
-    <div className={cn(
-      "bg-paper rounded-xl p-6 shadow-sm border border-ink/5 relative overflow-hidden flex flex-col gap-4 font-ui",
-      className
-    )}>
-      <div className="absolute top-4 right-4 z-10">
-        <DailyStamp variant={variant} />
-      </div>
-
-      <div className="pr-14">
-        {label && (
-          <div className={cn("text-xs font-bold tracking-wider uppercase mb-2", labelColor)}>
-            {label}
-          </div>
-        )}
-
-        <div className="flex items-center gap-2">
-          <h3 className="font-display text-2xl font-bold text-ink leading-tight">{word}</h3>
-          <button
-            onClick={play}
-            disabled={!audioUrl}
-            className={cn(
-              "p-2 rounded-full transition-colors flex-shrink-0",
-              !audioUrl ? "text-faded-ink/40 cursor-not-allowed" :
-                isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" :
-                  "text-ember hover:bg-ember/5 hover:text-ember/80"
-            )}
-            aria-label="Play pronunciation"
-            type="button"
-          >
-            <Volume2 size={20} strokeWidth={2.5} />
-          </button>
+    <>
+      <div className={cn(
+        "bg-paper rounded-xl p-6 shadow-sm border border-ink/5 relative overflow-hidden flex flex-col gap-4 font-ui",
+        className
+      )}>
+        <div className="absolute top-4 right-4 z-10">
+          <DailyStamp variant={variant} />
         </div>
-      </div>
 
-      <div>
-        <p className="text-ink leading-relaxed mb-4">{definition}</p>
-
-        <div className="text-faded-ink text-xs font-bold  uppercase mb-2">
-          How to use in a sentence
-        </div>
-        <div className="pl-4 border-l-2 border-ember/25">
-          <p className="text-ink/80  text-sm leading-relaxed">"{exampleSentence}"</p>
-        </div>
-      </div>
-
-      {/* Quick Recall + Save, side by side */}
-      <div className="pt-4 border-t border-ink/8 flex items-center justify-between">
-        {!isKnown ? (
-          <button
-            onClick={markKnown}
-            className="text-sm font-bold text-ember hover:text-ember/80 transition-colors flex items-center gap-2"
-            type="button"
-          >
-            <span>Got it</span>
-            <span role="img" aria-label="thumbs up">👍</span>
-          </button>
-        ) : (
-          <div className="text-sm font-bold text-moss flex items-center gap-2">
-            <Check size={16} />
-            <span>Marked as known</span>
-          </div>
-        )}
-
-        <button
-          onClick={toggleSave}
-          className={cn(
-            "text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer",
-            saveFlash ? "border-gold-stamp bg-gold-stamp/10 text-gold-stamp scale-105" :
-              isSaved ? "border-ember/30 bg-ember/5 text-ember" :
-                "border-ink/15 text-ink hover:border-ink/30 hover:text-ink"
+        <div className="pr-14">
+          {label && (
+            <div className={cn("text-xs font-bold tracking-wider uppercase mb-2", labelColor)}>
+              {label}
+            </div>
           )}
-          aria-label={isSaved ? "Remove from collection" : "Save to collection"}
-          type="button"
-        >
-          {isSaved ? "Remove from Collection" : "Add To Collection"}
-        </button>
+
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-2xl font-bold text-ink leading-tight">{word}</h3>
+            <button
+              onClick={play}
+              disabled={!audioUrl}
+              className={cn(
+                "p-2 rounded-full transition-colors flex-shrink-0",
+                !audioUrl ? "text-faded-ink/40 cursor-not-allowed" :
+                  isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" :
+                    "text-ember hover:bg-ember/5 hover:text-ember/80"
+              )}
+              aria-label="Play pronunciation"
+              type="button"
+            >
+              <Volume2 size={20} strokeWidth={2.5} />
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-ink leading-relaxed mb-4">{definition}</p>
+
+          <div className="text-faded-ink text-xs font-bold  uppercase mb-2">
+            How to use in a sentence
+          </div>
+          <div className="pl-4 border-l-2 border-ember/25">
+            <p className="text-ink/80  text-sm leading-relaxed">"{exampleSentence}"</p>
+          </div>
+        </div>
+
+        {/* Quick Recall + Share + Save */}
+        <div className="pt-4 border-t border-ink/8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {!isKnown ? (
+              <button
+                onClick={markKnown}
+                className="text-sm font-bold text-ember hover:text-ember/80 transition-colors flex items-center gap-2"
+                type="button"
+              >
+                <span>Got it</span>
+                <span role="img" aria-label="thumbs up">👍</span>
+              </button>
+            ) : (
+              <div className="text-sm font-bold text-moss flex items-center gap-2">
+                <Check size={16} />
+                <span>Marked as known</span>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShareOpen(true)}
+              className="p-1.5 cursor-pointer rounded-full text-faded-ink hover:text-ember hover:bg-ember/5 transition-colors"
+              aria-label="Share this word"
+              type="button"
+            >
+              <Share2 size={16} />
+            </button>
+          </div>
+
+          <button
+            onClick={toggleSave}
+            className={cn(
+              "text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer",
+              saveFlash ? "border-gold-stamp bg-gold-stamp/10 text-gold-stamp scale-105" :
+                isSaved ? "border-ember/30 bg-ember/5 text-ember" :
+                  "border-ink/15 text-ink hover:border-ink/30 hover:text-ink"
+            )}
+            aria-label={isSaved ? "Remove from collection" : "Save to collection"}
+            type="button"
+          >
+            {isSaved ? "Remove from Collection" : "Add To Collection"}
+          </button>
+        </div>
       </div>
-    </div>
+
+      <ShareCardModal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        data={{
+          type: 'word',
+          word,
+          definition,
+          exampleSentence,
+        }}
+      />
+    </>
   );
 }
