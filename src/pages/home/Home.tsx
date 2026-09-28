@@ -2,11 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
+import { DailyQuiz } from '../../components/DailyQuiz';
 import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
+import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
 import { supabase } from '../../lib/superbase';
-import { Feather, Lightbulb } from 'lucide-react';
+import { StreakCalendar } from '../../components/Streakcalendar';
 
 function SkeletonCard() {
   return (
@@ -35,7 +37,6 @@ export function HomeScreen() {
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
 
-
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
     const hasPrompted = localStorage.getItem('notification_prompted');
@@ -48,6 +49,23 @@ export function HomeScreen() {
       supabase.from('users').update({ installed: true }).eq('id', user?.id);
     }
   }, [navigate, user]);
+
+  // Logs today as an active day — feeds the StreakCalendar's plain "active"
+  // dots, separate from the gold star which marks a perfect quiz day.
+  useEffect(() => {
+    if (!user) return;
+    const today = new Date().toISOString().split('T')[0];
+
+    supabase
+      .from('user_activity_log')
+      .upsert(
+        { user_id: user.id, activity_date: today },
+        { onConflict: 'user_id,activity_date', ignoreDuplicates: true }
+      )
+      .then(({ error }) => {
+        if (error) console.error('Failed to log daily activity:', error.message);
+      });
+  }, [user]);
 
   const greeting = (() => {
     const hour = new Date().getHours();
@@ -62,32 +80,22 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
-      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col  max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <NotificationReEnableBanner />
+      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
         <div>
-          <p className="text-faded-ink text-base font-medium mb-1 font-display">{greeting} 👋</p>
-          <h1 className="font-display text-3xl max-sm:text-2xl font-bold text-ink leading-tight">
+          <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
+          <h1 className="font-display text-3xl font-bold text-ink leading-tight">
             {firstName}, here's your daily dose.
           </h1>
         </div>
 
-
-
-        <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1 mt-6">
-
+        {/* Primary grid: Word + Fact */}
+        <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
 
           {/* Today's Word */}
-
-
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1 flex items-center gap-2">
-                Today's Word
-                <Feather
-                  size={18}
-                  className="text-ember animate-feather-float"
-                  aria-hidden="true"
-                />
-              </h2>
+              <h2 className="font-display text-xl font-bold text-ink mb-1">Today's Word</h2>
               <p className="text-faded-ink text-sm">Vocabulary to elevate your conversations.</p>
             </div>
             {todaysWord.loading ? (
@@ -108,18 +116,9 @@ export function HomeScreen() {
           </section>
 
           {/* Today's Fact */}
-
-
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1 flex items-center gap-2">
-                Today's Fact
-                <Lightbulb
-                  size={18}
-                  className="text-ember animate-lightbulb-glow"
-                  aria-hidden="true"
-                />
-              </h2>
+              <h2 className="font-display text-xl font-bold text-ink mb-1">Today's Fact</h2>
               <p className="text-faded-ink text-sm">Fascinating facts to expand your knowledge.</p>
             </div>
             {todaysFact.loading ? (
@@ -145,55 +144,16 @@ export function HomeScreen() {
 
         </div>
 
-        <div className="flex flex-col gap-4 mt-5">
-          {!oldButGold.loading && oldButGold.data && (
-            <div>
-              <h2 className="font-display text-2xl font-bold text-ink mb-1.5 flex items-center gap-2">
-                Review &amp; Retain
-                <span
-                  className="inline-block text-2xl origin-bottom animate-book-flip"
-                  role="img"
-                  aria-label="books"
-                >
-                  📚
-                </span>
-              </h2>
-              <p className="text-faded-ink text-sm">
-                You've seen this word & fact before, but going through it again will help you retain it better.
-              </p>
-            </div>
-          )}
+        {/* Daily Quiz — replaces the old passive Review & Retain / Fact Recap sections */}
+        <DailyQuiz
+          todaysWord={todaysWord.data}
+          oldButGoldWord={oldButGold.data}
+          todaysFact={todaysFact.data}
+          oldButGoldFact={oldButGoldFact.data}
+        />
 
-          <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
-            {!oldButGold.loading && oldButGold.data && (
-              <section className="flex flex-col gap-4">
-                <WordCard
-                  id={oldButGold.data.id}
-                  word={oldButGold.data.word}
-                  definition={oldButGold.data.definition}
-                  exampleSentence={oldButGold.data.example_sentence}
-                  audioUrl={oldButGold.data.pronunciation_audio_url}
-                  variant="old"
-                  label="Old but Gold"
-                />
-              </section>
-            )}
-
-            {!oldButGoldFact.loading && oldButGoldFact.data && (
-              <section className="flex flex-col gap-4 pb-8">
-                <FactCard
-                  id={oldButGoldFact.data.id}
-                  imageUrl={oldButGoldFact.data.image_url}
-                  hookLine={oldButGoldFact.data.hook_line}
-                  contextLine={oldButGoldFact.data.context_line}
-                  bullets={[oldButGoldFact.data.bullet_1, oldButGoldFact.data.bullet_2, oldButGoldFact.data.bullet_3, oldButGoldFact.data.bullet_4]}
-                  variant="old"
-                />
-              </section>
-            )}
-          </div>
-        </div>
-
+        {/* Streak calendar — shows the last 30 days, gold star on perfect quiz days */}
+        <StreakCalendar />
 
       </div>
     </AppShell>
