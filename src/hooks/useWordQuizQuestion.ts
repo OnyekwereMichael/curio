@@ -5,7 +5,7 @@ import { supabase } from '../lib/superbase';
 interface QuizQuestion {
   question: string;
   options: string[]; // 4 shuffled options
-  correctAnswer: string;
+  correctAnswer: any;
 }
 
 export function useWordQuizQuestion(word: { id: string; word: string; definition: string } | null) {
@@ -23,7 +23,7 @@ export function useWordQuizQuestion(word: { id: string; word: string; definition
       const { data: decoys, error } = await supabase
         .from('words')
         .select('definition')
-        .neq('id', word.id)
+        .neq('id', word?.id)
         .limit(20); // pull extra, then randomly pick 3, for better shuffling
 
       if (error || !decoys || decoys.length < 3) {
@@ -36,12 +36,12 @@ export function useWordQuizQuestion(word: { id: string; word: string; definition
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
 
-      const options = [word.definition, ...shuffledDecoys].sort(() => Math.random() - 0.5);
+      const options = [word?.definition, ...shuffledDecoys].sort(() => Math.random() - 0.5);
 
       setQuiz({
-        question: `What does "${word.word}" mean?`,
+        question: `What does "${word?.word}" mean?`,
         options,
-        correctAnswer: word.definition,
+        correctAnswer: word?.definition,
       });
       setLoading(false);
     }

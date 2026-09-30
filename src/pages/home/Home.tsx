@@ -3,10 +3,12 @@ import { useEffect } from 'react';
 import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
 import { DailyQuiz } from '../../components/DailyQuiz';
+
 import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
+import { useStreak } from '../../components/useStreak';
 import { supabase } from '../../lib/superbase';
 import { StreakCalendar } from '../../components/Streakcalendar';
 
@@ -36,6 +38,7 @@ export function HomeScreen() {
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
+  const { commitStreak } = useStreak(); // read-only on mount; increments only when called
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -144,12 +147,15 @@ export function HomeScreen() {
 
         </div>
 
-        {/* Daily Quiz — replaces the old passive Review & Retain / Fact Recap sections */}
+        {/* Daily Quiz — replaces the old passive Review & Retain / Fact Recap sections.
+           Streak now increments from commitStreak(), fired only when the quiz is
+           actually completed — not just from this page loading. */}
         <DailyQuiz
           todaysWord={todaysWord.data}
           oldButGoldWord={oldButGold.data}
           todaysFact={todaysFact.data}
           oldButGoldFact={oldButGoldFact.data}
+          commitStreak={commitStreak}
         />
 
         {/* Streak calendar — shows the last 30 days, gold star on perfect quiz days */}

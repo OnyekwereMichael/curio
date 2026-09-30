@@ -23,7 +23,7 @@ export function StreakCalendar() {
             const { data } = await supabase
                 .from('user_activity_log')
                 .select('activity_date, quiz_perfect')
-                .eq('user_id', user.id)
+                .eq('user_id', user?.id)
                 .gte('activity_date', thirtyDaysAgo.toISOString().split('T')[0]);
 
             setActivity(data ?? []);
