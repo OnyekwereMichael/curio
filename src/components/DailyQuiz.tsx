@@ -109,9 +109,6 @@ function Mascot({ mood = 'idle', size = 80 }: { mood?: Mood; size?: number }) {
     );
 }
 
-// ─────────────────────────────────────────────────────────
-// AnswerFeedbackPopup — same behavior, uses the new mascot
-// ─────────────────────────────────────────────────────────
 function AnswerFeedbackPopup({ correct }: { correct: boolean }) {
     return (
         <motion.div
