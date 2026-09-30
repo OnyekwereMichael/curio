@@ -91,11 +91,12 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
 
             <button
               onClick={() => setShareOpen(true)}
-              className="p-1.5 cursor-pointer rounded-full text-faded-ink hover:text-ember hover:bg-ember/5 transition-colors"
+              className="text-xs font-bold px-3 py-1.5 rounded-full border border-ink/15 text-ink hover:border-ink/30 hover:text-ink transition-all duration-300 cursor-pointer flex items-center gap-1.5"
               aria-label="Share this word"
               type="button"
             >
-              <Share2 size={16} />
+              <Share2 size={14} />
+              <span>Share</span>
             </button>
           </div>
 
