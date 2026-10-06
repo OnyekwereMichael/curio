@@ -147,9 +147,7 @@ export function HomeScreen() {
 
         </div>
 
-        {/* Daily Quiz — replaces the old passive Review & Retain / Fact Recap sections.
-           Streak now increments from commitStreak(), fired only when the quiz is
-           actually completed — not just from this page loading. */}
+
         <DailyQuiz
           todaysWord={todaysWord.data}
           oldButGoldWord={oldButGold.data}

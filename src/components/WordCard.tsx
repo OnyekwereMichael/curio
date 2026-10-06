@@ -111,7 +111,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
             aria-label={isSaved ? "Remove from collection" : "Save to collection"}
             type="button"
           >
-            {isSaved ? "Remove from Collection" : "Add To Collection"}
+            {isSaved ? "Remove" : "Add To Collection"}
           </button>
         </div>
       </div>

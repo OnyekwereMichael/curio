@@ -92,7 +92,7 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
               aria-label={isSaved ? "Remove from collection" : "Save to collection"}
               type="button"
             >
-              {isSaved ? "Remove from Collection" : "Add To Collection"}
+              {isSaved ? "Remove" : "Add To Collection"}
             </button>
           </div>
         </div>
