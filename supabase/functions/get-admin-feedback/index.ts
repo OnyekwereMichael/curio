@@ -4,9 +4,6 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-// Service role client — required since the feedback table has no SELECT
-// policy at all for regular users (by design, to keep it private). This
-// function is the one deliberate, admin-only way to actually read it.
 const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 const corsHeaders = {
