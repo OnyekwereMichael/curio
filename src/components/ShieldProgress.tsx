@@ -17,10 +17,10 @@ export function ShieldProgress({ currentStreak, shieldCount }: Props) {
 
   if (shieldCount >= MAX_SHIELDS) {
     content = (
-      <div className="flex items-center gap-2 text-xs text-faded-ink">
-        <Shield size={14} className="text-moss" />
+      <div className="flex items-center gap-2 text-xs    text-faded-ink cursor-pointer">
+        <Shield size={14} className="text-moss cursor-pointer" />
         <span>Shields full ({MAX_SHIELDS}/{MAX_SHIELDS}). Your streak is well protected.</span>
-        <Info size={12} className="opacity-60" />
+        <Info size={12} className="opacity-60   cursor-pointer text-[#d8492f]" />
       </div>
     );
   } else {
@@ -29,7 +29,7 @@ export function ShieldProgress({ currentStreak, shieldCount }: Props) {
     const progress = (daysIntoCycle / DAYS_PER_SHIELD) * 100;
 
     content = (
-      <div className="flex flex-col gap-1.5 max-w-xs">
+      <div className="flex flex-col gap-1.5 max-w-xs cursor-pointer">
         <div className="flex items-center gap-2">
           <Shield size={14} className="text-moss flex-shrink-0 cursor-pointer" />
           <div className="flex-1 h-1.5 bg-ink/10 rounded-full overflow-hidden">
@@ -39,9 +39,9 @@ export function ShieldProgress({ currentStreak, shieldCount }: Props) {
             />
           </div>
         </div>
-        <span className="text-xs text-faded-ink flex items-center gap-1.5">
+        <span className="text-xs text-ink flex items-center gap-1.5">
           {daysLeft} day{daysLeft !== 1 ? 's' : ''} to your next Shield
-          <Info size={12} className="opacity-60" />
+          <Info size={12} className="opacity-60 cursor-pointer text-[#d8492f]" />
         </span>
       </div>
     );

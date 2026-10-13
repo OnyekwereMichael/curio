@@ -54,7 +54,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
               aria-label="Play pronunciation"
               type="button"
             >
-              <Volume2 size={20} strokeWidth={2.5} />
+              <Volume2 size={20} strokeWidth={2.5} className="cursor-pointer" />
             </button>
           </div>
         </div>

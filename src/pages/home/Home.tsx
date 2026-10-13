@@ -91,7 +91,7 @@ export function HomeScreen() {
   <h1 className="font-display text-3xl font-bold text-ink leading-tight">
     {firstName}, here's your daily dose.
   </h1>
-  <div className="mt-4">
+  <div className="mt-4 cursor-pointer">
     <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
   </div>
 </div>
