@@ -19,7 +19,7 @@ interface AppShellProps {
 
 function TopNav({ title, onMenuClick, onOpenDictionary }: { title: string; onMenuClick: () => void; onOpenDictionary: () => void }) {
   const { user } = useAuth();
-  const { currentStreak, justIncremented } = useStreak();
+const { currentStreak, justIncremented, shieldCount } = useStreak();
 
   const avatarUrl = user?.user_metadata?.avatar_url;
   const fullName =
@@ -70,7 +70,7 @@ function TopNav({ title, onMenuClick, onOpenDictionary }: { title: string; onMen
         <Search size={22} />
       </button>
 
-      <StreakCounter count={currentStreak} justIncremented={justIncremented} />
+     <StreakCounter count={currentStreak} shieldCount={shieldCount} justIncremented={justIncremented} />
 
       <div className="hidden sm:flex items-center gap-1.5 bg-ink/[0.04] border border-ink/8 rounded-full px-4 py-1.5">
         <span className="text-xs font-medium text-faded-ink">{dateLabel}</span>

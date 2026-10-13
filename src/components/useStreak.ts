@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/superbase';
 
 const MAX_SHIELDS = 2;
 

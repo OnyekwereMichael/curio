@@ -11,6 +11,7 @@ import { NotificationReEnableBanner } from '../../components/NotificationReEnabl
 import { useStreak } from '../../components/useStreak';
 import { supabase } from '../../lib/superbase';
 import { StreakCalendar } from '../../components/Streakcalendar';
+import { ShieldProgress } from '../../components/ShieldProgress';
 
 function SkeletonCard() {
   return (
@@ -38,7 +39,7 @@ export function HomeScreen() {
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
-  const { commitStreak } = useStreak(); // read-only on mount; increments only when called
+  const { commitStreak, currentStreak, shieldCount } = useStreak(); // read-only on mount; increments only when called
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -85,12 +86,15 @@ export function HomeScreen() {
     <AppShell title="Home">
       <NotificationReEnableBanner />
       <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
-        <div>
-          <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
-          <h1 className="font-display text-3xl font-bold text-ink leading-tight">
-            {firstName}, here's your daily dose.
-          </h1>
-        </div>
+      <div>
+  <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
+  <h1 className="font-display text-3xl font-bold text-ink leading-tight">
+    {firstName}, here's your daily dose.
+  </h1>
+  <div className="mt-4">
+    <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
+  </div>
+</div>
 
         {/* Primary grid: Word + Fact */}
         <div className="grid grid-cols-2 gap-6 max-sm:gap-4 max-md:gap-4 max-lg:gap-4 max-sm:grid-cols-1">
