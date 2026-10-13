@@ -248,7 +248,7 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
         <section className="flex flex-col gap-4">
             <div>
                 <h2 className="font-display text-xl font-bold text-ink mb-1">Daily Quiz</h2>
-                <p className="text-faded-ink text-sm">Quick recall check — no pressure, just practice.</p>
+                <p className="text-faded-ink text-sm">Quick recall check — no pressure, just practice to keep your streak alive.</p>
             </div>
 
             <AnimatePresence mode="wait">
