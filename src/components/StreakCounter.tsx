@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Flame, Shield } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { ShieldExplainerModal } from './ShieldExplainerModal';
 
 interface StreakCounterProps {
   count: number;
@@ -8,6 +10,8 @@ interface StreakCounterProps {
 }
 
 export function StreakCounter({ count, shieldCount = 0, justIncremented }: StreakCounterProps) {
+  const [shieldModalOpen, setShieldModalOpen] = useState(false);
+
   return (
     <div className="flex items-center gap-2">
       <div
@@ -21,11 +25,23 @@ export function StreakCounter({ count, shieldCount = 0, justIncremented }: Strea
       </div>
 
       {shieldCount > 0 && (
-        <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-moss/10">
-          <Shield size={14} className="text-moss" />
+        <button
+          type="button"
+          onClick={() => setShieldModalOpen(true)}
+          aria-label="How Shields work"
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-moss/10 hover:bg-moss/15 transition-colors"
+        >
+          <Shield size={14} className="text-moss cursor-pointer" />
           <span className="font-mono text-sm font-semibold text-ink">{shieldCount}</span>
-        </div>
+        </button>
       )}
+
+      <ShieldExplainerModal
+        open={shieldModalOpen}
+        onClose={() => setShieldModalOpen(false)}
+        currentStreak={count}
+        shieldCount={shieldCount}
+      />
     </div>
   );
 }
