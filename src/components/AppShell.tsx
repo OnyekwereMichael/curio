@@ -76,7 +76,7 @@ const { currentStreak, justIncremented, shieldCount } = useStreak();
         <span className="text-xs font-medium text-faded-ink">{dateLabel}</span>
       </div>
 
-      <div className="flex items-center gap-2 ml-2">
+      <div className="flex items-center gap-2 ml-2 max-sm:hidden">
         {avatarUrl ? (
           <img
             src={avatarUrl}

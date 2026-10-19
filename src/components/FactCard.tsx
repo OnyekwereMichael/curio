@@ -51,11 +51,11 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
               Fact of the day
             </div>
 
-            <h3 className="font-display text-xl font-bold text-ink leading-snug mb-2">
+            <h3 className="font-display text-xl font-bold text-ink leading-[1.7] mb-2">
               {hookLine}
             </h3>
 
-            <p className="text-faded-ink text-sm leading-relaxed">{contextLine}</p>
+            <p className="text-faded-ink text-sm leading-[1.8]">{contextLine}</p>
           </div>
 
           <div className="h-px bg-ink/8" />
@@ -70,31 +70,35 @@ export function FactCard({ id, imageUrl, hookLine, contextLine, bullets, classNa
           </ul>
 
           {/* Share + Save, tucked below the reading content */}
-          <div className="pt-4 border-t border-ink/8 flex justify-between items-center">
-            <button
-              onClick={() => setShareOpen(true)}
-              className="text-xs font-bold px-3 py-1.5 rounded-full border border-ink/15 text-ink hover:border-ink/30 hover:text-ink transition-all duration-300 cursor-pointer flex items-center gap-1.5"
-              aria-label="Share this fact"
-              type="button"
-            >
-              <Share2 size={14} />
-              <span>Share</span>
-            </button>
+       {/* Drop this in place of your existing fact card action row. Needs: Share2 from lucide-react, and cn. */}
+<div className="pt-4 border-t border-ink/10 flex items-center gap-2 sm:justify-end">
+  <button
+    onClick={() => setShareOpen(true)}
+    className="flex-1 sm:flex-none h-10 px-5 rounded-xl border border-ink/15 text-ink text-sm font-semibold whitespace-nowrap inline-flex items-center justify-center gap-2 hover:bg-ink/5 active:bg-ink/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 cursor-pointer!"
+    aria-label="Share this fact"
+    type="button"
+  >
+    <Share2 size={15} aria-hidden="true" />
+    Share
+  </button>
 
-            <button
-              onClick={toggleSave}
-              className={cn(
-                "text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer",
-                saveFlash ? "border-gold-stamp bg-gold-stamp/10 text-gold-stamp scale-105" :
-                  isSaved ? "border-ember/30 bg-ember/5 text-ember" :
-                    "border-ink/15 text-ink hover:border-ink/30 hover:text-ink"
-              )}
-              aria-label={isSaved ? "Remove from collection" : "Save to collection"}
-              type="button"
-            >
-              {isSaved ? "Remove" : "Add To Collection"}
-            </button>
-          </div>
+  <button
+    onClick={toggleSave}
+    className={cn(
+      'flex-1 sm:flex-none h-10 px-5 rounded-xl border text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-paper cursor-pointer!',
+      saveFlash
+        ? 'border-gold-stamp bg-gold-stamp/10 text-gold-stamp focus-visible:ring-gold-stamp/50'
+        : isSaved
+          ? 'border-ember/30 bg-ember/5 text-ember hover:bg-ember/10 focus-visible:ring-ember/40'
+          : 'border-ember bg-ember text-paper hover:bg-ember/90 active:bg-ember/80 focus-visible:ring-ember/50'
+    )}
+    aria-pressed={isSaved}
+    aria-label={isSaved ? 'Remove from collection' : 'Save to collection'}
+    type="button"
+  >
+    {isSaved ? 'Saved' : 'Save'}
+  </button>
+</div>
         </div>
       </div>
 

@@ -71,49 +71,55 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
         </div>
 
         {/* Quick Recall + Share + Save */}
-        <div className="pt-4 border-t border-ink/8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {!isKnown ? (
-              <button
-                onClick={markKnown}
-                className="text-sm font-bold text-ember hover:text-ember/80 transition-colors flex items-center gap-2"
-                type="button"
-              >
-                <span>Got it</span>
-                <span role="img" aria-label="thumbs up">👍</span>
-              </button>
-            ) : (
-              <div className="text-sm font-bold text-moss flex items-center gap-2">
-                <Check size={16} />
-                <span>Marked as known</span>
-              </div>
-            )}
+      {/* Drop this in place of your existing action row. Needs: Check, Share2 from lucide-react, and cn. */}
+<div className="pt-4 border-t border-ink/10 flex flex-wrap items-center gap-3 sm:flex-nowrap">
+  {/* Primary action: full width on mobile, left-aligned on larger screens */}
+  {!isKnown ? (
+    <button
+      onClick={markKnown}
+      className="w-full sm:w-auto sm:mr-auto h-10 px-5 rounded-xl bg-ember text-paper text-sm font-semibold whitespace-nowrap hover:bg-ember/90 active:bg-ember/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+      type="button"
+    >
+      Got it
+    </button>
+  ) : (
+    <div
+      className="w-full sm:w-auto sm:mr-auto h-10 px-4 rounded-xl bg-moss/10 text-moss text-sm font-semibold inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer!"
+      role="status"
+    >
+      <Check size={16} aria-hidden="true" />
+      Marked as known
+    </div>
+  )}
 
-            <button
-              onClick={() => setShareOpen(true)}
-              className="text-xs font-bold px-3 py-1.5 rounded-full border border-ink/15 text-ink hover:border-ink/30 hover:text-ink transition-all duration-300 cursor-pointer flex items-center gap-1.5"
-              aria-label="Share this word"
-              type="button"
-            >
-              <Share2 size={14} />
-              <span>Share</span>
-            </button>
-          </div>
+  {/* Secondary actions: share the second row equally on mobile */}
+  <button
+    onClick={() => setShareOpen(true)}
+    className="flex-1 sm:flex-none h-10 px-4 rounded-xl border border-ink/15 text-ink text-sm font-semibold whitespace-nowrap inline-flex items-center justify-center gap-2 hover:bg-ink/5 active:bg-ink/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 cursor-pointer!"
+    aria-label="Share this word"
+    type="button"
+  >
+    <Share2 size={15} aria-hidden="true" />
+    Share
+  </button>
 
-          <button
-            onClick={toggleSave}
-            className={cn(
-              "text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer",
-              saveFlash ? "border-gold-stamp bg-gold-stamp/10 text-gold-stamp scale-105" :
-                isSaved ? "border-ember/30 bg-ember/5 text-ember" :
-                  "border-ink/15 text-ink hover:border-ink/30 hover:text-ink"
-            )}
-            aria-label={isSaved ? "Remove from collection" : "Save to collection"}
-            type="button"
-          >
-            {isSaved ? "Remove" : "Add To Collection"}
-          </button>
-        </div>
+  <button
+    onClick={toggleSave}
+    className={cn(
+      'flex-1 sm:flex-none h-10 px-4 rounded-xl border text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 cursor-pointer!',
+      saveFlash
+        ? 'border-gold-stamp bg-gold-stamp/10 text-gold-stamp'
+        : isSaved
+          ? 'border-ember/30 bg-ember/5 text-ember hover:bg-ember/10'
+          : 'border-ink/15 text-ink hover:bg-ink/5 active:bg-ink/10'
+    )}
+    aria-pressed={isSaved}
+    aria-label={isSaved ? 'Remove from collection' : 'Save to collection'}
+    type="button"
+  >
+    {isSaved ? 'Saved' : 'Save'}
+  </button>
+</div>
       </div>
 
       <ShareCardModal

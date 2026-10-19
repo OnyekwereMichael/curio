@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { X, Download, Share2, Loader2, Check } from 'lucide-react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { X, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { ShareData } from './useShareCard';
 import { useShareCard } from './useShareCard';
-import CuriLogo from '../../public/apple-touch-icon.png'
+import CuriLogo from '../../public/apple-touch-icon.png';
 
 interface ShareCardModalProps {
   isOpen: boolean;
@@ -13,278 +13,85 @@ interface ShareCardModalProps {
 
 const SITE_URL = 'trycuri.app';
 
-/** Small inline Curi lightning logo — matches the brand purple from favicon.svg */
-// function CuriLogo({ size = 24 }: { size?: number }) {
-//   return (
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       width={size}
-//       height={size}
-//       fill="none"
-//       viewBox="0 0 48 46"
-//     >
-//       <path
-//         fill="#863bff"
-//         d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"
-//       />
-//     </svg>
-//   );
-// }
+/** The card is always designed and exported at this width. The preview scales to fit the screen. */
+const CARD_WIDTH = 440;
 
-function ShareCardContent({ data }: { data: ShareData }) {
+const INK = '#1C2B3A';
+const MUTED = '#6B7882';
+const RULE = 'rgba(28, 43, 58, 0.12)';
+const EMBER = '#D8492F';
+const MOSS = '#3E6259';
+
+/* -------------------------------------------------------------------------- */
+/*  Card                                                                      */
+/* -------------------------------------------------------------------------- */
+
+function CardShell({
+  accent,
+  label,
+  tagline = 'One word, one fact, every day',
+  children,
+}: {
+  accent: string;
+  label: string;
+  tagline?: string;
+  children: React.ReactNode;
+}) {
   const today = new Date().toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
 
-  if (data.type === 'word') {
-    return (
-      <div
-        style={{
-          width: 440,
-          padding: '40px 36px 32px',
-          background: 'linear-gradient(145deg, #F6F4EF 0%, #EDE8DF 100%)',
-          borderRadius: 20,
-          fontFamily: "'Sora', sans-serif",
-          color: '#1C2B3A',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Decorative accent bar */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 5,
-            background: 'linear-gradient(90deg, #D8492F 0%, #C7962E 50%, #3E6259 100%)',
-            borderRadius: '20px 20px 0 0',
-          }}
-        />
-
-        {/* Header: Logo + Date */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 28,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img src={CuriLogo} alt="Curi" className="w-6 h-6" />
-            <span
-              style={{
-                fontFamily: "'Fraunces', serif",
-                fontWeight: 600,
-                fontSize: 18,
-                color: '#1C2B3A',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Curi
-            </span>
-          </div>
-          <span
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: 11,
-              color: '#C7962E',
-              fontWeight: 500,
-              letterSpacing: '0.04em',
-              border: '1px solid rgba(199, 150, 46, 0.3)',
-              padding: '3px 10px',
-              borderRadius: 4,
-              transform: 'rotate(-2deg)',
-              display: 'inline-block',
-            }}
-          >
-            {today}
-          </span>
-        </div>
-
-        {/* Label */}
-        <div
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            textTransform: 'uppercase' as const,
-            letterSpacing: '0.12em',
-            color: '#D8492F',
-            marginBottom: 10,
-          }}
-        >
-          Word of the Day
-        </div>
-
-        {/* Word */}
-        <h2
-          style={{
-            fontFamily: "'Fraunces', serif",
-            fontSize: 32,
-            fontWeight: 700,
-            color: '#1C2B3A',
-            margin: '0 0 16px',
-            lineHeight: 1.2,
-          }}
-        >
-          {data.word}
-        </h2>
-
-        {/* Definition */}
-        <p
-          style={{
-            fontSize: 14,
-            lineHeight: 1.7,
-            color: '#1C2B3A',
-            margin: '0 0 20px',
-          }}
-        >
-          {data.definition}
-        </p>
-
-        {/* Example sentence */}
-        <div
-          style={{
-            borderLeft: '3px solid rgba(216, 73, 47, 0.3)',
-            paddingLeft: 16,
-            marginBottom: 28,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: 'uppercase' as const,
-              letterSpacing: '0.1em',
-              color: '#7C8A93',
-              marginBottom: 6,
-            }}
-          >
-            Example
-          </div>
-          <p
-            style={{
-              fontSize: 13,
-              color: 'rgba(28, 43, 58, 0.8)',
-              lineHeight: 1.6,
-              margin: 0,
-              fontStyle: 'italic',
-            }}
-          >
-            "{data.exampleSentence}"
-          </p>
-        </div>
-
-        {/* Divider */}
-        <div
-          style={{
-            height: 1,
-            background: 'rgba(28, 43, 58, 0.08)',
-            marginBottom: 16,
-          }}
-        />
-
-        {/* Footer: Tagline + URL */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <span
-            style={{
-              fontSize: 11,
-              color: '#7C8A93',
-              fontStyle: 'italic',
-              fontFamily: "'Fraunces', serif",
-            }}
-          >
-            One word. One fact. Every day.
-          </span>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: '#D8492F',
-              letterSpacing: '0.02em',
-            }}
-          >
-            {SITE_URL}
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  // Fact card
   return (
     <div
       style={{
-        width: 440,
-        padding: '40px 36px 32px',
-        background: 'linear-gradient(145deg, #F6F4EF 0%, #EDE8DF 100%)',
-        borderRadius: 20,
+        width: CARD_WIDTH,
+        minHeight: 540,
+        boxSizing: 'border-box',
+        padding: '36px 40px 32px',
+        display: 'flex',
+        flexDirection: 'column',
+        background: '#FBF9F4',
+        borderRadius: 16,
+        border: `1px solid ${RULE}`,
         fontFamily: "'Sora', sans-serif",
-        color: '#1C2B3A',
-        position: 'relative',
-        overflow: 'hidden',
+        color: INK,
       }}
     >
-      {/* Decorative accent bar */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 5,
-          background: 'linear-gradient(90deg, #3E6259 0%, #C7962E 50%, #D8492F 100%)',
-          borderRadius: '20px 20px 0 0',
-        }}
-      />
-
-      {/* Header */}
+      {/* Brand row: fixed-height line boxes so the logo and wordmark align in the exported image */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 28,
+          height: 32,
+          marginBottom: 44,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src={CuriLogo} alt="Curi" className="w-6 h-6" />
+        <div style={{ display: 'flex', alignItems: 'center', height: 32 }}>
+          <img
+            src={CuriLogo}
+            alt=""
+            width={32}
+            height={32}
+            style={{ borderRadius: 8, display: 'block', marginRight: 10 }}
+          />
           <span
             style={{
+              display: 'block',
+              height: 32,
+              lineHeight: '32px',
               fontFamily: "'Fraunces', serif",
               fontWeight: 600,
-              fontSize: 18,
-              color: '#1C2B3A',
+              fontSize: 20,
               letterSpacing: '-0.02em',
             }}
           >
             Curi
           </span>
         </div>
-        <span
-          style={{
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 11,
-            color: '#C7962E',
-            fontWeight: 500,
-            letterSpacing: '0.04em',
-            border: '1px solid rgba(199, 150, 46, 0.3)',
-            padding: '3px 10px',
-            borderRadius: 4,
-            transform: 'rotate(-2deg)',
-            display: 'inline-block',
-          }}
-        >
+        <span style={{ display: 'block', lineHeight: '32px', fontSize: 12, color: MUTED }}>
           {today}
         </span>
       </div>
@@ -292,131 +99,193 @@ function ShareCardContent({ data }: { data: ShareData }) {
       {/* Label */}
       <div
         style={{
-          fontSize: 10,
-          fontWeight: 700,
-          textTransform: 'uppercase' as const,
-          letterSpacing: '0.12em',
-          color: '#3E6259',
-          marginBottom: 10,
-        }}
-      >
-        Fact of the Day
-      </div>
-
-      {/* Hook */}
-      <h2
-        style={{
-          fontFamily: "'Fraunces', serif",
-          fontSize: 24,
-          fontWeight: 700,
-          color: '#1C2B3A',
-          margin: '0 0 12px',
-          lineHeight: 1.3,
-        }}
-      >
-        {data.hookLine}
-      </h2>
-
-      {/* Context */}
-      <p
-        style={{
           fontSize: 13,
-          lineHeight: 1.7,
-          color: '#7C8A93',
-          margin: '0 0 20px',
+          fontWeight: 600,
+          lineHeight: '18px',
+          color: accent,
+          marginBottom: 12,
         }}
       >
-        {data.contextLine}
-      </p>
-
-      {/* Divider */}
-      <div
-        style={{
-          height: 1,
-          background: 'rgba(28, 43, 58, 0.08)',
-          marginBottom: 16,
-        }}
-      />
-
-      {/* Bullets */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
-        {data.bullets.map((bullet, idx) => (
-          <div
-            key={idx}
-            style={{
-              display: 'flex',
-              gap: 12,
-              fontSize: 13,
-              color: 'rgba(28, 43, 58, 0.9)',
-              lineHeight: 1.6,
-            }}
-          >
-            <span
-              style={{
-                flexShrink: 0,
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: '#7C8A93',
-                marginTop: 7,
-              }}
-            />
-            <span>{bullet}</span>
-          </div>
-        ))}
+        {label}
       </div>
 
-      {/* Divider */}
-      <div
-        style={{
-          height: 1,
-          background: 'rgba(28, 43, 58, 0.08)',
-          marginBottom: 16,
-        }}
-      />
+      {/* Content */}
+      <div style={{ flex: 1 }}>{children}</div>
 
       {/* Footer */}
       <div
         style={{
+          marginTop: 36,
+          paddingTop: 18,
+          borderTop: `1px solid ${RULE}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          lineHeight: '18px',
+          fontSize: 12,
         }}
       >
-        <span
-          style={{
-            fontSize: 11,
-            color: '#7C8A93',
-            fontStyle: 'italic',
-            fontFamily: "'Fraunces', serif",
-          }}
-        >
-          One word. One fact. Every day.
-        </span>
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 600,
-            color: '#D8492F',
-            letterSpacing: '0.02em',
-          }}
-        >
-          {SITE_URL}
-        </span>
+        <span style={{ fontWeight: 600, color: accent }}>{SITE_URL}</span>
+        <span style={{ color: MUTED }}>{tagline}</span>
       </div>
     </div>
   );
 }
 
+function wordSize(word: string) {
+  if (word.length > 14) return 38;
+  if (word.length > 11) return 46;
+  if (word.length > 8) return 54;
+  return 64;
+}
+
+function ShareCardContent({ data }: { data: ShareData }) {
+  if (data.type === 'word') {
+    return (
+      <CardShell accent={EMBER} label="Word of the day">
+        <h2
+          style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: wordSize(data.word),
+            fontWeight: 700,
+            lineHeight: 1.15,
+            letterSpacing: '-0.025em',
+            margin: 0,
+            paddingBottom: 6,
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {data.word}
+        </h2>
+
+        <p
+          style={{
+            fontSize: 18,
+            lineHeight: 1.55,
+            margin: 0,
+            paddingTop: 16,
+            maxWidth: 340,
+          }}
+        >
+          {data.definition}
+        </p>
+
+        <div style={{ marginTop: 40 }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              lineHeight: '16px',
+              color: MUTED,
+              marginBottom: 10,
+            }}
+          >
+            Example
+          </div>
+          <p
+            style={{
+              fontFamily: "'Fraunces', serif",
+              fontSize: 16,
+              lineHeight: 1.6,
+              // fontStyle: 'italic',
+              margin: 0,
+              paddingLeft: 16,
+              borderLeft: `2px solid ${EMBER}`,
+              color: INK,
+              opacity: 0.8,
+            }}
+          >
+            “{data.exampleSentence}”
+          </p>
+        </div>
+      </CardShell>
+    );
+  }
+
+  return (
+    <CardShell accent={MOSS} label="Fact of the day">
+      <h2
+        style={{
+          fontFamily: "'Fraunces', serif",
+          fontSize: 32,
+          fontWeight: 700,
+          lineHeight: 1.2,
+          letterSpacing: '-0.02em',
+          margin: '0 0 16px',
+        }}
+      >
+        {data.hookLine}
+      </h2>
+
+      <p
+        style={{
+          fontSize: 15,
+          lineHeight: 1.65,
+          color: MUTED,
+          margin: '0 0 28px',
+        }}
+      >
+        {data.contextLine}
+      </p>
+
+      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+        {data.bullets.map((bullet, idx) => (
+          <li
+            key={idx}
+            style={{
+              fontSize: 14,
+              lineHeight: 1.6,
+              padding: '12px 0',
+              borderTop: `1px solid ${RULE}`,
+            }}
+          >
+            {bullet}
+          </li>
+        ))}
+      </ul>
+    </CardShell>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Modal                                                                     */
+/* -------------------------------------------------------------------------- */
+
 export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  // Off-screen, full-size copy used only for image export. Output is identical on every device.
+  const exportRef = useRef<HTMLDivElement>(null);
+  // Visible preview, scaled to fit the available width.
+  const previewBoxRef = useRef<HTMLDivElement>(null);
+  const previewCardRef = useRef<HTMLDivElement>(null);
+
   const { isGenerating, generateImage, downloadImage, nativeShare, canNativeShare } =
     useShareCard();
   const [imageReady, setImageReady] = useState(false);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
+  const [scale, setScale] = useState(1);
+  const [cardHeight, setCardHeight] = useState(540);
 
-  // Generate image once modal opens and card is rendered
+  // Fit the preview to the container
+  useLayoutEffect(() => {
+    if (!isOpen || !data) return;
+    const box = previewBoxRef.current;
+    const card = previewCardRef.current;
+    if (!box || !card) return;
+
+    const measure = () => {
+      setScale(Math.min(1, box.clientWidth / CARD_WIDTH));
+      setCardHeight(card.offsetHeight);
+    };
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(box);
+    ro.observe(card);
+    return () => ro.disconnect();
+  }, [isOpen, data]);
+
+  // Generate the image once fonts are ready
   useEffect(() => {
     if (!isOpen || !data) {
       setImageReady(false);
@@ -425,19 +294,41 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
       return;
     }
 
-    // Wait a tick for fonts to load / card to render
-    const timer = setTimeout(async () => {
-      if (cardRef.current) {
-        const url = await generateImage(cardRef.current);
-        if (url) {
-          setGeneratedUrl(url);
-          setImageReady(true);
-        }
+    let cancelled = false;
+    (async () => {
+      try {
+        await document.fonts?.ready;
+      } catch {
+        /* ignore */
       }
-    }, 300);
+      await new Promise((r) => setTimeout(r, 150));
+      if (cancelled || !exportRef.current) return;
+      const url = await generateImage(exportRef.current);
+      if (!cancelled && url) {
+        setGeneratedUrl(url);
+        setImageReady(true);
+      }
+    })();
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+    };
   }, [isOpen, data, generateImage]);
+
+  // Escape to close, lock background scroll
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [isOpen, onClose]);
 
   const handleDownload = useCallback(() => {
     if (!generatedUrl || !data) return;
@@ -454,97 +345,111 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
     if (!generatedUrl || !data) return;
     const title = data.type === 'word' ? `Word: ${data.word}` : 'Fact of the Day';
     const shared = await nativeShare(generatedUrl, title);
-    if (!shared) {
-      // Fallback to download if native share isn't available
-      handleDownload();
-    }
+    if (!shared) handleDownload();
   }, [generatedUrl, data, nativeShare, handleDownload]);
 
   if (!isOpen || !data) return null;
 
+  const busy = isGenerating || !imageReady;
+
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Share card"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
-        style={{ animation: 'shareModalFadeIn 0.2s ease-out' }}
+        className="absolute inset-0 bg-ink/50 pointer-events-none"
+        style={{ animation: 'shareFade 0.2s ease-out' }}
       />
 
-      {/* Modal */}
+      {/* Sheet on mobile, dialog on larger screens */}
       <div
-        className="relative bg-paper rounded-2xl shadow-2xl border border-ink/10 w-full max-w-lg overflow-hidden flex flex-col"
-        style={{ animation: 'shareModalSlideUp 0.3s ease-out' }}
+        className="relative bg-paper w-full sm:max-w-[520px] flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl shadow-2xl"
+        style={{
+          maxHeight: 'calc(100dvh - env(safe-area-inset-top, 0px) - 8px)',
+          animation: 'shareRise 0.25s ease-out',
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-ink/8">
-          <div className="flex items-center gap-2">
-            <Share2 size={18} className="text-ember" />
-            <h3 className="font-display text-lg font-bold text-ink">Share Card</h3>
-          </div>
+        <div className="flex items-center justify-between pl-5 pr-3 h-14 shrink-0">
+          <h3 className="font-display text-base font-bold text-ink">Share</h3>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-ink/5 transition-colors text-faded-ink hover:text-ink"
-            aria-label="Close share modal"
+            className="h-10 w-10 -mr-1 inline-flex items-center justify-center rounded-full text-faded-ink hover:text-ink hover:bg-ink/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30"
+            aria-label="Close"
             type="button"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Card Preview */}
-        <div className="px-6 py-5 overflow-y-auto max-h-[60vh]">
-          {/* The actual card element we capture */}
-          <div className="flex justify-center">
-            <div ref={cardRef}>
-              <ShareCardContent data={data} />
+        {/* Preview */}
+        <div className="flex-1 min-h-0 overflow-y-auto bg-ink/[0.04] px-4 py-5 sm:px-6 sm:py-6">
+          <div ref={previewBoxRef} className="mx-auto w-full" style={{ maxWidth: CARD_WIDTH }}>
+            <div
+              style={{
+                width: CARD_WIDTH * scale,
+                height: cardHeight * scale,
+                marginInline: 'auto',
+                borderRadius: 16 * scale,
+                boxShadow: '0 1px 2px rgba(28,43,58,0.08), 0 8px 24px rgba(28,43,58,0.08)',
+              }}
+            >
+              <div
+                ref={previewCardRef}
+                style={{
+                  width: CARD_WIDTH,
+                  transform: `scale(${scale})`,
+                  transformOrigin: 'top left',
+                }}
+              >
+                <ShareCardContent data={data} />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="px-6 py-4 border-t border-ink/8 flex items-center gap-3">
-          {isGenerating || !imageReady ? (
-            <div className="flex items-center gap-2 text-faded-ink text-sm w-full justify-center py-1">
+        <div
+          className="flex items-center gap-3 px-4 sm:px-6 pt-4 shrink-0 border-t border-ink/10"
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
+        >
+          {busy ? (
+            <div
+              className="flex items-center justify-center gap-2 w-full h-11 text-sm text-faded-ink"
+              role="status"
+            >
               <Loader2 size={16} className="animate-spin" />
-              <span>Generating card…</span>
+              <span>Preparing image</span>
             </div>
           ) : (
             <>
               <button
                 onClick={handleDownload}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200',
+                  'flex-1 h-11 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30',
                   downloadSuccess
-                    ? 'bg-moss/10 text-moss border border-moss/20'
-                    : 'bg-ink/5 text-ink hover:bg-ink/10 border border-ink/10'
+                    ? 'bg-moss/10 text-moss'
+                    : canNativeShare
+                      ? 'bg-ink/5 text-ink hover:bg-ink/10'
+                      : 'bg-ember text-paper hover:bg-ember/90'
                 )}
                 type="button"
               >
-                {downloadSuccess ? (
-                  <>
-                    <Check size={16} />
-                    Saved!
-                  </>
-                ) : (
-                  <>
-                    <Download size={16} />
-                    Download
-                  </>
-                )}
+                {downloadSuccess ? 'Saved' : 'Download'}
               </button>
 
               {canNativeShare && (
                 <button
                   onClick={handleShare}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-paper text-sm font-bold hover:bg-ember/90 transition-all duration-200 shadow-sm"
+                  className="flex-1 h-11 rounded-xl bg-ember text-paper text-sm font-semibold hover:bg-ember/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
                   type="button"
                 >
-                  <Share2 size={16} />
                   Share
                 </button>
               )}
@@ -553,15 +458,27 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
         </div>
       </div>
 
-      {/* Animations */}
+      {/* Full-size export copy, kept off-screen so the saved image never depends on screen size */}
+      <div
+        aria-hidden="true"
+        style={{ position: 'fixed', left: -10000, top: 0, pointerEvents: 'none' }}
+      >
+        <div ref={exportRef} style={{ width: CARD_WIDTH }}>
+          <ShareCardContent data={data} />
+        </div>
+      </div>
+
       <style>{`
-        @keyframes shareModalFadeIn {
+        @keyframes shareFade {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes shareModalSlideUp {
-          from { opacity: 0; transform: translateY(16px) scale(0.97); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes shareRise {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [role="dialog"] * { animation: none !important; }
         }
       `}</style>
     </div>
