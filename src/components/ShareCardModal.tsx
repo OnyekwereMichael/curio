@@ -59,23 +59,25 @@ function CardShell({
         color: INK,
       }}
     >
-      {/* Brand row: fixed-height line boxes so the logo and wordmark align in the exported image */}
+      {/* Brand row — avoid flex align-items:center here; html2canvas misplaces text
+           inside flex cross-axis alignment. Instead we give every child an explicit
+           height + lineHeight so the baseline is baked in and render-stable. */}
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'stretch',
           justifyContent: 'space-between',
           height: 32,
           marginBottom: 44,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', height: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'stretch', gap: 10 }}>
           <img
             src={CuriLogo}
             alt=""
             width={32}
             height={32}
-            style={{ borderRadius: 8, display: 'block', marginRight: 10 }}
+            style={{ borderRadius: 8, display: 'inline-block', verticalAlign: 'middle', flexShrink: 0, alignSelf: 'center' }}
           />
           <span
             style={{
@@ -91,10 +93,11 @@ function CardShell({
             Curi
           </span>
         </div>
-        <span style={{ display: 'block', lineHeight: '32px', fontSize: 12, color: MUTED }}>
+        <span style={{ display: 'block', height: 32, lineHeight: '32px', fontSize: 12, color: MUTED }}>
           {today}
         </span>
       </div>
+
 
       {/* Label */}
       <div

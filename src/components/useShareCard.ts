@@ -47,6 +47,16 @@ export function useShareCard() {
         useCORS: true,
         allowTaint: true,
         logging: false,
+        onclone: (_clonedDoc, clonedElement) => {
+          // Tailwind preflight sets `img { display: block }` globally. Inside the
+          // html2canvas clone this causes the logo <img> (inside a flex row with
+          // align-items:center) to sit on the wrong baseline, shifting the "Curi"
+          // wordmark down relative to the logo. Resetting it to inline-block makes
+          // the clone match exactly what the browser paints in the live preview.
+          const style = _clonedDoc.createElement('style');
+          style.textContent = 'img { display: inline-block !important; vertical-align: middle !important; }';
+          clonedElement.appendChild(style);
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       setGeneratedImage(dataUrl);
