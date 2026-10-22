@@ -2,7 +2,7 @@ import { AppShell } from '../../components/AppShell';
 import { DictionarySearch } from '../../components/DictionarySearch';
 import { DictionaryResult } from '../../components/DictionaryResult';
 import { useDictionary } from '../../hooks/useDictionary';
-import { BookOpen } from 'lucide-react';
+
 
 const SUGGESTIONS = ['Pragmatic', 'Ambivalent', 'Resilient', 'Eloquent', 'Nuance'];
 
