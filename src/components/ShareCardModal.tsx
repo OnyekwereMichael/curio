@@ -59,45 +59,53 @@ function CardShell({
         color: INK,
       }}
     >
-      {/* Brand row — avoid flex align-items:center here; html2canvas misplaces text
-           inside flex cross-axis alignment. Instead we give every child an explicit
-           height + lineHeight so the baseline is baked in and render-stable. */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'stretch',
-          justifyContent: 'space-between',
-          height: 32,
-          marginBottom: 44,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'stretch', gap: 10 }}>
-          <img
-            src={CuriLogo}
-            alt=""
-            width={32}
-            height={32}
-            style={{ borderRadius: 8, display: 'inline-block', verticalAlign: 'middle', flexShrink: 0, alignSelf: 'center' }}
-          />
-          <span
-            style={{
-              display: 'block',
-              height: 32,
-              lineHeight: '32px',
-              fontFamily: "'Fraunces', serif",
-              fontWeight: 600,
-              fontSize: 20,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Curi
-          </span>
-        </div>
-        <span style={{ display: 'block', height: 32, lineHeight: '32px', fontSize: 12, color: MUTED }}>
-          {today}
-        </span>
-      </div>
+      {/* Brand row — NO flexbox here. html2canvas cannot reliably resolve flex
+           cross-axis alignment for mixed children. Instead the logo + wordmark are
+           pure inline-block siblings (html2canvas-safe vertical centering), and the
+           date is absolutely positioned so it never touches inline flow. */}
+     <div
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 32,
+    marginBottom: 44,
+  }}
+>
+  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <img
+      src={CuriLogo}
+      alt=""
+      width={32}
+      height={32}
+      style={{ borderRadius: 8, display: 'block', flexShrink: 0 }}
+    />
+    {/* <span
+      style={{
+        fontFamily: "'Fraunces', serif",
+        fontWeight: 600,
+        fontSize: 20,
+        lineHeight: 1,
+        letterSpacing: '-0.02em',
+        display: 'block',
+        transform: 'translateY(-1px)',
+      }}
+    >
+      Curi
+    </span> */}
+  </div>
 
+  <span
+    style={{
+      fontSize: 12,
+      lineHeight: 1,
+      color: MUTED,
+      display: 'block',
+    }}
+  >
+    {today}
+  </span>
+</div>
 
       {/* Label */}
       <div

@@ -1,17 +1,56 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { Smartphone, Bell, Flame } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { usePlatform } from '../../lib/usePlatform';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
 
 const SafariShareIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-ember inline mx-1 translate-y-[-2px]">
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="mx-1 inline -translate-y-px text-ember"
+    aria-hidden="true"
+  >
     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
     <polyline points="16 6 12 2 8 6" />
     <line x1="12" y1="2" x2="12" y2="15" />
   </svg>
 );
+
+function Step({ number, children }: { number: number; children: ReactNode }) {
+  return (
+    <li className="flex items-start gap-4">
+      <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-ember/10 font-display text-sm font-bold text-ember">
+        {number}
+      </span>
+      <p className="pt-1 text-sm leading-relaxed text-ink/80">{children}</p>
+    </li>
+  );
+}
+
+function StepsCard({ children }: { children: ReactNode }) {
+  return (
+    <ol className="flex flex-col gap-5 rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+      {children}
+    </ol>
+  );
+}
+
+function PromptCard({ children }: { children: ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-ink/10 bg-white p-6 text-center shadow-sm">
+      <p className="text-sm leading-relaxed text-ink/80">{children}</p>
+    </div>
+  );
+}
 
 export function InstallNudge() {
   const navigate = useNavigate();
@@ -79,121 +118,91 @@ export function InstallNudge() {
   };
 
   return (
-    <div className="min-h-screen bg-paper flex flex-col font-ui text-ink">
-      <main className="flex-1 flex flex-col justify-center items-center px-6 pb-20 pt-12">
-        <div className="w-full max-w-md flex flex-col h-full">
-          {/* Step 1: Static screen shell */}
-          <div className="text-center mb-8">
-            <h1 className="font-display text-3xl font-bold text-ink mb-2 leading-tight">
+    <div className="flex min-h-screen flex-col bg-paper font-ui text-ink">
+      <main className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="flex w-full max-w-md flex-col gap-8">
+          {/* Header */}
+          <header className="text-center">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-ember/10 text-ember">
+              <Smartphone size={30} aria-hidden="true" />
+            </div>
+
+            <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-ink max-sm:text-[26px]">
               Install Curi to get your daily word and fact
             </h1>
-            <p className="text-faded-ink text-sm font-display">
-              So your streak — and your reminders — actually work.
+            <p className="mt-3 text-sm leading-relaxed text-faded-ink">
+              So your streak and your reminders actually work.
             </p>
-          </div>
 
-          {/* Content Area */}
-          <div className="mb-10 min-h-full flex flex-col justify-center max-w-md mx-auto px-4">
-            {/* Android - Automatic PWA Prompt Available */}
+            <ul className="mt-5 flex flex-wrap items-center justify-center gap-2">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-white px-3 py-1.5 text-xs font-medium text-ink/80">
+                <Bell size={13} className="text-ember" aria-hidden="true" />
+                Daily reminders
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-white px-3 py-1.5 text-xs font-medium text-ink/80">
+                <Flame size={13} className="text-ember" aria-hidden="true" />
+                Keep your streak
+              </li>
+            </ul>
+          </header>
+
+          {/* Instructions */}
+          <section aria-label="How to install">
+            {/* Android: automatic prompt available */}
             {platform === 'android' && installPromptEvent && (
-              <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <p className="text-ink font-medium font-display">
-                  Tap Install below to add Curi to your home screen.
-                </p>
-              </div>
+              <PromptCard>Tap <strong className="text-ink">Install</strong> below to add Curi to your home screen.</PromptCard>
             )}
 
-            {/* Android - Manual Installation Instructions */}
+            {/* Android: manual steps */}
             {platform === 'android' && !installPromptEvent && (
-              <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
-                    1
-                  </div>
-                  <p className="text-ink text-sm leading-snug pt-1">
-                    Tap the menu icon (<strong>⋮</strong>) in your browser.
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-ink font-semibold text-sm font-display">
-                    2
-                  </div>
-                  <p className="text-ink text-sm leading-snug pt-1 font-display">
-                    Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
-                  </p>
-                </div>
-              </div>
+              <StepsCard>
+                <Step number={1}>
+                  Tap the menu icon (<strong className="text-ink">⋮</strong>) in your browser.
+                </Step>
+                <Step number={2}>
+                  Tap <strong className="text-ink">"Install app"</strong> or{' '}
+                  <strong className="text-ink">"Add to Home screen"</strong>.
+                </Step>
+              </StepsCard>
             )}
 
-            {/* iOS - Step-by-Step Safari Instructions */}
+            {/* iOS: Safari steps */}
             {platform === 'ios' && (
-              <div className="flex flex-col gap-5 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink  font-semibold text-sm font-display">
-                    1
-                  </div>
-                  <p className="text-faded-ink text-sm leading-relaxed pt-1 flex items-center flex-wrap gap-1 font-display">
-                    Tap the <SafariShareIcon /> Share icon in Safari.
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink  font-semibold text-sm font-display">
-                    2
-                  </div>
-                  <p className="text-faded-ink text-sm leading-relaxed pt-1 font-display">
-                    Scroll down and tap <strong>"Add to Home Screen"</strong>.
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink font-semibold text-sm font-display">
-                    3
-                  </div>
-                  <p className="text-faded-ink text-sm leading-relaxed pt-1 font-display">
-                    Tap <strong>"Add"</strong> in the top-right corner to finish.
-                  </p>
-                </div>
-              </div>
+              <StepsCard>
+                <Step number={1}>
+                  Tap the <SafariShareIcon /> <strong className="text-ink">Share</strong> icon in Safari.
+                </Step>
+                <Step number={2}>
+                  Scroll down and tap <strong className="text-ink">"Add to Home Screen"</strong>.
+                </Step>
+                <Step number={3}>
+                  Tap <strong className="text-ink">"Add"</strong> in the top-right corner to finish.
+                </Step>
+              </StepsCard>
             )}
 
-            {/* Desktop / Other - Manual Installation Instructions */}
+            {/* Desktop / other: manual steps */}
             {platform === 'other' && !installPromptEvent && (
-              <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink font-semibold text-sm font-display">
-                    1
-                  </div>
-                  <p className="text-faded-ink text-sm leading-snug pt-1">
-                    Click the <strong>Install icon (⊕)</strong> in your browser address bar or menu.
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center flex-shrink-0 text-faded-ink  font-semibold text-sm font-display">
-                    2
-                  </div>
-                  <p className="text-faded-ink text-sm leading-snug pt-1">
-                    Click <strong>"Install"</strong> to add Curi to your device.
-                  </p>
-                </div>
-              </div>
+              <StepsCard>
+                <Step number={1}>
+                  Click the <strong className="text-ink">Install icon (⊕)</strong> in your browser address bar or menu.
+                </Step>
+                <Step number={2}>
+                  Click <strong className="text-ink">"Install"</strong> to add Curi to your device.
+                </Step>
+              </StepsCard>
             )}
 
-            {/* Desktop / Other - Automatic PWA Prompt Available */}
+            {/* Desktop / other: automatic prompt available */}
             {platform === 'other' && installPromptEvent && (
-              <div className="text-center bg-white rounded-2xl p-6 shadow-sm border border-ink/5">
-                <p className="text-faded-ink font-medium font-display">
-                  Click Install below to add Curi to your device.
-                  Takes less than a minute.
-                </p>
-              </div>
+              <PromptCard>
+                Click <strong className="text-ink">Install</strong> below to add Curi to your device. Takes less than a minute.
+              </PromptCard>
             )}
-          </div>
+          </section>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-4 mt-auto">
+          {/* Actions */}
+          <div className="flex flex-col items-center gap-2">
             {installPromptEvent ? (
               <Button onClick={handleInstallClick} className="w-full font-display">
                 Install
@@ -203,14 +212,15 @@ export function InstallNudge() {
                 Got it
               </Button>
             ) : (
-              <Button onClick={completeOnboardingStep} className="w-full">
+              <Button onClick={completeOnboardingStep} className="w-full font-display">
                 Continue
               </Button>
             )}
 
             <button
+              type="button"
               onClick={handleSkipInstall}
-              className="text-faded-ink text-sm font-medium hover:text-ink transition-colors py-3"
+              className="cursor-pointer rounded-lg px-4 py-3 text-sm font-medium text-faded-ink transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/40"
             >
               Skip for now
             </button>

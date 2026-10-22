@@ -6,7 +6,8 @@ import { supabase } from '../lib/superbase';
 export function useWordCardInteractions(
   wordId: string,
   audioUrl?: string,
-  onSavedChange?: (saved: boolean) => void
+  onSavedChange?: (saved: boolean) => void,
+  word?: string
 ) {
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
@@ -99,30 +100,84 @@ export function useWordCardInteractions(
     }
   }, [wordId, user]);
 
+  const playBrowserAudio = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) {
+      console.warn('Text-to-speech is not supported in this browser.');
+      setIsPlaying(false);
+      return;
+    }
+
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(
+        (v) => v.lang === 'en-US' || v.lang === 'en-GB' || v.lang.startsWith('en-')
+      );
+      if (enVoice) {
+        utterance.voice = enVoice;
+      } else {
+        utterance.lang = 'en-US';
+      }
+
+      utterance.onstart = () => setIsPlaying(true);
+      utterance.onend = () => setIsPlaying(false);
+      utterance.onerror = () => setIsPlaying(false);
+
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.error('Speech synthesis failed:', err);
+      setIsPlaying(false);
+    }
+  }, []);
+
   const play = useCallback(() => {
-    if (!audioUrl || isPlaying) return;
+    if (isPlaying) return;
 
-    setIsPlaying(true);
+    if (audioUrl) {
+      setIsPlaying(true);
 
-    const audio = new Audio(audioUrl);
-    audioRef.current = audio;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
 
-    audio.onended = () => setIsPlaying(false);
-    audio.onerror = () => {
-      console.error('Failed to play pronunciation audio for word:', wordId);
-      setIsPlaying(false);
-    };
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
 
-    audio.play().catch((err) => {
-      console.error('Audio playback failed:', err);
-      setIsPlaying(false);
-    });
-  }, [audioUrl, isPlaying, wordId]);
+      audio.onended = () => setIsPlaying(false);
+      audio.onerror = () => {
+        console.error('Failed to play pronunciation audio for word:', wordId);
+        if (word) {
+          playBrowserAudio(word);
+        } else {
+          setIsPlaying(false);
+        }
+      };
+
+      audio.play().catch((err) => {
+        console.error('Audio playback failed:', err);
+        if (word) {
+          playBrowserAudio(word);
+        } else {
+          setIsPlaying(false);
+        }
+      });
+      return;
+    }
+
+    if (word) {
+      playBrowserAudio(word);
+    }
+  }, [audioUrl, isPlaying, playBrowserAudio, word, wordId]);
 
   // Stop playback if the component unmounts mid-play (e.g. navigating away)
   useEffect(() => {
     return () => {
       audioRef.current?.pause();
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
     };
   }, []);
 

@@ -18,7 +18,7 @@ interface WordCardProps {
 }
 
 export function WordCard({ id, word, definition, exampleSentence, audioUrl, className, variant = 'new', label, onSavedChange }: WordCardProps) {
-  const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnown, play } = useWordCardInteractions(id, audioUrl, onSavedChange);
+  const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnown, play } = useWordCardInteractions(id, audioUrl, onSavedChange, word);
   const [shareOpen, setShareOpen] = useState(false);
 
   const labelColor = variant === 'new' ? 'text-ember' : 'text-faded-ink';
@@ -44,12 +44,10 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
             <h3 className="font-display text-2xl font-bold text-ink leading-tight">{word}</h3>
             <button
               onClick={play}
-              disabled={!audioUrl}
               className={cn(
                 "p-2 rounded-full transition-colors flex-shrink-0",
-                !audioUrl ? "text-faded-ink/40 cursor-not-allowed" :
-                  isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" :
-                    "text-ember hover:bg-ember/5 hover:text-ember/80"
+                isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" :
+                  "text-ember hover:bg-ember/5 hover:text-ember/80"
               )}
               aria-label="Play pronunciation"
               type="button"
