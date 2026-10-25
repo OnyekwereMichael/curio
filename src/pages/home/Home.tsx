@@ -12,6 +12,7 @@ import { useStreak } from '../../components/useStreak';
 import { supabase } from '../../lib/superbase';
 import { StreakCalendar } from '../../components/Streakcalendar';
 import { ShieldProgress } from '../../components/ShieldProgress';
+import { ShieldSavedNotice } from '../../components/ShieldSavedNotice';
 
 function SkeletonCard() {
   return (
@@ -39,7 +40,7 @@ export function HomeScreen() {
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
-  const { commitStreak, currentStreak, shieldCount } = useStreak(); // read-only on mount; increments only when called
+ const { commitStreak, currentStreak, shieldCount, shieldsJustUsed } = useStreak();
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -85,6 +86,7 @@ export function HomeScreen() {
   return (
     <AppShell title="Home">
       <NotificationReEnableBanner />
+      <ShieldSavedNotice shieldsUsed={shieldsJustUsed} shieldsLeft={shieldCount} />
       <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
       <div>
   <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
