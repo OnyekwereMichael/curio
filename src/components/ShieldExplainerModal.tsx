@@ -70,7 +70,7 @@ export function ShieldExplainerModal({ open, onClose, currentStreak, shieldCount
             </h2>
 
             <p className="text-sm text-ink leading-relaxed mb-4">
-              Shields protect your streak through one missed day. Earn one every 7 days, up to 2 at a time.
+              If you miss a day, a shield can restore your streak. Earn one every 7 days, up to 2 at a time.
             </p>
 
             <div className="rounded-lg bg-moss/10 px-4 py-3 text-sm text-moss font-medium mb-5">

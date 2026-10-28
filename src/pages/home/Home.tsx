@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
 import { DailyQuiz } from '../../components/DailyQuiz';
+import { StreakLossModal } from '../../components/StreakLossModal';
 
 import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
@@ -40,7 +41,14 @@ export function HomeScreen() {
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
- const { commitStreak, currentStreak, shieldCount, shieldsJustUsed } = useStreak();
+const {
+  commitStreak, currentStreak, shieldCount, shieldsJustUsed,
+  lostStreak, missedDays, reconcileStreak, recoverStreak, dismissLostStreak,
+} = useStreak();
+
+useEffect(() => {
+  reconcileStreak();
+}, [reconcileStreak]);
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -87,6 +95,13 @@ export function HomeScreen() {
     <AppShell title="Home">
       <NotificationReEnableBanner />
       <ShieldSavedNotice shieldsUsed={shieldsJustUsed} shieldsLeft={shieldCount} />
+      <StreakLossModal
+  lostStreak={lostStreak}
+  missedDays={missedDays}
+  shieldCount={shieldCount}
+  onRestore={recoverStreak}
+  onStartFresh={dismissLostStreak}
+/>
       <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
       <div>
   <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
