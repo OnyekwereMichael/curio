@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
+
 import { useAuth } from '../contexts/AuthContext';
 import { missedDaysSince, reconcile, recover, commit, type StreakRow } from '../lib/streakLogic';
 import { supabase } from '../lib/superbase';
 
-const COLUMNS = 'current_streak, longest_streak, last_active_date, shield_count, lost_streak';
+const COLUMNS =
+  'current_streak, longest_streak, last_active_date, shield_count, lost_streak, last_milestone_shown';
 const todayStr = () => new Date().toISOString().split('T')[0];
 
 function toRow(d: any): StreakRow {
@@ -13,6 +15,7 @@ function toRow(d: any): StreakRow {
     lastActiveDate: d.last_active_date ?? null,
     shieldCount: d.shield_count ?? 0,
     lostStreak: d.lost_streak ?? 0,
+    lastMilestoneShown: d.last_milestone_shown ?? 0,
   };
 }
 
@@ -22,6 +25,7 @@ const EMPTY: StreakRow = {
   lastActiveDate: null,
   shieldCount: 0,
   lostStreak: 0,
+  lastMilestoneShown: 0,
 };
 
 export function useStreak() {
@@ -31,6 +35,7 @@ export function useStreak() {
   const [justIncremented, setJustIncremented] = useState(false);
   const [shieldsJustUsed, setShieldsJustUsed] = useState(0);
   const [shieldJustEarned, setShieldJustEarned] = useState(false);
+  const [milestoneReached, setMilestoneReached] = useState<number | null>(null);
 
   const fetchRow = useCallback(async (): Promise<StreakRow | null> => {
     if (!user) return null;
@@ -70,7 +75,11 @@ export function useStreak() {
 
     const { error } = await supabase
       .from('users')
-      .update({ current_streak: result.currentStreak, lost_streak: result.lostStreak })
+      .update({
+        current_streak: result.currentStreak,
+        lost_streak: result.lostStreak,
+        last_milestone_shown: result.lastMilestoneShown,
+      })
       .eq('id', user.id);
 
     if (error) {
@@ -78,7 +87,12 @@ export function useStreak() {
       return;
     }
 
-    setRow({ ...current, currentStreak: result.currentStreak, lostStreak: result.lostStreak });
+    setRow({
+      ...current,
+      currentStreak: result.currentStreak,
+      lostStreak: result.lostStreak,
+      lastMilestoneShown: result.lastMilestoneShown,
+    });
     window.dispatchEvent(new Event('streak-updated'));
   }, [user, fetchRow]);
 
@@ -149,6 +163,7 @@ export function useStreak() {
         last_active_date: today,
         shield_count: result.newShieldCount,
         lost_streak: 0,
+        last_milestone_shown: result.newLastMilestoneShown,
       })
       .eq('id', user.id);
 
@@ -163,11 +178,15 @@ export function useStreak() {
       lastActiveDate: today,
       shieldCount: result.newShieldCount,
       lostStreak: 0,
+      lastMilestoneShown: result.newLastMilestoneShown,
     });
     setJustIncremented(true);
+    setMilestoneReached(result.milestone);
     setShieldJustEarned(result.earnedShield);
     window.dispatchEvent(new Event('streak-updated'));
   }, [user, fetchRow]);
+
+  const dismissMilestone = useCallback(() => setMilestoneReached(null), []);
 
   return {
     currentStreak: row.currentStreak,
@@ -179,6 +198,8 @@ export function useStreak() {
     justIncremented,
     shieldsJustUsed,
     shieldJustEarned,
+    milestoneReached,
+    dismissMilestone,
     reconcileStreak,
     recoverStreak,
     dismissLostStreak,

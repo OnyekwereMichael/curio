@@ -4,6 +4,7 @@ import { WordCard } from '../../components/WordCard';
 import { FactCard } from '../../components/FactCard';
 import { DailyQuiz } from '../../components/DailyQuiz';
 import { StreakLossModal } from '../../components/StreakLossModal';
+import { MilestoneModal } from '../../components/MilestoneModal';
 
 import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
@@ -42,8 +43,9 @@ export function HomeScreen() {
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
 const {
-  commitStreak, currentStreak, shieldCount, shieldsJustUsed,
+  commitStreak, currentStreak, shieldCount, shieldsJustUsed, shieldJustEarned,
   lostStreak, missedDays, reconcileStreak, recoverStreak, dismissLostStreak,
+  milestoneReached, dismissMilestone,
 } = useStreak();
 
 useEffect(() => {
@@ -95,6 +97,7 @@ useEffect(() => {
     <AppShell title="Home">
       <NotificationReEnableBanner />
       <ShieldSavedNotice shieldsUsed={shieldsJustUsed} shieldsLeft={shieldCount} />
+      <MilestoneModal milestone={milestoneReached} shieldEarned={shieldJustEarned} onClose={dismissMilestone} />
       <StreakLossModal
   lostStreak={lostStreak}
   missedDays={missedDays}

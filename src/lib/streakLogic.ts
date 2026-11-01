@@ -4,6 +4,9 @@
 export const MAX_SHIELDS = 2;
 export const SHIELD_EVERY_DAYS = 7;
 
+// Streak lengths that get a celebration screen. Add more (365, say) any time.
+export const MILESTONES = [7, 30, 60, 100];
+
 // A streak shorter than this resets quietly, with no loss screen. Early on
 // there is little to mourn and nothing to restore, so we don't discourage
 // newcomers. Set to 1 if you want the loss screen for every lost streak.
@@ -15,6 +18,7 @@ export interface StreakRow {
   lastActiveDate: string | null; // last day a quiz was completed (or covered by a shield)
   shieldCount: number;
   lostStreak: number; // streak that just ended and can still be restored (0 = none)
+  lastMilestoneShown: number; // highest milestone celebrated in the current streak
 }
 
 export function daysBetween(earlier: string, later: string): number {
@@ -40,20 +44,31 @@ export function reconcile(row: StreakRow, today: string) {
 
   if (missed === 0) {
     // Streak is intact. Clear any stale leftover, just in case.
-    return { changed: row.lostStreak !== 0, currentStreak: row.currentStreak, lostStreak: 0 };
+    return {
+      changed: row.lostStreak !== 0,
+      currentStreak: row.currentStreak,
+      lostStreak: 0,
+      lastMilestoneShown: row.lastMilestoneShown,
+    };
   }
 
   if (row.currentStreak > 0) {
-    // First time we notice the break.
+    // First time we notice the break. The streak is over, so milestones start fresh.
     return {
       changed: true,
       currentStreak: 0,
       lostStreak: row.currentStreak >= MIN_LOSS_STREAK ? row.currentStreak : 0,
+      lastMilestoneShown: 0,
     };
   }
 
   // Already reset on an earlier visit. Keep any pending restore as it is.
-  return { changed: false, currentStreak: 0, lostStreak: row.lostStreak };
+  return {
+    changed: false,
+    currentStreak: 0,
+    lostStreak: row.lostStreak,
+    lastMilestoneShown: row.lastMilestoneShown,
+  };
 }
 
 // Using shields to bring a lost streak back. One shield per missed day.
@@ -100,12 +115,20 @@ export function commit(row: StreakRow, today: string) {
     earnedShield = true;
   }
 
+  // Celebrate a milestone once per streak: only if it is a milestone AND higher
+  // than the last one already celebrated. A fresh start clears that memory.
+  const base = newStreak === 1 ? 0 : row.lastMilestoneShown;
+  const milestone =
+    MILESTONES.includes(newStreak) && newStreak > base ? newStreak : null;
+
   return {
     skipped: false as const,
     newStreak,
     newLongest: Math.max(newStreak, row.longestStreak),
     newShieldCount: shields,
     earnedShield,
+    milestone,
+    newLastMilestoneShown: milestone ?? base,
   };
 }
 
@@ -132,4 +155,33 @@ export function getStreakLossCopy(lostStreak: number, missedDays: number, shield
     restoreNote,
     restoreLabel: `Use ${plural(Math.max(missedDays, 1), 'shield')} to restore it`,
   };
+}
+
+// Wording for the milestone screen. Quiet acknowledgment, nothing loud.
+export function getMilestoneCopy(days: number, shieldEarned: boolean) {
+  const copy: Record<number, { title: string; body: string }> = {
+    7: {
+      title: 'Seven days. You showed up.',
+      body: 'A full week of one word and one fact a day. This is how habits start.',
+    },
+    30: {
+      title: 'Thirty days.',
+      body: "A month of showing up. This isn't a streak anymore, it's a habit.",
+    },
+    60: {
+      title: 'Sixty days.',
+      body: "Two months of curiosity. You've learned more than you probably realize.",
+    },
+    100: {
+      title: 'One hundred days.',
+      body: 'Most people never get here. You did.',
+    },
+  };
+
+  const found = copy[days] ?? {
+    title: `${days} days.`,
+    body: 'You keep showing up. That is the whole secret.',
+  };
+
+  return { ...found, shieldLine: shieldEarned ? 'You earned a Streak Shield.' : null };
 }
