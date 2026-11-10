@@ -11,31 +11,31 @@ function ResultSkeleton() {
     <div
       role="status"
       aria-label="Loading definition"
-      className="flex animate-pulse flex-col gap-6 rounded-2xl border border-ink/10 bg-paper p-5 shadow-sm sm:p-6"
+      className="flex animate-pulse flex-col gap-6 rounded-card border border-line bg-paper p-5 shadow-card sm:p-6"
     >
       {/* Word + phonetic + audio */}
-      <div className="flex items-start justify-between gap-4 border-b border-ink/10 pb-5">
+      <div className="flex items-start justify-between gap-4 border-b border-line pb-5">
         <div className="flex w-full flex-col gap-3">
-          <div className="h-9 w-2/5 rounded-lg bg-ink/10" />
-          <div className="h-5 w-24 rounded-full bg-ink/10" />
+          <div className="h-9 w-2/5 rounded-lg bg-ink-900/10" />
+          <div className="h-5 w-24 rounded-full bg-ink-900/10" />
         </div>
-        <div className="h-11 w-11 flex-shrink-0 rounded-full bg-ink/10" />
+        <div className="h-11 w-11 flex-shrink-0 rounded-full bg-ink-900/10" />
       </div>
 
       {/* Part of speech */}
       <div className="flex items-center gap-3">
-        <div className="h-3 w-16 rounded bg-ink/10" />
-        <div className="h-px flex-1 bg-ink/10" />
+        <div className="h-3 w-16 rounded bg-ink-900/10" />
+        <div className="h-px flex-1 bg-ink-900/10" />
       </div>
 
       {/* Definitions */}
       <div className="flex flex-col gap-5">
         {[0, 1].map((i) => (
           <div key={i} className="flex gap-3">
-            <div className="h-6 w-6 flex-shrink-0 rounded-full bg-ink/10" />
+            <div className="h-6 w-6 flex-shrink-0 rounded-full bg-ink-900/10" />
             <div className="flex w-full flex-col gap-2">
-              <div className="h-4 w-full rounded bg-ink/10" />
-              <div className="h-4 w-4/5 rounded bg-ink/10" />
+              <div className="h-4 w-full rounded bg-ink-900/10" />
+              <div className="h-4 w-4/5 rounded bg-ink-900/10" />
             </div>
           </div>
         ))}
@@ -50,16 +50,16 @@ function ErrorState({ message }: { message: string }) {
   return (
     <div
       role="alert"
-      className="flex flex-col items-center gap-4 rounded-2xl border border-ink/10 bg-paper px-6 py-10 text-center shadow-sm"
+      className="flex flex-col items-center gap-4 rounded-card border border-line bg-paper px-6 py-10 text-center shadow-card"
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ember/10">
-        <AlertCircle size={26} className="text-ember" aria-hidden="true" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-card bg-ember-50">
+        <AlertCircle size={26} className="text-ember-600" aria-hidden="true" />
       </div>
       <div>
-        <p className="mb-1 font-display text-lg font-bold text-ink">
+        <p className="mb-1 font-display text-lg font-bold text-ink-900">
           Word not found
         </p>
-        <p className="mx-auto max-w-xs text-sm leading-relaxed text-faded-ink">
+        <p className="mx-auto max-w-xs text-sm leading-relaxed text-ink-500">
           {message}
         </p>
       </div>
@@ -72,14 +72,14 @@ function ErrorState({ message }: { message: string }) {
 export function EmptyState() {
   return (
     <div className="flex flex-col items-center gap-4 py-10 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ember/10">
-        <BookOpen size={26} className="text-ember" aria-hidden="true" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-card bg-ember-50">
+        <BookOpen size={26} className="text-ember-600" aria-hidden="true" />
       </div>
       <div>
-        <p className="mb-1 font-display text-lg font-bold text-ink">
+        <p className="mb-1 font-display text-lg font-bold text-ink-900">
           Look up any word
         </p>
-        <p className="mx-auto max-w-xs text-sm leading-relaxed text-faded-ink">
+        <p className="mx-auto max-w-xs text-sm leading-relaxed text-ink-500">
           Search for a word to see its phonetic spelling, definitions, and usage
           examples.
         </p>
@@ -117,15 +117,15 @@ function DefinitionCard({ entry }: { entry: DictionaryEntry }) {
   const { word, phonetic, phoneticAudioUrl, meanings } = entry;
 
   return (
-    <article className="flex flex-col gap-6 rounded-2xl border border-ink/10 bg-paper p-5 font-ui shadow-sm sm:p-6">
+    <article className="flex flex-col gap-6 rounded-card border border-line bg-paper p-5 font-ui shadow-card sm:p-6">
       {/* Header: word, phonetic, audio */}
-      <header className="flex items-start justify-between gap-4 border-b border-ink/10 pb-5">
+      <header className="flex items-start justify-between gap-4 border-b border-line pb-5">
         <div className="flex min-w-0 flex-col gap-2">
-          <h2 className="break-words font-display text-3xl font-bold capitalize leading-tight tracking-tight text-ink sm:text-4xl">
+          <h2 className="break-words font-display text-3xl font-bold capitalize leading-tight tracking-tight text-ink-900 sm:text-4xl">
             {word}
           </h2>
           {phonetic && (
-            <span className="w-fit rounded-full bg-ember/10 px-3 py-1 font-utility text-sm tracking-wide text-ember">
+            <span className="w-fit rounded-full bg-ember-50 px-3 py-1 font-utility text-sm tracking-wide text-ember-600">
               {phonetic}
             </span>
           )}
@@ -139,24 +139,24 @@ function DefinitionCard({ entry }: { entry: DictionaryEntry }) {
         <section key={`${meaning.partOfSpeech}-${idx}`}>
           {/* Part of speech with divider line */}
           <div className="mb-4 flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-ember">
+            <span className="text-xs font-bold uppercase tracking-widest text-ember-600">
               {meaning.partOfSpeech}
             </span>
-            <span className="h-px flex-1 bg-ink/10" aria-hidden="true" />
+            <span className="h-px flex-1 bg-ink-900/10" aria-hidden="true" />
           </div>
 
           <ol className="flex flex-col gap-5">
             {meaning.definitions.map((def, dIdx) => (
               <li key={dIdx} className="flex gap-3">
-                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-ember/10 text-xs font-bold text-ember">
+                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-ember-50 text-xs font-bold text-ember-600">
                   {dIdx + 1}
                 </span>
                 <div className="flex min-w-0 flex-col gap-2">
-                  <p className="text-[15px] leading-relaxed text-ink">
+                  <p className="text-[15px] leading-relaxed text-ink-900">
                     {def.definition}
                   </p>
                   {def.example && (
-                    <p className="border-l-2 border-ember/30 pl-3 text-sm italic leading-relaxed text-ink/70">
+                    <p className="border-l-2 border-ember-500/30 pl-3 text-sm italic leading-relaxed text-ink-900/70">
                       &ldquo;{def.example}&rdquo;
                     </p>
                   )}
@@ -231,10 +231,10 @@ function AudioButton({ word, audioUrl }: { word: string; audioUrl?: string }) {
     <button
       onClick={play}
       className={cn(
-        'flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/40',
+        'flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40',
         isPlaying
-          ? 'animate-pulse bg-ember/20 text-ember/70'
-          : 'bg-ember/10 text-ember hover:bg-ember/15 active:bg-ember/20'
+          ? 'animate-pulse bg-ember-50 text-ember-600/70'
+          : 'bg-ember-50 text-ember-600 hover:bg-ember-50/70 active:bg-ember-50'
       )}
       aria-label="Play pronunciation"
       type="button"

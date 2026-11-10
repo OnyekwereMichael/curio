@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, LogOut, Download, Settings, Search, LineChart } from 'lucide-react';
+import { Home, BookOpen, LogOut, Download, Settings, LineChart } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { usePlatform } from '../lib/usePlatform';
@@ -7,10 +7,9 @@ import { cn } from '../lib/utils';
 import logo from '../../public/icon-192.png'
 
 export const NAV_ITEMS = [
-  { to: '/home', icon: Home, label: 'Home' },
-  { to: '/collection', icon: BookOpen, label: 'My Collection' },
+  { to: '/home', icon: Home, label: 'Today' },
+  { to: '/collection', icon: BookOpen, label: 'Review' },
   { to: '/progress', icon: LineChart, label: 'Progress' },
-  { to: '/dictionary', icon: Search, label: 'Dictionary' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 

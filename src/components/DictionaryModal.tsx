@@ -34,7 +34,7 @@ export function DictionaryModal({ isOpen, onClose }: DictionaryModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center bg-ink/30 px-4 pt-20 backdrop-blur-sm sm:pt-24"
+      className="fixed inset-0 z-[100] flex items-start justify-center bg-ink-900/30 px-4 pt-20 backdrop-blur-sm sm:pt-24"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -43,16 +43,16 @@ export function DictionaryModal({ isOpen, onClose }: DictionaryModalProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Dictionary"
-        className="flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-ink/10 bg-paper shadow-xl animate-in zoom-in-95 duration-200"
+        className="flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-sheet border border-line bg-paper shadow-raised animate-in zoom-in-95 duration-200"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4">
-          <h2 className="font-display text-lg font-bold text-ink">Curi's Dictionary</h2>
+          <h2 className="font-display text-lg font-bold text-ink-900">Curi's Dictionary</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="cursor-pointer rounded-lg p-1.5 text-faded-ink transition-colors hover:bg-ink/5 hover:text-ink"
+            className="cursor-pointer rounded-control p-1.5 text-ink-500 transition-colors hover:bg-ink-900/5 hover:text-ink-900"
           >
             <X size={20} />
           </button>
