@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Search, Bookmark } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Bookmark, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { cn } from '../../lib/utils';
@@ -22,6 +23,7 @@ type WordFilter = 'all' | 'new' | 'mastered';
 type Tab = 'words' | 'facts' | 'lists';
 
 export function CollectionPage() {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [tab, setTab] = useState<Tab>('words');
     const [wordFilter, setWordFilter] = useState<WordFilter>('all');
@@ -56,6 +58,21 @@ export function CollectionPage() {
                     <h1 className="font-display text-display font-bold text-ink-900">Your pouch</h1>
                     <Search size={20} className="text-ink-500" />
                 </div>
+
+                {PREVIEW_FEATURES && words.length > 0 && (
+                    <button
+                        onClick={() => navigate('/collection/review')}
+                        className="flex items-center justify-between gap-3 rounded-card bg-gold-50 border border-gold-500/30 px-4 py-3.5 text-left font-ui hover:bg-gold-50/70 transition-colors"
+                    >
+                        <div>
+                            <p className="text-sm font-semibold text-gold-700">
+                                {Math.min(words.length, 8)} word{Math.min(words.length, 8) !== 1 ? 's' : ''} ready to review
+                            </p>
+                            <p className="text-xs text-ink-500 mt-0.5">About 2 minutes</p>
+                        </div>
+                        <ChevronRight size={18} className="text-gold-700 flex-shrink-0" />
+                    </button>
+                )}
 
                 {/* Tabs */}
                 <div className="flex gap-2 font-ui">

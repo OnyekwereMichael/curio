@@ -14,6 +14,16 @@ import { LearningPlanSettingsPage } from './pages/settings/plan/LearningPlanSett
 import { PlanWhenPage } from './pages/settings/plan/PlanWhen';
 import { PreviewRoute } from './components/PreviewRoute';
 import { NotFoundPage } from './pages/NotFound';
+import { WordStylePage } from './pages/onboarding/WordStyle';
+import { LevelPage } from './pages/onboarding/Level';
+import { WordsPerDayPage } from './pages/onboarding/WordsPerDay';
+import { FactTopicsPage } from './pages/onboarding/FactTopics';
+import { GoalReminderPage } from './pages/onboarding/GoalReminder';
+import { PlanSummaryPage } from './pages/onboarding/PlanSummary';
+import { ReviewSessionPage } from './pages/review/ReviewSession';
+import { PlayHubPage } from './pages/play/PlayHub';
+import { WordDuelPage } from './pages/play/WordDuel';
+import { FriendsPage } from './pages/friends/Friends';
 import { ToastProvider } from './components/ui/Toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -35,6 +45,12 @@ function App() {
               <Route path="/login" element={<LoginScreen />} />
               {/* Public route — no session exists yet at this point, so it can't be behind ProtectedRoute */}
               <Route path="/check-email" element={<CheckEmailScreen />} />
+              <Route path="/onboarding/word-style" element={<ProtectedRoute><PreviewRoute><WordStylePage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/onboarding/level" element={<ProtectedRoute><PreviewRoute><LevelPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/onboarding/words-per-day" element={<ProtectedRoute><PreviewRoute><WordsPerDayPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/onboarding/fact-topics" element={<ProtectedRoute><PreviewRoute><FactTopicsPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/onboarding/goal-reminder" element={<ProtectedRoute><PreviewRoute><GoalReminderPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/onboarding/plan" element={<ProtectedRoute><PreviewRoute><PlanSummaryPage /></PreviewRoute></ProtectedRoute>} />
               <Route path="/install-nudge" element={<ProtectedRoute><InstallNudge /></ProtectedRoute>} />
               <Route path="/notification-permission" element={<ProtectedRoute><NotificationPermission /></ProtectedRoute>} />
               <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
@@ -42,11 +58,15 @@ function App() {
               <Route path="/learn/fact" element={<ProtectedRoute><FactFocusScreen /></ProtectedRoute>} />
               <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
               <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
+              <Route path="/collection/review" element={<ProtectedRoute><PreviewRoute><ReviewSessionPage /></PreviewRoute></ProtectedRoute>} />
               <Route path="/dictionary" element={<ProtectedRoute><DictionaryPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/settings/plan" element={<ProtectedRoute><PreviewRoute><LearningPlanSettingsPage /></PreviewRoute></ProtectedRoute>} />
               <Route path="/settings/plan/when" element={<ProtectedRoute><PreviewRoute><PlanWhenPage /></PreviewRoute></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/play" element={<ProtectedRoute><PreviewRoute><PlayHubPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/play/:code" element={<ProtectedRoute><PreviewRoute><WordDuelPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/friends" element={<ProtectedRoute><PreviewRoute><FriendsPage /></PreviewRoute></ProtectedRoute>} />
 
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/activity" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

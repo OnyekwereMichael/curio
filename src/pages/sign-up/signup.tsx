@@ -6,6 +6,7 @@ import { Eye, EyeOff, X } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/superbase';
+import { PREVIEW_FEATURES } from '../../lib/featureFlags';
 
 
 export function SignupScreen() {
@@ -66,7 +67,9 @@ export function SignupScreen() {
 
             if (data.session) {
                 // Confirmation is off, or this account was pre-confirmed — go straight in.
-                navigate('/install-nudge');
+                // Preview-only: route through the mock onboarding flow first, which
+                // continues into /install-nudge itself when it's done.
+                navigate(PREVIEW_FEATURES ? '/onboarding/word-style' : '/install-nudge');
             } else {
                 // Confirmation is required — no session yet. Tell them to check email.
                 navigate('/check-email', { state: { email: values.email } });
