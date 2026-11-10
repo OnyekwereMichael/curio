@@ -9,6 +9,10 @@ import { HomeScreen } from './pages/home/Home';
 import { WordFocusScreen } from './pages/learn/WordFocus';
 import { FactFocusScreen } from './pages/learn/FactFocus';
 import { ProgressPage } from './pages/progress/Progress';
+import { ProfilePage } from './pages/profile/Profile';
+import { LearningPlanSettingsPage } from './pages/settings/plan/LearningPlanSettings';
+import { PlanWhenPage } from './pages/settings/plan/PlanWhen';
+import { PreviewRoute } from './components/PreviewRoute';
 import { ToastProvider } from './components/ui/Toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -39,6 +43,9 @@ function App() {
               <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
               <Route path="/dictionary" element={<ProtectedRoute><DictionaryPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/settings/plan" element={<ProtectedRoute><PreviewRoute><LearningPlanSettingsPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/settings/plan/when" element={<ProtectedRoute><PreviewRoute><PlanWhenPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/activity" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

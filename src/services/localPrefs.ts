@@ -43,3 +43,41 @@ export function addRecentSearch(term: string) {
     // ignore
   }
 }
+
+// Real, device-local preferences with no server-side need — Settings' Reduce
+// motion and Sounds & haptics toggles.
+const REDUCE_MOTION_KEY = 'curi_pref_reduce_motion';
+const SOUNDS_HAPTICS_KEY = 'curi_pref_sounds_haptics';
+
+export function getReduceMotionPref(): boolean {
+  try {
+    return localStorage.getItem(REDUCE_MOTION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function setReduceMotionPref(enabled: boolean) {
+  try {
+    localStorage.setItem(REDUCE_MOTION_KEY, enabled ? '1' : '0');
+  } catch {
+    // ignore
+  }
+}
+
+export function getSoundsHapticsPref(): boolean {
+  try {
+    const v = localStorage.getItem(SOUNDS_HAPTICS_KEY);
+    return v === null ? true : v === '1'; // on by default
+  } catch {
+    return true;
+  }
+}
+
+export function setSoundsHapticsPref(enabled: boolean) {
+  try {
+    localStorage.setItem(SOUNDS_HAPTICS_KEY, enabled ? '1' : '0');
+  } catch {
+    // ignore
+  }
+}

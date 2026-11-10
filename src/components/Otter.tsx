@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { usePrefersReducedMotion } from '../lib/useReducedMotionPref';
 
 export type OtterMood =
   | 'idle'
@@ -176,7 +177,7 @@ function PawsAndHold({ mood }: { mood: OtterMood }) {
 }
 
 export function Otter({ mood = 'idle', size = 96, className, breathe = false }: OtterProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = usePrefersReducedMotion();
   const tilt = mood === 'curious' ? -7 : 0;
   const Wrapper = breathe ? motion.svg : 'svg';
   const breatheProps =
