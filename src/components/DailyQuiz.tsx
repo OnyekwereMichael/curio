@@ -462,18 +462,18 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                        className="relative flex flex-col items-center gap-4 overflow-hidden rounded-sheet bg-ink-900 px-6 py-10 text-center text-paper"
+                        className="relative flex flex-col items-center gap-4 overflow-hidden rounded-sheet bg-night px-6 py-10 text-center text-cream"
                     >
                         <div className="flex items-center gap-2 text-ember-500">
                             <span className="font-display text-4xl font-bold">🔥{currentStreak}</span>
                         </div>
-                        <p className="text-xs uppercase tracking-wider text-paper/60 font-ui">day streak</p>
+                        <p className="text-xs uppercase tracking-wider text-cream-dim font-ui">day streak</p>
                         <Mascot mood="happy" size={72} />
                         <p className="font-display text-2xl font-bold">All done. That's a full pouch.</p>
                         <div className="flex w-full flex-col gap-3 pt-2">
                             <button
                                 onClick={handleShareDay}
-                                className="w-full rounded-control border border-paper/25 py-3 text-sm font-semibold text-paper hover:bg-paper/10 transition-colors font-ui"
+                                className="w-full rounded-control border border-cream/25 py-3 text-sm font-semibold text-cream hover:bg-cream/10 transition-colors font-ui"
                             >
                                 {shareState === 'working' ? 'Preparing…' : shareState === 'shared' ? 'Shared!' : shareState === 'copied' ? 'Link copied' : "Share today's result"}
                             </button>

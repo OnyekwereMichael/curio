@@ -8,6 +8,7 @@ import { NotificationPermission } from './pages/notification-permission/Notifica
 import { HomeScreen } from './pages/home/Home';
 import { WordFocusScreen } from './pages/learn/WordFocus';
 import { FactFocusScreen } from './pages/learn/FactFocus';
+import { ProgressPage } from './pages/progress/Progress';
 import { ToastProvider } from './components/ui/Toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -34,6 +35,7 @@ function App() {
               <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
               <Route path="/learn/word" element={<ProtectedRoute><WordFocusScreen /></ProtectedRoute>} />
               <Route path="/learn/fact" element={<ProtectedRoute><FactFocusScreen /></ProtectedRoute>} />
+              <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
               <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
               <Route path="/dictionary" element={<ProtectedRoute><DictionaryPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />

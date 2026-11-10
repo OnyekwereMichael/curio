@@ -81,6 +81,10 @@
   --color-gold-700: var(--gold-700);
 
   --color-night: #12191F;
+  /* Fixed (non-theme-flipping) pair for "always dark" celebratory cards —
+     milestones, day-complete — so they read the same in light or dark mode. */
+  --color-cream: #F6F4EF;
+  --color-cream-dim: rgb(246 244 239 / 0.7);
 
   /* Legacy aliases — keep every pre-redesign component (which reads
      bg-ember, text-ink, text-faded-ink, bg-gold-stamp, etc.) resolving

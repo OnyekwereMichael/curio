@@ -16,6 +16,7 @@ import { ShieldProgress } from '../../components/ShieldProgress';
 import { ShieldSavedNotice } from '../../components/ShieldSavedNotice';
 import { Otter } from '../../components/Otter';
 import { PlanRow, type PlanRowState } from '../../components/PlanRow';
+import { StreakAtRiskBanner } from '../../components/StreakAtRiskBanner';
 import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
 import { isFactOpened } from '../../services/localPrefs';
@@ -196,6 +197,13 @@ useEffect(() => {
             />
           ))}
         </div>
+
+        <StreakAtRiskBanner
+          currentStreak={currentStreak}
+          quizDone={quizDone}
+          shieldCount={shieldCount}
+          onStart={() => quizSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+        />
 
         {PREVIEW_FEATURES && <DailyQuestsPanel />}
 

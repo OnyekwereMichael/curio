@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { getStreakLossCopy } from '../lib/streakLogic';
+import { Otter } from './Otter';
 
 interface Props {
   lostStreak: number;
@@ -40,7 +41,7 @@ export function StreakLossModal({ lostStreak, missedDays, shieldCount, onRestore
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/50"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink-900/50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -54,27 +55,25 @@ export function StreakLossModal({ lostStreak, missedDays, shieldCount, onRestore
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-            className="w-full max-w-sm bg-paper rounded-2xl border border-ink/10 shadow-xl p-6 font-ui"
+            className="w-full max-w-sm bg-paper rounded-sheet border border-line shadow-raised p-6 font-ui text-center flex flex-col items-center"
           >
-            <div className="w-12 h-12 rounded-full bg-ink/5 flex items-center justify-center mb-4">
-              <Flame size={22} className="text-faded-ink" />
-            </div>
+            <Otter mood="supportive" size={80} className="mb-4" />
 
-            <h2 id="streak-loss-title" className="font-display text-2xl font-bold text-ink mb-2">
+            <h2 id="streak-loss-title" className="font-display text-title font-bold text-ink-900 mb-2">
               {copy.title}
             </h2>
-            <p className="text-sm text-ink leading-relaxed mb-4">{copy.body}</p>
+            <p className="text-sm text-ink-900/80 leading-relaxed mb-4">{copy.body}</p>
 
             <div
-              className={`flex items-start gap-2.5 rounded-lg px-4 py-3 text-sm mb-5 ${
-                copy.canRestore ? 'bg-moss/10 text-moss' : 'bg-ink/5 text-faded-ink'
+              className={`flex items-start gap-2.5 rounded-control px-4 py-3 text-sm mb-5 w-full text-left ${
+                copy.canRestore ? 'bg-moss-50 text-moss-600' : 'bg-ink-900/5 text-ink-500'
               }`}
             >
               <Shield size={16} className="flex-shrink-0 mt-0.5" />
               <span>{copy.restoreNote}</span>
             </div>
 
-            {error && <p className="text-sm text-ember mb-3">{error}</p>}
+            {error && <p className="text-sm text-ember-600 mb-3">{error}</p>}
 
             {copy.canRestore ? (
               <>
@@ -83,7 +82,7 @@ export function StreakLossModal({ lostStreak, missedDays, shieldCount, onRestore
                   autoFocus
                   disabled={busy}
                   onClick={handleRestore}
-                  className="w-full py-3 rounded-xl bg-ember text-white text-sm font-semibold hover:bg-ember/90 disabled:opacity-50 transition-colors"
+                  className="w-full py-3 rounded-control bg-ember-600 text-on-ember text-sm font-semibold hover:brightness-105 disabled:opacity-50 transition-all"
                 >
                   {copy.restoreLabel}
                 </button>
@@ -91,11 +90,11 @@ export function StreakLossModal({ lostStreak, missedDays, shieldCount, onRestore
                   type="button"
                   disabled={busy}
                   onClick={handleStartFresh}
-                  className="w-full mt-2 py-3 rounded-xl text-sm font-medium text-faded-ink hover:text-ink hover:bg-ink/5 disabled:opacity-50 transition-colors"
+                  className="w-full mt-2 py-3 rounded-control text-sm font-medium text-ink-500 hover:text-ink-900 hover:bg-ink-900/5 disabled:opacity-50 transition-colors"
                 >
                   Start fresh
                 </button>
-                <p className="text-xs text-faded-ink text-center mt-1">Starting fresh can't be undone.</p>
+                <p className="text-xs text-ink-500 text-center mt-1">Starting fresh can't be undone.</p>
               </>
             ) : (
               <button
@@ -103,7 +102,7 @@ export function StreakLossModal({ lostStreak, missedDays, shieldCount, onRestore
                 autoFocus
                 disabled={busy}
                 onClick={handleStartFresh}
-                className="w-full py-3 rounded-xl bg-ember text-white text-sm font-semibold hover:bg-ember/90 disabled:opacity-50 transition-colors"
+                className="w-full py-3 rounded-control bg-ember-600 text-on-ember text-sm font-semibold hover:brightness-105 disabled:opacity-50 transition-all"
               >
                 Start fresh
               </button>
