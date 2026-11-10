@@ -47,12 +47,12 @@ export function StreakCalendar() {
     }
 
     if (loading) {
-        return <div className="h-24 bg-ink/5 rounded-xl animate-pulse" />;
+        return <div className="h-24 bg-ink-900/5 rounded-card animate-pulse" />;
     }
 
     return (
-        <div className="bg-white rounded-xl border border-ink/5 p-5">
-            <p className="text-xs font-bold tracking-wider uppercase text-faded-ink mb-3">Last 30 days</p>
+        <div className="bg-surface rounded-card border border-line p-5 shadow-card font-ui">
+            <p className="text-xs font-bold tracking-wider uppercase text-ink-500 mb-3">Last 30 days</p>
             <div className="grid grid-cols-10 gap-1.5">
                 {days.map((dateStr) => {
                     const status = getDayStatus(dateStr);
@@ -60,30 +60,30 @@ export function StreakCalendar() {
                         <div
                             key={dateStr}
                             title={dateStr}
-                            className="aspect-square rounded-md flex items-center justify-center"
+                            className="aspect-square rounded-tag flex items-center justify-center"
                         >
                             {status === 'perfect' ? (
-                                <div className="w-full h-full rounded-md bg-gold-stamp/15 flex items-center justify-center">
-                                    <Star size={12} className="text-gold-stamp fill-gold-stamp" />
+                                <div className="w-full h-full rounded-tag bg-gold-50 flex items-center justify-center">
+                                    <Star size={12} className="text-gold-500 fill-gold-500" />
                                 </div>
                             ) : status === 'active' ? (
-                                <div className="w-full h-full rounded-md bg-moss/15 flex items-center justify-center">
-                                    <Circle size={8} className="text-moss fill-moss" />
+                                <div className="w-full h-full rounded-tag bg-moss-50 flex items-center justify-center">
+                                    <Circle size={8} className="text-moss-600 fill-moss-600" />
                                 </div>
                             ) : (
-                                <div className="w-full h-full rounded-md bg-ink/5" />
+                                <div className="w-full h-full rounded-tag bg-ink-900/5" />
                             )}
                         </div>
                     );
                 })}
             </div>
-            <div className="flex items-center gap-4 mt-4 text-xs text-faded-ink">
+            <div className="flex items-center gap-4 mt-4 text-xs text-ink-500">
                 <div className="flex items-center gap-1.5">
-                    <Star size={11} className="text-gold-stamp fill-gold-stamp" />
+                    <Star size={11} className="text-gold-500 fill-gold-500" />
                     <span>Perfect quiz</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <Circle size={7} className="text-moss fill-moss" />
+                    <Circle size={7} className="text-moss-600 fill-moss-600" />
                     <span>Active</span>
                 </div>
             </div>

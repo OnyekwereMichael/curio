@@ -21,12 +21,12 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
   const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnown, play } = useWordCardInteractions(id, audioUrl, onSavedChange, word);
   const [shareOpen, setShareOpen] = useState(false);
 
-  const labelColor = variant === 'new' ? 'text-ember' : 'text-faded-ink';
+  const labelColor = variant === 'new' ? 'text-ember-600' : 'text-ink-500';
 
   return (
     <>
       <div className={cn(
-        "bg-paper rounded-xl p-6 shadow-sm border border-ink/5 relative overflow-hidden flex flex-col gap-4 font-ui",
+        "bg-surface rounded-card p-6 shadow-card border border-line relative overflow-hidden flex flex-col gap-4 font-ui",
         className
       )}>
         <div className="absolute top-4 right-4 z-10">
@@ -35,19 +35,19 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
 
         <div className="pr-14">
           {label && (
-            <div className={cn("text-xs font-bold tracking-wider uppercase mb-2", labelColor)}>
+            <div className={cn("text-xs font-bold tracking-wider uppercase mb-2 font-ui", labelColor)}>
               {label}
             </div>
           )}
 
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-2xl font-bold text-ink leading-tight">{word}</h3>
+            <h3 className="font-display text-word-hero font-semibold text-ink-900 leading-tight">{word}</h3>
             <button
               onClick={play}
               className={cn(
                 "p-2 rounded-full transition-colors flex-shrink-0",
-                isPlaying ? "text-ember/70 bg-ember/10 animate-pulse" :
-                  "text-ember hover:bg-ember/5 hover:text-ember/80"
+                isPlaying ? "text-ember-600/70 bg-ember-50 animate-pulse" :
+                  "text-ember-600 hover:bg-ember-50 hover:text-ember-700"
               )}
               aria-label="Play pronunciation"
               type="button"
@@ -58,31 +58,31 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
         </div>
 
         <div>
-          <p className="text-ink leading-relaxed mb-4">{definition}</p>
+          <p className="text-ink-900 leading-relaxed mb-4">{definition}</p>
 
-          <div className="text-faded-ink text-xs font-bold  uppercase mb-2">
+          <div className="text-ink-500 text-xs font-bold uppercase mb-2 font-ui">
             How to use in a sentence
           </div>
-          <div className="pl-4 border-l-2 border-ember/25">
-            <p className="text-ink/80  text-sm leading-relaxed">"{exampleSentence}"</p>
+          <div className="pl-4 border-l-2 border-ember-500/25">
+            <p className="text-ink-900/80 text-sm leading-relaxed italic">"{exampleSentence}"</p>
           </div>
         </div>
 
         {/* Quick Recall + Share + Save */}
       {/* Drop this in place of your existing action row. Needs: Check, Share2 from lucide-react, and cn. */}
-<div className="pt-4 border-t border-ink/10 flex flex-wrap items-center gap-3 sm:flex-nowrap">
+<div className="pt-4 border-t border-line flex flex-wrap items-center gap-3 sm:flex-nowrap font-ui">
   {/* Primary action: full width on mobile, left-aligned on larger screens */}
   {!isKnown ? (
     <button
       onClick={markKnown}
-      className="w-full sm:w-auto sm:mr-auto h-10 px-5 rounded-xl bg-ember text-paper text-sm font-semibold whitespace-nowrap hover:bg-ember/90 active:bg-ember/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+      className="w-full sm:w-auto sm:mr-auto h-10 px-5 rounded-control bg-ember-600 text-on-ember text-sm font-semibold whitespace-nowrap hover:brightness-105 active:brightness-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
       type="button"
     >
       Got it
     </button>
   ) : (
     <div
-      className="w-full sm:w-auto sm:mr-auto h-10 px-4 rounded-xl bg-moss/10 text-moss text-sm font-semibold inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer!"
+      className="w-full sm:w-auto sm:mr-auto h-10 px-4 rounded-control bg-moss-50 text-moss-600 text-sm font-semibold inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer!"
       role="status"
     >
       <Check size={16} aria-hidden="true" />
@@ -93,7 +93,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
   {/* Secondary actions: share the second row equally on mobile */}
   <button
     onClick={() => setShareOpen(true)}
-    className="flex-1 sm:flex-none h-10 px-4 rounded-xl border border-ink/15 text-ink text-sm font-semibold whitespace-nowrap inline-flex items-center justify-center gap-2 hover:bg-ink/5 active:bg-ink/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 cursor-pointer!"
+    className="flex-1 sm:flex-none h-10 px-4 rounded-control border border-line-strong text-ink-900 text-sm font-semibold whitespace-nowrap inline-flex items-center justify-center gap-2 hover:bg-ink-900/5 active:bg-ink-900/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900/30 cursor-pointer!"
     aria-label="Share this word"
     type="button"
   >
@@ -104,12 +104,12 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
   <button
     onClick={toggleSave}
     className={cn(
-      'flex-1 sm:flex-none h-10 px-4 rounded-xl border text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 cursor-pointer!',
+      'flex-1 sm:flex-none h-10 px-4 rounded-control border text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900/30 cursor-pointer!',
       saveFlash
-        ? 'border-gold-stamp bg-gold-stamp/10 text-gold-stamp'
+        ? 'border-gold-500 bg-gold-50 text-gold-700'
         : isSaved
-          ? 'border-ember/30 bg-ember/5 text-ember hover:bg-ember/10'
-          : 'border-ink/15 text-ink hover:bg-ink/5 active:bg-ink/10'
+          ? 'border-ember-500/30 bg-ember-50 text-ember-600 hover:bg-ember-50'
+          : 'border-line-strong text-ink-900 hover:bg-ink-900/5 active:bg-ink-900/10'
     )}
     aria-pressed={isSaved}
     aria-label={isSaved ? 'Remove from collection' : 'Save to collection'}

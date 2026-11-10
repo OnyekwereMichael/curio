@@ -15,21 +15,22 @@ import { supabase } from '../../lib/superbase';
 import { StreakCalendar } from '../../components/Streakcalendar';
 import { ShieldProgress } from '../../components/ShieldProgress';
 import { ShieldSavedNotice } from '../../components/ShieldSavedNotice';
+import { Otter } from '../../components/Otter';
 
 function SkeletonCard() {
   return (
-    <div className="bg-paper rounded-xl shadow-sm border border-ink/5 p-6 animate-pulse h-48 w-full flex flex-col justify-center">
-      <div className="h-4 bg-ink/10 rounded w-1/4 mb-4"></div>
-      <div className="h-8 bg-ink/10 rounded w-1/2 mb-4"></div>
-      <div className="h-4 bg-ink/10 rounded w-full mb-2"></div>
-      <div className="h-4 bg-ink/10 rounded w-3/4"></div>
+    <div className="bg-surface rounded-card shadow-card border border-line p-6 animate-pulse h-48 w-full flex flex-col justify-center">
+      <div className="h-4 bg-ink-900/10 rounded w-1/4 mb-4"></div>
+      <div className="h-8 bg-ink-900/10 rounded w-1/2 mb-4"></div>
+      <div className="h-4 bg-ink-900/10 rounded w-full mb-2"></div>
+      <div className="h-4 bg-ink-900/10 rounded w-3/4"></div>
     </div>
   );
 }
 
 function FallbackCard({ message }: { message: string }) {
   return (
-    <div className="bg-paper rounded-xl shadow-sm border border-ink/5 p-6 text-center text-faded-ink py-12">
+    <div className="bg-surface rounded-card shadow-card border border-line p-6 text-center text-ink-500 py-12 font-ui">
       <p>{message}</p>
     </div>
   );
@@ -105,14 +106,17 @@ useEffect(() => {
   onRestore={recoverStreak}
   onStartFresh={dismissLostStreak}
 />
-      <div className="px-2 py-5 max-w-5xl mx-auto w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
-      <div>
-  <p className="text-faded-ink text-base font-medium mb-1">{greeting} 👋</p>
-  <h1 className="font-display text-3xl font-bold text-ink leading-tight">
-    {firstName}, here's your daily dose.
-  </h1>
-  <div className="mt-4 cursor-pointer">
-    <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
+      <div className="px-2 py-5 w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <div className="flex items-start gap-4">
+  <Otter mood="idle" size={56} breathe className="hidden sm:block flex-shrink-0 mt-1" />
+  <div>
+    <p className="text-ink-500 text-base font-medium mb-1 font-ui">{greeting} 👋</p>
+    <h1 className="font-display text-display font-bold text-ink-900 leading-tight">
+      {firstName}, here's your daily dose.
+    </h1>
+    <div className="mt-4 cursor-pointer">
+      <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
+    </div>
   </div>
 </div>
 
@@ -122,8 +126,8 @@ useEffect(() => {
           {/* Today's Word */}
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1">Today's Word</h2>
-              <p className="text-faded-ink text-sm">Vocabulary to elevate your conversations.</p>
+              <h2 className="font-display text-heading font-bold text-ink-900 mb-1">Today's Word</h2>
+              <p className="text-ink-500 text-sm font-ui">Vocabulary to elevate your conversations.</p>
             </div>
             {todaysWord.loading ? (
               <SkeletonCard />
@@ -145,8 +149,8 @@ useEffect(() => {
           {/* Today's Fact */}
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-ink mb-1">Today's Fact</h2>
-              <p className="text-faded-ink text-sm">Fascinating facts to expand your knowledge.</p>
+              <h2 className="font-display text-heading font-bold text-ink-900 mb-1">Today's Fact</h2>
+              <p className="text-ink-500 text-sm font-ui">Fascinating facts to expand your knowledge.</p>
             </div>
             {todaysFact.loading ? (
               <SkeletonCard />

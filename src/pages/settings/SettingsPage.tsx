@@ -171,19 +171,19 @@ export function SettingsPage() {
     <AppShell title="Settings">
       <div className="px-4 py-4 mx-auto w-full flex flex-col gap-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-ink mb-2">Preferences</h1>
-          <p className="text-faded-ink text-sm">Manage your app experience and notifications.</p>
+          <h1 className="font-display text-title font-bold text-ink-900 mb-2">Preferences</h1>
+          <p className="text-ink-500 text-sm font-ui">Manage your app experience and notifications.</p>
         </div>
 
-        <div className="bg-paper border border-ink/5 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
+        <div className="bg-surface border border-line rounded-card p-4 sm:p-6 shadow-card flex flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-start gap-4 max-sm:flex-col">
-              <div className="w-10 h-10 rounded-full bg-ember/10 flex items-center justify-center text-ember flex-shrink-0 mt-0.5 ">
+              <div className="w-10 h-10 rounded-full bg-ember-50 flex items-center justify-center text-ember-600 flex-shrink-0 mt-0.5 ">
                 {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
               </div>
               <div>
-                <h3 className="font-semibold text-ink font-display">Dark Mode</h3>
-                <p className="text-sm text-faded-ink mt-0.5 font-display">
+                <h3 className="font-semibold text-ink-900 font-ui">Dark Mode</h3>
+                <p className="text-sm text-ink-500 mt-0.5 font-ui">
                   Toggle between light and dark themes.
                 </p>
               </div>
@@ -194,9 +194,9 @@ export function SettingsPage() {
                 type="button"
                 onClick={toggleTheme}
                 className={`
-                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ember focus:ring-offset-2
-                  ${theme === 'dark' ? 'bg-ember' : 'bg-ink/20'}
+                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                  transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ember-500 focus:ring-offset-2
+                  ${theme === 'dark' ? 'bg-ember-600' : 'bg-ink-900/20'}
                 `}
                 role="switch"
                 aria-checked={theme === 'dark'}
@@ -204,7 +204,7 @@ export function SettingsPage() {
                 <span
                   aria-hidden="true"
                   className={`
-                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
+                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface shadow ring-0
                     transition duration-200 ease-in-out flex items-center justify-center
                     ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}
                   `}
@@ -214,15 +214,15 @@ export function SettingsPage() {
           </div>
         </div>
 
-        <div className="bg-paper border border-ink/5 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
+        <div className="bg-surface border border-line rounded-card p-4 sm:p-6 shadow-card flex flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-start gap-4 max-sm:flex-col">
-              <div className="w-10 h-10 rounded-full bg-ember/10 flex items-center justify-center text-ember flex-shrink-0 mt-0.5 ">
+              <div className="w-10 h-10 rounded-full bg-ember-50 flex items-center justify-center text-ember-600 flex-shrink-0 mt-0.5 ">
                 <Bell size={20} />
               </div>
               <div>
-                <h3 className="font-semibold text-ink font-display">Daily Word Push Notifications</h3>
-                <p className="text-sm text-faded-ink mt-0.5 font-display">
+                <h3 className="font-semibold text-ink-900 font-ui">Daily Word Push Notifications</h3>
+                <p className="text-sm text-ink-500 mt-0.5 font-ui">
                   Receive a push notification every day when your new word is ready.
                 </p>
               </div>
@@ -230,16 +230,16 @@ export function SettingsPage() {
 
             <div className="flex-shrink-0">
               {loading ? (
-                <div className="w-12 h-6 bg-ink/5 rounded-full animate-pulse" />
+                <div className="w-12 h-6 bg-ink-900/5 rounded-full animate-pulse" />
               ) : (
                 <button
                   type="button"
                   onClick={handleToggleNotifications}
                   disabled={toggling}
                   className={`
-                    relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ember focus:ring-offset-2
-                    ${notificationsEnabled ? 'bg-ember' : 'bg-ink/20'}
+                    relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ember-500 focus:ring-offset-2
+                    ${notificationsEnabled ? 'bg-ember-600' : 'bg-ink-900/20'}
                     ${toggling ? 'opacity-50 cursor-not-allowed' : ''}
                   `}
                   role="switch"
@@ -248,12 +248,12 @@ export function SettingsPage() {
                   <span
                     aria-hidden="true"
                     className={`
-                      pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
+                      pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface shadow ring-0
                       transition duration-200 ease-in-out flex items-center justify-center
                       ${notificationsEnabled ? 'translate-x-5' : 'translate-x-0'}
                     `}
                   >
-                    {toggling && <Loader2 size={12} className="animate-spin text-faded-ink" />}
+                    {toggling && <Loader2 size={12} className="animate-spin text-ink-500" />}
                   </span>
                 </button>
               )}
@@ -261,7 +261,7 @@ export function SettingsPage() {
           </div>
         </div>
 
-        <div className="bg-paper border border-ink/5 rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div className="bg-surface border border-line rounded-card p-4 sm:p-6 shadow-card">
           {feedbackSubmitted ? (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -294,7 +294,7 @@ export function SettingsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.25 }}
-                className="text-base text-ink font-display mb-1"
+                className="text-base text-ink-900 font-ui mb-1"
               >
                 Thanks for the feedback
               </motion.p>
@@ -311,12 +311,12 @@ export function SettingsPage() {
           ) : (
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3 max-sm:flex-col  max-sm:items-start">
-                <div className="w-10 h-10 rounded-full bg-ember/10 flex items-center justify-center text-ember flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-ember-50 flex items-center justify-center text-ember-600 flex-shrink-0">
                   <MessageSquare size={20} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-ink font-display">Help us make Curi better.</h3>
-                  <p className="text-sm text-faded-ink  font-display mt-0.5">
+                  <h3 className="font-semibold text-ink-900 font-ui">Help us make Curi better.</h3>
+                  <p className="text-sm text-ink-500 font-ui mt-0.5">
                     Found a bug, have an idea, or just want to say hello? Tell us what is working and what is not. We read every message.
                   </p>
                 </div>
@@ -327,13 +327,13 @@ export function SettingsPage() {
                 onChange={(e) => setFeedbackMessage(e.target.value)}
                 placeholder="What's on your mind?"
                 rows={3}
-                className="w-full rounded-lg border border-ink/10 p-3 text-sm text-ink placeholder:text-faded-ink focus:outline-none focus:ring-2 focus:ring-ember/30 resize-none"
+                className="w-full rounded-control border border-line-strong p-3 text-sm text-ink-900 placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-ember-500/30 resize-none font-ui bg-paper"
               />
 
               <button
                 onClick={handleSubmitFeedback}
                 disabled={feedbackSubmitting || !feedbackMessage.trim()}
-                className="self-end px-4 py-2 rounded-lg bg-ember text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-ember/90 transition-colors"
+                className="self-end px-4 py-2 rounded-control bg-ember-600 text-on-ember text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-105 transition-all font-ui"
               >
                 {feedbackSubmitting ? 'Sending...' : 'Send'}
               </button>
@@ -341,9 +341,9 @@ export function SettingsPage() {
           )}
         </div>
 
-        <div className="w-full mx-auto bg-paper border border-red-100 rounded-2xl shadow-sm overflow-hidden mt-4">
+        <div className="w-full mx-auto bg-surface border border-red-100 rounded-card shadow-card overflow-hidden mt-4">
           <div className="px-4 sm:px-6 py-4 border-b border-red-100">
-            <h2 className="text-xs font-bold font-display  uppercase text-red-500">Danger zone</h2>
+            <h2 className="text-xs font-bold font-ui uppercase text-red-500">Danger zone</h2>
           </div>
 
           {!deleteConfirming ? (
@@ -352,12 +352,12 @@ export function SettingsPage() {
               className="w-full flex items-center gap-3 px-4 sm:px-6 py-4 text-left hover:bg-red-50/50 transition-colors"
             >
               <Trash2 size={18} className="text-red-500" />
-              <span className="text-sm font-medium text-red-600 font-display">Delete account</span>
+              <span className="text-sm font-medium text-red-600 font-ui">Delete account</span>
             </button>
           ) : (
             <div className="px-4 sm:px-6 py-4 flex flex-col gap-3">
-              <div className="flex items-start gap-2 text-sm text-ink font-display">
-                <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5 font-display" />
+              <div className="flex items-start gap-2 text-sm text-ink-900 font-ui">
+                <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
                 <span>
                   This permanently deletes your account, streak, and saved words. This can't be undone.
                 </span>
@@ -367,14 +367,14 @@ export function SettingsPage() {
                 <button
                   onClick={() => setDeleteConfirming(false)}
                   disabled={deleting}
-                  className="flex-1 py-2.5 rounded-lg border border-ink/10 text-sm font-medium text-ink hover:bg-ink/[0.02] transition-colors disabled:opacity-50 font-display"
+                  className="flex-1 py-2.5 rounded-control border border-line-strong text-sm font-medium text-ink-900 hover:bg-ink-900/[0.02] transition-colors disabled:opacity-50 font-ui"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteAccount}
                   disabled={deleting}
-                  className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50 font-display"
+                  className="flex-1 py-2.5 rounded-control bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50 font-ui"
                 >
                   {deleting ? 'Deleting...' : 'Yes, delete my account'}
                 </button>

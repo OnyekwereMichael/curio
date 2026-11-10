@@ -14,11 +14,11 @@ export function DailyStamp({
   return (
     <div 
       className={cn(
-        "font-utility text-sm font-medium px-3 py-1 rounded-sm border inline-block",
+        "font-utility text-sm font-medium px-3 py-1 rounded-tag border inline-block",
         "transform -rotate-4 origin-center",
         variant === 'old'
-          ? "text-faded-ink border-faded-ink/30 bg-paper" 
-          : "text-gold-stamp border-gold-stamp/30 bg-paper",
+          ? "text-ink-500 border-ink-500/30 bg-surface"
+          : "text-gold-700 border-gold-500/40 bg-surface",
         className
       )}
       style={{

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { QuizQuestionCard } from './QuizQuestionCard';
+import { Otter, type OtterMood } from './Otter';
 import { useWordQuizQuestion } from '../hooks/useWordQuizQuestion';
 import { buildFactQuizQuestions } from '../hooks/useFactQuizQuestions';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,81 +18,15 @@ interface Props {
 type QuizState = 'loading' | 'already-done' | 'start' | 'starting' | 'playing' | 'completed';
 type Mood = 'idle' | 'happy' | 'sad';
 
-const EMBER = '#D8492F';
-const EMBER_DEEP = '#A8341F';
+const EMBER = '#C73B20';
 const GOLD = '#C7962E';
-const FADED = '#7C8A93';
+const MOOD_TO_OTTER: Record<Mood, OtterMood> = { idle: 'idle', happy: 'cheering', sad: 'supportive' };
 
 // ─────────────────────────────────────────────────────────
-// Mascot — calm orb, slow breathing. Unchanged in character.
+// Mascot — Curi the otter, swapped in for the three quiz moods.
 // ─────────────────────────────────────────────────────────
 function Mascot({ mood = 'idle', size = 80 }: { mood?: Mood; size?: number }) {
-    const reduce = useReducedMotion();
-    const primary = mood === 'sad' ? FADED : EMBER;
-    const ring = mood === 'happy' ? GOLD : mood === 'sad' ? FADED : EMBER;
-
-    const pulse = { scale: reduce ? 1 : mood === 'happy' ? [1, 1.05, 1] : [1, 1.02, 1] };
-    const pulseTransition = {
-        duration: mood === 'happy' ? 1.4 : 3,
-        repeat: Infinity,
-        ease: 'easeInOut' as const,
-    };
-
-    return (
-        <div className="relative flex items-center justify-center" style={{ width: size * 1.3, height: size * 1.3 }}>
-            <motion.div
-                className="absolute rounded-full blur-xl"
-                style={{ width: size * 1.1, height: size * 1.1, background: ring, opacity: 0.12 }}
-                animate={{ opacity: mood === 'happy' ? [0.12, 0.24, 0.12] : [0.08, 0.16, 0.08] }}
-                transition={pulseTransition}
-            />
-            <div
-                className="absolute rounded-full"
-                style={{ width: size, height: size, border: `1.5px solid ${ring}`, opacity: 0.25 }}
-            />
-            <motion.div animate={pulse} transition={pulseTransition} className="relative z-10">
-                <svg width={size * 0.78} height={size * 0.78} viewBox="0 0 100 100" aria-hidden="true">
-                    <defs>
-                        <radialGradient id={`orb-${mood}`} cx="38%" cy="32%" r="72%">
-                            <stop offset="0%" stopColor={mood === 'sad' ? '#F0EDE7' : '#F6E6C8'} />
-                            <stop offset="60%" stopColor={primary} />
-                            <stop offset="100%" stopColor={primary} stopOpacity="0.92" />
-                        </radialGradient>
-                    </defs>
-                    <circle cx="50" cy="50" r="42" fill={`url(#orb-${mood})`} />
-
-                    {mood === 'happy' ? (
-                        <>
-                            <path d="M 33 47 Q 38 41 43 47" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
-                            <path d="M 57 47 Q 62 41 67 47" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
-                        </>
-                    ) : mood === 'sad' ? (
-                        <>
-                            <rect x="33" y="46" width="10" height="3" rx="1.5" fill="#fff" opacity="0.85" />
-                            <rect x="57" y="46" width="10" height="3" rx="1.5" fill="#fff" opacity="0.85" />
-                        </>
-                    ) : (
-                        <motion.g
-                            animate={{ scaleY: [1, 1, 0.15, 1, 1] }}
-                            transition={{ duration: 3.4, repeat: Infinity, times: [0, 0.9, 0.94, 0.98, 1] }}
-                            style={{ transformOrigin: '50px 47px' }}
-                        >
-                            <rect x="33" y="45.5" width="10" height="3.5" rx="1.75" fill="#fff" />
-                            <rect x="57" y="45.5" width="10" height="3.5" rx="1.75" fill="#fff" />
-                        </motion.g>
-                    )}
-
-                    {mood === 'happy' ? (
-                        <path d="M 38 62 Q 50 70 62 62" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
-                    ) : mood === 'sad' ? (
-                        <path d="M 41 65 Q 50 61 59 65" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" />
-                    ) : (
-                        <path d="M 40 61 Q 50 66 60 61" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
-                    )}
-                </svg>
-            </motion.div>
-        </div>
-    );
+    return <Otter mood={MOOD_TO_OTTER[mood]} size={size} breathe={mood === 'idle'} />;
 }
 
 // ─────────────────────────────────────────────────────────
@@ -104,7 +39,7 @@ function Stage({ children }: { children: React.ReactNode }) {
         <div className="relative flex items-center justify-center">
             <div
                 className="absolute h-44 w-44 rounded-full"
-                style={{ background: 'radial-gradient(circle, rgba(216,73,47,0.10) 0%, rgba(216,73,47,0) 70%)' }}
+                style={{ background: 'radial-gradient(circle, var(--ember-500) 0%, transparent 70%)', opacity: 0.1 }}
             />
             <div className="relative">{children}</div>
         </div>
@@ -113,8 +48,8 @@ function Stage({ children }: { children: React.ReactNode }) {
 
 function Chip({ children }: { children: React.ReactNode }) {
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-ink/[0.04] px-3 py-1.5 text-xs font-medium text-ink/70">
-            <span className="h-1.5 w-1.5 rounded-full bg-ember" />
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-ink-900/[0.04] px-3 py-1.5 text-xs font-medium text-ink-900/70 font-ui">
+            <span className="h-1.5 w-1.5 rounded-full bg-ember-600" />
             {children}
         </span>
     );
@@ -125,11 +60,11 @@ function PrimaryButton({ onClick, children }: { onClick: () => void; children: R
     return (
         <button
             onClick={onClick}
-            className="rounded-2xl bg-ember px-10 py-4 text-base font-semibold text-white transition-all duration-100 hover:brightness-105 active:translate-y-[4px] focus:outline-none focus-visible:ring-4 focus-visible:ring-ember/30"
-            style={{ boxShadow: `0 5px 0 0 ${EMBER_DEEP}` }}
-            onMouseDown={(e) => (e.currentTarget.style.boxShadow = `0 1px 0 0 ${EMBER_DEEP}`)}
-            onMouseUp={(e) => (e.currentTarget.style.boxShadow = `0 5px 0 0 ${EMBER_DEEP}`)}
-            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = `0 5px 0 0 ${EMBER_DEEP}`)}
+            className="rounded-control bg-ember-600 px-10 py-4 text-base font-semibold text-on-ember font-ui transition-all duration-100 hover:brightness-105 active:translate-y-[4px] focus:outline-none focus-visible:ring-4 focus-visible:ring-ember-500/30"
+            style={{ boxShadow: `0 5px 0 0 var(--ember-700)` }}
+            onMouseDown={(e) => (e.currentTarget.style.boxShadow = `0 1px 0 0 var(--ember-700)`)}
+            onMouseUp={(e) => (e.currentTarget.style.boxShadow = `0 5px 0 0 var(--ember-700)`)}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = `0 5px 0 0 var(--ember-700)`)}
         >
             {children}
         </button>
@@ -161,8 +96,8 @@ function ScoreRing({ score, total, perfect }: { score: number; total: number; pe
                 />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-display text-4xl font-bold leading-none text-ink tabular-nums">{score}</span>
-                <span className="mt-1 text-xs font-medium text-faded-ink">out of {total}</span>
+                <span className="font-display text-4xl font-bold leading-none text-ink-900 tabular-nums">{score}</span>
+                <span className="mt-1 text-xs font-medium text-ink-500 font-ui">out of {total}</span>
             </div>
         </div>
     );
@@ -179,7 +114,7 @@ function Confetti() {
                 y: 120 + Math.random() * 140,
                 rot: (Math.random() - 0.5) * 540,
                 delay: Math.random() * 0.2,
-                color: [EMBER, GOLD, '#4C7A5A', '#F6E6C8'][i % 4],
+                color: [EMBER, GOLD, '#3E6259', '#FBE7DF'][i % 4],
                 round: i % 3 === 0,
             })),
         []
@@ -206,8 +141,8 @@ function AnswerFeedbackBanner({ correct }: { correct: boolean }) {
     return (
         <motion.div
             role="status"
-            className={`absolute inset-x-3 bottom-3 z-20 flex items-center gap-3 rounded-2xl border px-4 py-2 shadow-lg backdrop-blur-sm ${
-                correct ? 'border-moss/25 bg-white/95' : 'border-ink/10 bg-white/95'
+            className={`absolute inset-x-3 bottom-3 z-20 flex items-center gap-3 rounded-card border px-4 py-2 shadow-raised backdrop-blur-sm font-ui ${
+                correct ? 'border-moss-600/25 bg-surface/95' : 'border-line bg-surface/95'
             }`}
             initial={{ y: 24, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -216,10 +151,10 @@ function AnswerFeedbackBanner({ correct }: { correct: boolean }) {
         >
             <Mascot mood={correct ? 'happy' : 'sad'} size={36} />
             <div className="leading-tight">
-                <p className={`font-display text-base font-bold ${correct ? 'text-moss' : 'text-ink'}`}>
+                <p className={`font-display text-base font-bold ${correct ? 'text-moss-600' : 'text-ink-900'}`}>
                     {correct ? "That's right." : 'Not quite.'}
                 </p>
-                <p className="text-xs text-faded-ink">
+                <p className="text-xs text-ink-500">
                     {correct ? 'Nice recall — on to the next one.' : "It sticks with repetition. Next one."}
                 </p>
             </div>
@@ -227,7 +162,7 @@ function AnswerFeedbackBanner({ correct }: { correct: boolean }) {
     );
 }
 
-const cardBase = 'rounded-3xl ';
+const cardBase = 'rounded-sheet bg-surface border border-line';
 
 // ─────────────────────────────────────────────────────────
 // DailyQuiz
@@ -344,8 +279,8 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
     return (
         <section className="flex flex-col gap-5">
             <div>
-                <h2 className="font-display text-2xl font-bold text-ink">Daily Quiz</h2>
-                <p className="mt-1 text-sm text-faded-ink">
+                <h2 className="font-display text-2xl font-bold text-ink-900">Daily Quiz</h2>
+                <p className="mt-1 text-sm text-ink-500 font-ui">
                     A quick recall check on what you've learned. No pressure — just practice to keep your streak alive.
                 </p>
             </div>
@@ -368,8 +303,8 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                             </Stage>
                         )}
                         <div>
-                            <p className="font-display text-xl font-bold text-ink">Done for today</p>
-                            <p className="mt-1 text-sm text-faded-ink">
+                            <p className="font-display text-xl font-bold text-ink-900">Done for today</p>
+                            <p className="mt-1 text-sm text-ink-500 font-ui">
                                 {persistedScore !== null
                                     ? `You scored ${persistedScore} of ${doneTotal}. A new quiz unlocks tomorrow.`
                                     : 'A new quiz unlocks tomorrow.'}
@@ -391,8 +326,8 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                             <Mascot mood="idle" size={88} />
                         </Stage>
                         <div>
-                            <p className="font-display text-2xl font-bold text-ink">Ready for today's quiz?</p>
-                            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-faded-ink">
+                            <p className="font-display text-2xl font-bold text-ink-900">Ready for today's quiz?</p>
+                            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ink-500 font-ui">
                                 A few questions on the word and fact you've met, plus an older one worth remembering.
                             </p>
                         </div>
@@ -419,7 +354,7 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                         <Stage>
                             <Mascot mood="happy" size={72} />
                         </Stage>
-                        <p className="mt-1 font-display text-xl font-bold text-ember">Let's go</p>
+                        <p className="mt-1 font-display text-xl font-bold text-ember-600">Let's go</p>
                     </motion.div>
                 )}
 
@@ -433,19 +368,19 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                         className="relative"
                     >
                         <div className="mb-3 flex items-baseline justify-between">
-                            <p className="font-display text-sm font-bold text-ink">
-                                Question {answeredCount + 1} <span className="font-medium text-faded-ink">of {total}</span>
+                            <p className="font-display text-sm font-bold text-ink-900">
+                                Question {answeredCount + 1} <span className="font-medium text-ink-500 font-ui">of {total}</span>
                             </p>
-                            <p className="text-xs font-medium text-moss tabular-nums">{correctCount} correct</p>
+                            <p className="text-xs font-medium text-moss-600 tabular-nums font-ui">{correctCount} correct</p>
                         </div>
 
                         <div className="mb-5 flex items-center gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={answeredCount}>
                             {allQuestions.map((_, i) => {
                                 const answered = i < answeredCount;
                                 const current = i === answeredCount;
-                                const bg = answered ? (results[i] ? '#4C7A5A' : GOLD) : current ? EMBER : 'transparent';
+                                const bg = answered ? (results[i] ? 'var(--moss-600)' : GOLD) : current ? EMBER : 'transparent';
                                 return (
-                                    <div key={i} className="h-2.5 flex-1 overflow-hidden rounded-full bg-ink/10">
+                                    <div key={i} className="h-2.5 flex-1 overflow-hidden rounded-full bg-ink-900/10">
                                         <motion.div
                                             className="h-full rounded-full"
                                             style={{ background: bg }}
@@ -485,14 +420,14 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                         <Mascot mood={isPerfect ? 'happy' : 'idle'} size={64} />
                         <ScoreRing score={correctCount} total={total} perfect={isPerfect} />
                         <div>
-                            <p className="font-display text-2xl font-bold text-ink">
+                            <p className="font-display text-2xl font-bold text-ink-900">
                                 {isPerfect
                                     ? 'Perfect. You really know your stuff.'
                                     : correctCount >= Math.ceil(total / 2)
                                     ? 'Nice work today.'
                                     : 'Good effort — it sticks with repetition.'}
                             </p>
-                            <p className="mt-1.5 text-sm text-faded-ink">
+                            <p className="mt-1.5 text-sm text-ink-500 font-ui">
                                 {isPerfect
                                     ? 'Marked on your streak calendar. See you tomorrow.'
                                     : 'Your streak is safe. A new quiz unlocks tomorrow.'}

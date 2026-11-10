@@ -1,32 +1,117 @@
 @import "tailwindcss";
 
+/* ───────────────────────────────────────────────────────────
+   Field Journal design tokens — Curi redesign, Phase 1.
+   Light values live on :root, dark overrides on .dark.
+   @theme below turns every one of these into a Tailwind utility
+   (bg-ink-900, text-ember-600, rounded-card, shadow-raised, ...).
+   ─────────────────────────────────────────────────────────── */
 :root {
-  --theme-bg: #F6F4EF;
-  --theme-text: #1C2B3A;
-  --theme-faded: #7C8A93;
+  --paper: #F6F4EF;
+  --surface: #FFFDF9;
+  --line: #E6E1D6;
+  --line-strong: #DDD6C8;
+
+  --ink-900: #1C2B3A;
+  --ink-600: #4F5C66;
+  --ink-500: #5F6C75;
+
+  --ember-50: #FBE7DF;
+  --ember-500: #E8472A;
+  --ember-600: #C73B20;
+  --ember-700: #A3301A;
+  --on-ember: #FFFFFF;
+
+  --moss-50: #E4EDE8;
+  --moss-600: #3E6259;
+  --moss-700: #2F4C44;
+
+  --gold-50: #F5EBD0;
+  --gold-500: #C7962E;
+  --gold-700: #8A6416;
 }
 
 .dark {
-  --theme-bg: #12191F;
-  --theme-text: #E9E6DD;
-  --theme-faded: #a0aab2;
+  --paper: #12191F;
+  --surface: #1A232B;
+  --line: #2A353F;
+  --line-strong: #34414C;
+
+  --ink-900: #E9E6DD;
+  --ink-600: #A7B1B8;
+  --ink-500: #A7B1B8;
+
+  --ember-50: #28201C;
+  --ember-500: #F2694D;
+  --ember-600: #F2694D;
+  --ember-700: #F2694D;
+  --on-ember: #1C2B3A;
+
+  --moss-50: #1C2B26;
+  --moss-600: #8DB5A6;
+  --moss-700: #8DB5A6;
+
+  --gold-50: #2B2316;
+  --gold-500: #E3B95A;
+  --gold-700: #E3B95A;
 }
 
 @theme {
-  --color-paper: var(--theme-bg);
-  --color-ink: var(--theme-text);
-  --color-ember: #D8492F;
-  --color-moss: #3E6259;
-  --color-gold-stamp: #C7962E;
-  --color-faded-ink: var(--theme-faded);
-  
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-ink-900: var(--ink-900);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+
+  --color-ember-50: var(--ember-50);
+  --color-ember-500: var(--ember-500);
+  --color-ember-600: var(--ember-600);
+  --color-ember-700: var(--ember-700);
+  --color-on-ember: var(--on-ember);
+
+  --color-moss-50: var(--moss-50);
+  --color-moss-600: var(--moss-600);
+  --color-moss-700: var(--moss-700);
+
+  --color-gold-50: var(--gold-50);
+  --color-gold-500: var(--gold-500);
+  --color-gold-700: var(--gold-700);
+
   --color-night: #12191F;
-  --color-paper-dark: #E9E6DD;
-  --color-paper-light: #F6F4EF;
+
+  /* Legacy aliases — keep every pre-redesign component (which reads
+     bg-ember, text-ink, text-faded-ink, bg-gold-stamp, etc.) resolving
+     to the new, accessible palette without a mass rename. */
+  --color-ink: var(--ink-900);
+  --color-faded-ink: var(--ink-500);
+  --color-ember: var(--ember-500);
+  --color-moss: var(--moss-600);
+  --color-gold-stamp: var(--gold-500);
 
   --font-display: "Fraunces", serif;
   --font-ui: "Sora", sans-serif;
   --font-utility: "IBM Plex Mono", monospace;
+
+  --text-word-hero: 2.75rem;
+  --text-word-hero--line-height: 1.1;
+  --text-display: 2rem;
+  --text-display--line-height: 1.2;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.25;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.45;
+
+  --radius-tag: 8px;
+  --radius-control: 12px;
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+
+  --shadow-card: 0 1px 2px rgb(28 43 58 / 0.06), 0 2px 8px rgb(28 43 58 / 0.06);
+  --shadow-raised: 0 2px 4px rgb(28 43 58 / 0.06), 0 12px 28px rgb(28 43 58 / 0.10);
+  --shadow-press: inset 0 -3px 0 rgb(0 0 0 / 0.2);
 }
 
 @layer base {
@@ -88,4 +173,13 @@
 .animate-book-open {
   animation: book-open 2.4s ease-in-out infinite;
   animation-delay: 0.3s;
+}
+
+@keyframes otter-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+
+.animate-otter-breathe {
+  animation: otter-breathe 4s ease-in-out infinite;
 }
