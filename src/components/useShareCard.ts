@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import html2canvas from 'html2canvas';
 
-export type ShareCardType = 'word' | 'fact';
+export type ShareCardType = 'word' | 'fact' | 'dailyChallenge';
 
 export interface WordShareData {
   type: 'word';
@@ -17,7 +17,16 @@ export interface FactShareData {
   bullets: string[];
 }
 
-export type ShareData = WordShareData | FactShareData;
+/** Mock-only — the daily challenge game itself doesn't exist yet (see docs/BACKEND_TODO.md #7). */
+export interface DailyChallengeShareData {
+  type: 'dailyChallenge';
+  challengeNumber: number;
+  score: number;
+  total: number;
+  streak: number;
+}
+
+export type ShareData = WordShareData | FactShareData | DailyChallengeShareData;
 
 export function useShareCard() {
   const [isOpen, setIsOpen] = useState(false);

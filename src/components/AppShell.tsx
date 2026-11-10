@@ -3,6 +3,7 @@ import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
 import { EmailVerificationBanner } from './EmailVerificationBanner';
 import { NotificationReEnableBanner } from './NotificationReEnableBanner';
+import { OfflineBanner } from './OfflineBanner';
 import { useAuth } from '../contexts/AuthContext';
 
 import { StreakCounter } from './StreakCounter';
@@ -116,6 +117,7 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
         <TopNav title={title} onOpenDictionary={() => setDictionaryOpen(true)} />
 
         {/* Verification banner */}
+        <OfflineBanner />
         <EmailVerificationBanner />
         <NotificationReEnableBanner />
 
