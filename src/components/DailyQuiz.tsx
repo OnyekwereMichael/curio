@@ -6,12 +6,16 @@ import { useWordQuizQuestion } from '../hooks/useWordQuizQuestion';
 import { buildFactQuizQuestions } from '../hooks/useFactQuizQuestions';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
+import { createMilestoneImage, shareMilestone } from '../lib/milestoneShare';
+import { estimateQuizXp } from '../services/xp';
+import { PREVIEW_FEATURES } from '../lib/featureFlags';
 
 interface Props {
     todaysWord: any;
     oldButGoldWord: any;
     todaysFact: any;
     oldButGoldFact: any;
+    currentStreak: number;
     commitStreak: () => Promise<void>; // from useStreak() — called once, on completion
 }
 
@@ -167,7 +171,7 @@ const cardBase = 'rounded-sheet bg-surface border border-line';
 // ─────────────────────────────────────────────────────────
 // DailyQuiz
 // ─────────────────────────────────────────────────────────
-export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFact, commitStreak }: Props) {
+export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFact, currentStreak, commitStreak }: Props) {
     const { user } = useAuth();
     const [state, setState] = useState<QuizState>('loading');
     const [correctCount, setCorrectCount] = useState(0);
@@ -175,6 +179,15 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
     const [results, setResults] = useState<boolean[]>([]);
     const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
     const [persistedScore, setPersistedScore] = useState<number | null>(null);
+    const [dayFinished, setDayFinished] = useState(false);
+    const [shareState, setShareState] = useState<'idle' | 'working' | 'shared' | 'copied' | 'failed'>('idle');
+
+    async function handleShareDay() {
+        setShareState('working');
+        const image = await createMilestoneImage(currentStreak);
+        const result = await shareMilestone(currentStreak, image);
+        setShareState(result === 'shared' || result === 'copied' ? result : 'idle');
+    }
 
     const { quiz: todaysWordQuiz } = useWordQuizQuestion(todaysWord);
     const { quiz: oldWordQuiz } = useWordQuizQuestion(oldButGoldWord);
@@ -408,7 +421,7 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                 )}
 
                 {/* ───────── Completed ───────── */}
-                {state === 'completed' && (
+                {state === 'completed' && !dayFinished && (
                     <motion.div
                         key="completed"
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -432,6 +445,39 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                                     ? 'Marked on your streak calendar. See you tomorrow.'
                                     : 'Your streak is safe. A new quiz unlocks tomorrow.'}
                             </p>
+                        </div>
+                        {PREVIEW_FEATURES && (
+                            <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-3 py-1.5 rounded-tag font-ui">
+                                +{estimateQuizXp(correctCount, total)} XP
+                            </span>
+                        )}
+                        <PrimaryButton onClick={() => setDayFinished(true)}>Finish the day</PrimaryButton>
+                    </motion.div>
+                )}
+
+                {/* ───────── Day complete ───────── */}
+                {state === 'completed' && dayFinished && (
+                    <motion.div
+                        key="day-complete"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                        className="relative flex flex-col items-center gap-4 overflow-hidden rounded-sheet bg-ink-900 px-6 py-10 text-center text-paper"
+                    >
+                        <div className="flex items-center gap-2 text-ember-500">
+                            <span className="font-display text-4xl font-bold">🔥{currentStreak}</span>
+                        </div>
+                        <p className="text-xs uppercase tracking-wider text-paper/60 font-ui">day streak</p>
+                        <Mascot mood="happy" size={72} />
+                        <p className="font-display text-2xl font-bold">All done. That's a full pouch.</p>
+                        <div className="flex w-full flex-col gap-3 pt-2">
+                            <button
+                                onClick={handleShareDay}
+                                className="w-full rounded-control border border-paper/25 py-3 text-sm font-semibold text-paper hover:bg-paper/10 transition-colors font-ui"
+                            >
+                                {shareState === 'working' ? 'Preparing…' : shareState === 'shared' ? 'Shared!' : shareState === 'copied' ? 'Link copied' : "Share today's result"}
+                            </button>
+                            <PrimaryButton onClick={() => setDayFinished(false)}>Done</PrimaryButton>
                         </div>
                     </motion.div>
                 )}
