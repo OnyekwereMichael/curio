@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, type ReactNode } from 'react';
-import { Smartphone, Bell, Flame } from 'lucide-react';
+import { Bell, Flame } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { usePlatform } from '../../lib/usePlatform';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
+import { Otter } from '../../components/Otter';
 
 const SafariShareIcon = () => (
   <svg
@@ -16,7 +17,7 @@ const SafariShareIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="mx-1 inline -translate-y-px text-ember"
+    className="mx-1 inline -translate-y-px text-ember-600"
     aria-hidden="true"
   >
     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
@@ -28,17 +29,17 @@ const SafariShareIcon = () => (
 function Step({ number, children }: { number: number; children: ReactNode }) {
   return (
     <li className="flex items-start gap-4">
-      <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-ember/10 font-display text-sm font-bold text-ember">
+      <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-ember-50 font-display text-sm font-bold text-ember-600">
         {number}
       </span>
-      <p className="pt-1 text-sm leading-relaxed text-ink/80">{children}</p>
+      <p className="pt-1 text-sm leading-relaxed text-ink-900/80 font-ui">{children}</p>
     </li>
   );
 }
 
 function StepsCard({ children }: { children: ReactNode }) {
   return (
-    <ol className="flex flex-col gap-5 rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+    <ol className="flex flex-col gap-5 rounded-card border border-line bg-surface p-6 shadow-card">
       {children}
     </ol>
   );
@@ -46,8 +47,8 @@ function StepsCard({ children }: { children: ReactNode }) {
 
 function PromptCard({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-ink/10 bg-white p-6 text-center shadow-sm">
-      <p className="text-sm leading-relaxed text-ink/80">{children}</p>
+    <div className="rounded-card border border-line bg-surface p-6 text-center shadow-card">
+      <p className="text-sm leading-relaxed text-ink-900/80 font-ui">{children}</p>
     </div>
   );
 }
@@ -118,29 +119,27 @@ export function InstallNudge() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper font-ui text-ink">
+    <div className="flex min-h-screen flex-col bg-paper font-ui text-ink-900">
       <main className="flex flex-1 items-center justify-center px-6 py-12">
         <div className="flex w-full max-w-md flex-col gap-8">
           {/* Header */}
           <header className="text-center">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-ember/10 text-ember">
-              <Smartphone size={30} aria-hidden="true" />
-            </div>
+            <Otter mood="idle" size={88} breathe className="mx-auto mb-6" />
 
-            <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-ink max-sm:text-[26px]">
-              Install Curi to get your daily word and fact
+            <h1 className="font-display text-display font-bold leading-tight tracking-tight text-ink-900 max-sm:text-[26px]">
+              Keep Curi one tap away
             </h1>
-            <p className="mt-3 text-sm leading-relaxed text-faded-ink">
-              So your streak and your reminders actually work.
+            <p className="mt-3 text-sm leading-relaxed text-ink-500">
+              Installed, it opens instantly, works offline, and so your streak and reminders actually work.
             </p>
 
             <ul className="mt-5 flex flex-wrap items-center justify-center gap-2">
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-white px-3 py-1.5 text-xs font-medium text-ink/80">
-                <Bell size={13} className="text-ember" aria-hidden="true" />
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-900/80 font-ui">
+                <Bell size={13} className="text-ember-600" aria-hidden="true" />
                 Daily reminders
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-white px-3 py-1.5 text-xs font-medium text-ink/80">
-                <Flame size={13} className="text-ember" aria-hidden="true" />
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-900/80 font-ui">
+                <Flame size={13} className="text-ember-600" aria-hidden="true" />
                 Keep your streak
               </li>
             </ul>
@@ -150,18 +149,18 @@ export function InstallNudge() {
           <section aria-label="How to install">
             {/* Android: automatic prompt available */}
             {platform === 'android' && installPromptEvent && (
-              <PromptCard>Tap <strong className="text-ink">Install</strong> below to add Curi to your home screen.</PromptCard>
+              <PromptCard>Tap <strong className="text-ink-900">Install</strong> below to add Curi to your home screen.</PromptCard>
             )}
 
             {/* Android: manual steps */}
             {platform === 'android' && !installPromptEvent && (
               <StepsCard>
                 <Step number={1}>
-                  Tap the menu icon (<strong className="text-ink">⋮</strong>) in your browser.
+                  Tap the menu icon (<strong className="text-ink-900">⋮</strong>) in your browser.
                 </Step>
                 <Step number={2}>
-                  Tap <strong className="text-ink">"Install app"</strong> or{' '}
-                  <strong className="text-ink">"Add to Home screen"</strong>.
+                  Tap <strong className="text-ink-900">"Install app"</strong> or{' '}
+                  <strong className="text-ink-900">"Add to Home screen"</strong>.
                 </Step>
               </StepsCard>
             )}
@@ -170,13 +169,13 @@ export function InstallNudge() {
             {platform === 'ios' && (
               <StepsCard>
                 <Step number={1}>
-                  Tap the <SafariShareIcon /> <strong className="text-ink">Share</strong> icon in Safari.
+                  Tap the <SafariShareIcon /> <strong className="text-ink-900">Share</strong> icon in Safari.
                 </Step>
                 <Step number={2}>
-                  Scroll down and tap <strong className="text-ink">"Add to Home Screen"</strong>.
+                  Scroll down and tap <strong className="text-ink-900">"Add to Home Screen"</strong>.
                 </Step>
                 <Step number={3}>
-                  Tap <strong className="text-ink">"Add"</strong> in the top-right corner to finish.
+                  Tap <strong className="text-ink-900">"Add"</strong> in the top-right corner to finish.
                 </Step>
               </StepsCard>
             )}
@@ -185,10 +184,10 @@ export function InstallNudge() {
             {platform === 'other' && !installPromptEvent && (
               <StepsCard>
                 <Step number={1}>
-                  Click the <strong className="text-ink">Install icon (⊕)</strong> in your browser address bar or menu.
+                  Click the <strong className="text-ink-900">Install icon (⊕)</strong> in your browser address bar or menu.
                 </Step>
                 <Step number={2}>
-                  Click <strong className="text-ink">"Install"</strong> to add Curi to your device.
+                  Click <strong className="text-ink-900">"Install"</strong> to add Curi to your device.
                 </Step>
               </StepsCard>
             )}
@@ -196,7 +195,7 @@ export function InstallNudge() {
             {/* Desktop / other: automatic prompt available */}
             {platform === 'other' && installPromptEvent && (
               <PromptCard>
-                Click <strong className="text-ink">Install</strong> below to add Curi to your device. Takes less than a minute.
+                Click <strong className="text-ink-900">Install</strong> below to add Curi to your device. Takes less than a minute.
               </PromptCard>
             )}
           </section>
@@ -220,7 +219,7 @@ export function InstallNudge() {
             <button
               type="button"
               onClick={handleSkipInstall}
-              className="cursor-pointer rounded-lg px-4 py-3 text-sm font-medium text-faded-ink transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/40"
+              className="cursor-pointer rounded-control px-4 py-3 text-sm font-medium text-ink-500 transition-colors hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40 font-ui"
             >
               Skip for now
             </button>

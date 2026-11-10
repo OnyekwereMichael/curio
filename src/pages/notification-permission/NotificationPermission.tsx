@@ -9,6 +9,7 @@ import { usePlatform } from '../../lib/usePlatform';
 import { useToast } from '../../components/ui/Toast';
 import { supabase } from '../../lib/superbase';
 import logo from '../../../public/icon-192.png'
+import { Otter } from '../../components/Otter';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -144,7 +145,7 @@ export function NotificationPermission() {
   };
 
   return (
-    <div className="min-h-screen bg-paper flex flex-col font-ui text-ink">
+    <div className="min-h-screen bg-paper flex flex-col font-ui text-ink-900">
       <main className="flex-1 flex flex-col justify-center items-center pb-14 pt-14 max-sm:px-6">
         <div className="w-full max-w-md flex flex-col h-full">
 
@@ -152,68 +153,65 @@ export function NotificationPermission() {
 
             {!isGranted ? (
               <>
-                {/* Visual Lock Screen Mockup */}
+                <Otter mood="idle" size={88} breathe className="mx-auto mb-6" />
+
+                <div className="text-center mb-8">
+                  <h1 className="font-display text-display font-bold text-ink-900 mb-3 leading-tight tracking-tight">
+                    Can I tap you on the shoulder?
+                  </h1>
+                  <p className="text-[16px] text-ink-500 leading-relaxed px-4 font-ui">
+                    One ping when your daily word is ready, and one gentle nudge in the evening only if you haven't played. That's it.
+                  </p>
+                </div>
+
+                {/* Notification preview */}
                 <div className="mb-8 relative perspective-1000">
-                  <div className="absolute inset-0 bg-gradient-to-br from-ember/20 to-gold-stamp/20 blur-3xl -z-10 rounded-full animate-pulse" />
-                  
-                  <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out hover:scale-[1.02] transition-transform">
+                  <div className="absolute inset-0 bg-gradient-to-br from-ember-500/20 to-gold-500/20 blur-3xl -z-10 rounded-full animate-pulse" />
+
+                  <div className="bg-surface/90 backdrop-blur-md rounded-card border border-line shadow-raised p-4 mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out hover:scale-[1.02] transition-transform">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <div className="w-10 h-10 rounded-control shadow-card flex items-center justify-center flex-shrink-0 overflow-hidden">
                         <img src={logo} alt="Curi Logo" className="w-full h-full object-cover" />
                       </div>
-                      <div className="min-w-0 flex-1 font-display">
+                      <div className="min-w-0 flex-1 font-ui">
                         <div className="flex items-center justify-between mb-0.5">
-                          <span className="text-[13px] font-semibold text-ink">Curi</span>
-                          <span className="text-[11px] text-faded-ink">now</span>
+                          <span className="text-[13px] font-semibold text-ink-900">Curi</span>
+                          <span className="text-[11px] text-ink-500">8:00 AM</span>
                         </div>
-                        <p className="text-[14px] font-semibold text-ink leading-snug">
-                          Your daily word is ready: Sonder
-                        </p>
-                        <p className="text-[13px] text-faded-ink mt-0.5 leading-snug truncate">
-                          the realization that each random passerby has a life as vivid and complex as your own.
+                        <p className="text-[14px] font-semibold text-ink-900 leading-snug">
+                          Today's word is a strange one. Come see.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-center mb-8">
-                  <h1 className="font-display text-[26px] font-bold text-ink mb-3 leading-tight tracking-tight">
-                    Never miss your daily spark
-                  </h1>
-                  <p className="font-display text-[16px] text-faded-ink leading-relaxed px-4">
-                    Allow notifications so we can remind you when your daily word and facts are ready. 
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-4 mb-4 mx-auto w-full bg-white rounded-2xl p-5 border border-ink/5 shadow-sm">
-                  <div className="flex items-start gap-3 text-ink font-display">
-                    <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="flex flex-col gap-4 mb-4 mx-auto w-full bg-surface rounded-card p-5 border border-line shadow-card">
+                  <div className="flex items-start gap-3 text-ink-900 font-ui">
+                    <div className="w-6 h-6 rounded-full bg-moss-50 text-moss-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check size={14} strokeWidth={3} />
                     </div>
                     <div>
                       <span className="block font-semibold text-[15px]">Keep your streak alive</span>
-                      <span className="block text-[13px] text-faded-ink mt-0.5">The easiest way to stay consistent and build a learning habit.</span>
+                      <span className="block text-[13px] text-ink-500 mt-0.5">The easiest way to stay consistent and build a learning habit.</span>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3 text-ink font-display">
-                    <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-start gap-3 text-ink-900 font-ui">
+                    <div className="w-6 h-6 rounded-full bg-gold-50 text-gold-700 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <AlertCircleIcon size={14} strokeWidth={2.5} />
                     </div>
                     <div>
                       <span className="block font-semibold text-[15px]">Zero spam. Just one reminder.</span>
-                      <span className="block text-[13px] text-faded-ink mt-0.5">We only send you one notification a day, right when it's ready.</span>
+                      <span className="block text-[13px] text-ink-500 mt-0.5">We only send you one notification a day, right when it's ready.</span>
                     </div>
                   </div>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center animate-in zoom-in duration-500 mb-6 shadow-sm border border-emerald-100">
-                  <Check size={32} strokeWidth={2.5} />
-                </div>
-                <h2 className="font-display text-[24px] font-bold text-ink mb-2">You're all set!</h2>
-                <p className="text-faded-ink text-[16px] px-4 font-display">
+                <Otter mood="proud" size={88} className="mb-4" />
+                <h2 className="font-display text-title font-bold text-ink-900 mb-2">You're all set!</h2>
+                <p className="text-ink-500 text-[16px] px-4 font-ui">
                   Your daily reminder is scheduled. Your next word will find you.
                 </p>
               </div>
@@ -224,19 +222,19 @@ export function NotificationPermission() {
           <div className="flex flex-col gap-3 mt-10">
             {!isGranted ? (
               <>
-                <Button onClick={handleEnableClick} isLoading={loading} className="w-full font-display text-[16px] py-4 shadow-md hover:shadow-lg transition-all">
-                  Allow Notifications
+                <Button onClick={handleEnableClick} isLoading={loading} className="w-full text-[16px] py-4">
+                  Turn on reminders
                 </Button>
 
                 <button
                   onClick={handleNotificationDenied}
-                  className="text-faded-ink text-[14px] font-display font-medium hover:text-ink transition-colors py-3"
+                  className="text-ink-500 text-[14px] font-ui font-medium hover:text-ink-900 transition-colors py-3"
                 >
-                  Skip for now
+                  Not now
                 </button>
               </>
             ) : (
-              <Button onClick={completeNotificationStep} className="w-full font-display py-4">
+              <Button onClick={completeNotificationStep} className="w-full py-4">
                 Continue to Home
               </Button>
             )}

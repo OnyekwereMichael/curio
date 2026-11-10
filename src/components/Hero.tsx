@@ -18,7 +18,7 @@ export function Hero() {
             transition={{ duration: 0.5 }}
             className="mb-4"
           >
-            <span className="text-sm font-semibold text-faded-ink tracking-wider uppercase">
+            <span className="text-sm font-semibold text-ink-500 tracking-wider uppercase font-ui">
               One word. One fact. Every day.
             </span>
           </motion.div>
@@ -27,7 +27,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-5xl sm:text-6xl text-ink font-bold leading-[1.1] mb-6 "
+            className="font-display text-5xl sm:text-6xl text-ink-900 font-bold leading-[1.1] mb-6 "
           >
             Learn something worth knowing, every single day.
           </motion.h1>
@@ -36,7 +36,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg text-faded-ink mb-8 max-w-lg leading-relaxed"
+            className="text-lg text-ink-500 mb-8 max-w-lg leading-relaxed font-ui"
           >
             A new word to use, a new fact to remember — two minutes a day, no pressure, no lessons.
           </motion.p>
@@ -46,7 +46,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <button onClick={() => navigate(session ? '/home' : '/signup')} className="bg-ember text-paper font-semibold text-lg px-8 py-4 rounded-xl shadow-lg shadow-ember/20 hover:shadow-xl hover:-translate-y-0.5 hover:bg-ember/90 transition-all cursor-pointer">
+            <button onClick={() => navigate(session ? '/home' : '/signup')} className="bg-ember-600 text-on-ember font-semibold text-lg px-8 py-4 rounded-control shadow-raised hover:brightness-105 hover:-translate-y-0.5 transition-all cursor-pointer font-ui">
               {session ? 'Go to home' : "Get Started — It's Free"}
             </button>
           </motion.div>
