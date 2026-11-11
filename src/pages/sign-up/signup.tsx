@@ -15,6 +15,11 @@ export function SignupScreen() {
     const [formError, setFormError] = useState<string | null>(null);
     const [googleLoading, setGoogleLoading] = useState(false);
 
+    // Where a brand-new account lands — the mock onboarding wizard when the
+    // flag is on (it continues into /install-nudge itself when it's done),
+    // otherwise straight to the real install-nudge step.
+    const postSignupPath = PREVIEW_FEATURES ? '/onboarding/word-style' : '/install-nudge';
+
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -45,7 +50,10 @@ export function SignupScreen() {
                         full_name: values.name,
                         avatar_url: avatarUrl
                     },
-                    emailRedirectTo: `${window.location.origin}/install-nudge`,
+                    // This is where Supabase sends them after they click the
+                    // confirmation link — a server-side redirect, so it has to
+                    // be set here, not decided later in this component.
+                    emailRedirectTo: `${window.location.origin}${postSignupPath}`,
                 },
             });
 
@@ -67,9 +75,7 @@ export function SignupScreen() {
 
             if (data.session) {
                 // Confirmation is off, or this account was pre-confirmed — go straight in.
-                // Preview-only: route through the mock onboarding flow first, which
-                // continues into /install-nudge itself when it's done.
-                navigate(PREVIEW_FEATURES ? '/onboarding/word-style' : '/install-nudge');
+                navigate(postSignupPath);
             } else {
                 // Confirmation is required — no session yet. Tell them to check email.
                 navigate('/check-email', { state: { email: values.email } });
@@ -83,7 +89,7 @@ export function SignupScreen() {
 
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: `${window.location.origin}/install-nudge` },
+            options: { redirectTo: `${window.location.origin}${postSignupPath}` },
         });
 
         if (error) {
