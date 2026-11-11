@@ -121,12 +121,9 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
         <EmailVerificationBanner />
         <NotificationReEnableBanner />
 
-        {/* Page content — capped at 720px per the desktop layout spec, with
-            room at the bottom for the mobile tab bar. */}
+        {/* Page content — full width; room at the bottom for the mobile tab bar. */}
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-          <div className="max-w-[720px] mx-auto w-full">
-            {children}
-          </div>
+          {children}
         </main>
       </div>
 
