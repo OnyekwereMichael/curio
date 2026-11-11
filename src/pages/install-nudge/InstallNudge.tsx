@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Bell, Flame } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { usePlatform } from '../../lib/usePlatform';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
 import { Otter } from '../../components/Otter';
+import { peekFreshSignup, clearFreshSignup } from '../../lib/pendingOnboarding';
 
 const SafariShareIcon = () => (
   <svg
@@ -58,6 +59,18 @@ export function InstallNudge() {
   const { user } = useAuth();
   const { platform, installPromptEvent, isStandalone } = usePlatform();
 
+  // Set by signup/Splash right before the real Supabase signUp/OAuth call,
+  // since emailRedirectTo and OAuth redirectTo both have to stay pointed at
+  // this already-allow-listed route — see src/lib/pendingOnboarding.ts.
+  const [pendingOnboarding] = useState(peekFreshSignup);
+
+  useEffect(() => {
+    if (pendingOnboarding) {
+      clearFreshSignup();
+      navigate('/onboarding/word-style', { replace: true });
+    }
+  }, [pendingOnboarding, navigate]);
+
   // Fire welcome email for all signup paths (email+password AND Google OAuth).
   // The edge function's idempotency guard (welcome_email_sent_at) prevents double-sends.
   useEffect(() => {
@@ -72,6 +85,7 @@ export function InstallNudge() {
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (pendingOnboarding) return; // onboarding takes priority — see above
     if (isStandalone) {
       if (user) {
         supabase.from('users').update({ installed: true }).eq('id', user.id).then(() => {
@@ -81,7 +95,9 @@ export function InstallNudge() {
         navigate('/notification-permission', { replace: true });
       }
     }
-  }, [isStandalone, navigate, user]);
+  }, [isStandalone, navigate, user, pendingOnboarding]);
+
+  if (pendingOnboarding) return null; // redirecting to onboarding
 
   // Persists the installed flag to Supabase for this user
   async function markInstalled(installed: boolean) {

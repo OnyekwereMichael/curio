@@ -4,6 +4,7 @@ import { X, AlertCircle } from 'lucide-react';
 import { Otter } from '../../components/Otter';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/superbase';
+import { markFreshSignup } from '../../lib/pendingOnboarding';
 
 /**
  * The redesign's minimal splash/entry screen — sits in front of the real
@@ -19,10 +20,13 @@ export function SplashScreen() {
   async function handleGoogleSignUp() {
     setError(null);
     setGoogleLoading(true);
+    markFreshSignup();
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/onboarding/word-style` },
+      // Already-allow-listed in Supabase; install-nudge forwards fresh
+      // signups into onboarding itself (see src/lib/pendingOnboarding.ts).
+      options: { redirectTo: `${window.location.origin}/install-nudge` },
     });
 
     if (error) {
