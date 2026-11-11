@@ -6,19 +6,14 @@ import { Eye, EyeOff, X } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/superbase';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
 
+const POST_SIGNUP_PATH = '/onboarding/word-style';
 
 export function SignupScreen() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const [googleLoading, setGoogleLoading] = useState(false);
-
-    // Where a brand-new account lands — the mock onboarding wizard when the
-    // flag is on (it continues into /install-nudge itself when it's done),
-    // otherwise straight to the real install-nudge step.
-    const postSignupPath = PREVIEW_FEATURES ? '/onboarding/word-style' : '/install-nudge';
 
     const formik = useFormik({
         initialValues: {
@@ -53,7 +48,7 @@ export function SignupScreen() {
                     // This is where Supabase sends them after they click the
                     // confirmation link — a server-side redirect, so it has to
                     // be set here, not decided later in this component.
-                    emailRedirectTo: `${window.location.origin}${postSignupPath}`,
+                    emailRedirectTo: `${window.location.origin}${POST_SIGNUP_PATH}`,
                 },
             });
 
@@ -75,7 +70,7 @@ export function SignupScreen() {
 
             if (data.session) {
                 // Confirmation is off, or this account was pre-confirmed — go straight in.
-                navigate(postSignupPath);
+                navigate(POST_SIGNUP_PATH);
             } else {
                 // Confirmation is required — no session yet. Tell them to check email.
                 navigate('/check-email', { state: { email: values.email } });
@@ -89,7 +84,7 @@ export function SignupScreen() {
 
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: `${window.location.origin}${postSignupPath}` },
+            options: { redirectTo: `${window.location.origin}${POST_SIGNUP_PATH}` },
         });
 
         if (error) {

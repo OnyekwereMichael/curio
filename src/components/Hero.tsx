@@ -46,7 +46,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <button onClick={() => navigate(session ? '/home' : '/signup')} className="bg-ember-600 text-on-ember font-semibold text-lg px-8 py-4 rounded-control shadow-raised hover:brightness-105 hover:-translate-y-0.5 transition-all cursor-pointer font-ui">
+            <button onClick={() => navigate(session ? '/home' : '/welcome')} className="bg-ember-600 text-on-ember font-semibold text-lg px-8 py-4 rounded-control shadow-raised hover:brightness-105 hover:-translate-y-0.5 transition-all cursor-pointer font-ui">
               {session ? 'Go to home' : "Get Started — It's Free"}
             </button>
           </motion.div>

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
+import { SplashScreen } from './pages/splash/Splash';
 import { SignupScreen } from './pages/sign-up/signup';
 import { LoginScreen } from './pages/login/login';
 import { CheckEmailScreen } from './pages/check-email/CheckEmail';
@@ -41,16 +42,17 @@ function App() {
           <Router>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/welcome" element={<SplashScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
               <Route path="/login" element={<LoginScreen />} />
               {/* Public route — no session exists yet at this point, so it can't be behind ProtectedRoute */}
               <Route path="/check-email" element={<CheckEmailScreen />} />
-              <Route path="/onboarding/word-style" element={<ProtectedRoute><PreviewRoute><WordStylePage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/onboarding/level" element={<ProtectedRoute><PreviewRoute><LevelPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/onboarding/words-per-day" element={<ProtectedRoute><PreviewRoute><WordsPerDayPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/onboarding/fact-topics" element={<ProtectedRoute><PreviewRoute><FactTopicsPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/onboarding/goal-reminder" element={<ProtectedRoute><PreviewRoute><GoalReminderPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/onboarding/plan" element={<ProtectedRoute><PreviewRoute><PlanSummaryPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/onboarding/word-style" element={<ProtectedRoute><WordStylePage /></ProtectedRoute>} />
+              <Route path="/onboarding/level" element={<ProtectedRoute><LevelPage /></ProtectedRoute>} />
+              <Route path="/onboarding/words-per-day" element={<ProtectedRoute><WordsPerDayPage /></ProtectedRoute>} />
+              <Route path="/onboarding/fact-topics" element={<ProtectedRoute><FactTopicsPage /></ProtectedRoute>} />
+              <Route path="/onboarding/goal-reminder" element={<ProtectedRoute><GoalReminderPage /></ProtectedRoute>} />
+              <Route path="/onboarding/plan" element={<ProtectedRoute><PlanSummaryPage /></ProtectedRoute>} />
               <Route path="/install-nudge" element={<ProtectedRoute><InstallNudge /></ProtectedRoute>} />
               <Route path="/notification-permission" element={<ProtectedRoute><NotificationPermission /></ProtectedRoute>} />
               <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
@@ -61,8 +63,8 @@ function App() {
               <Route path="/collection/review" element={<ProtectedRoute><PreviewRoute><ReviewSessionPage /></PreviewRoute></ProtectedRoute>} />
               <Route path="/dictionary" element={<ProtectedRoute><DictionaryPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-              <Route path="/settings/plan" element={<ProtectedRoute><PreviewRoute><LearningPlanSettingsPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/settings/plan/when" element={<ProtectedRoute><PreviewRoute><PlanWhenPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/settings/plan" element={<ProtectedRoute><LearningPlanSettingsPage /></ProtectedRoute>} />
+              <Route path="/settings/plan/when" element={<ProtectedRoute><PlanWhenPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/play" element={<ProtectedRoute><PreviewRoute><PlayHubPage /></PreviewRoute></ProtectedRoute>} />
               <Route path="/play/:code" element={<ProtectedRoute><PreviewRoute><WordDuelPage /></PreviewRoute></ProtectedRoute>} />

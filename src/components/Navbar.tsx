@@ -67,7 +67,7 @@ export function Navbar() {
             </Link>
           )}
           <motion.button
-            onClick={() => navigate(session ? '/home' : '/signup')}
+            onClick={() => navigate(session ? '/home' : '/welcome')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-ember-600 text-on-ember font-medium text-sm px-5 py-2.5 rounded-control shadow-card hover:brightness-105 transition-all cursor-pointer"

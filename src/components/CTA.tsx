@@ -29,7 +29,7 @@ export function CTA() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-col items-center gap-4 w-full"
         >
-          <button onClick={() => navigate(session ? '/home' : '/signup')} className="bg-ember-600 text-on-ember font-semibold text-lg px-10 py-5 rounded-control shadow-raised hover:brightness-105 hover:-translate-y-0.5 transition-all w-full sm:w-auto cursor-pointer font-ui">
+          <button onClick={() => navigate(session ? '/home' : '/welcome')} className="bg-ember-600 text-on-ember font-semibold text-lg px-10 py-5 rounded-control shadow-raised hover:brightness-105 hover:-translate-y-0.5 transition-all w-full sm:w-auto cursor-pointer font-ui">
             {session ? 'Go to home' : "Get Started — It's Free"}
           </button>
           <p className="text-sm font-medium text-ink-500 font-ui">

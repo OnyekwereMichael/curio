@@ -10,7 +10,6 @@ import { useToast } from '../../components/ui/Toast';
 import { usePlatform } from '../../lib/usePlatform';
 import { supabase } from '../../lib/superbase';
 import { useTheme, type ThemeChoice } from '../../contexts/ThemeContext';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
 import {
   getReduceMotionPref,
   setReduceMotionPref,
@@ -71,7 +70,7 @@ export function SettingsPage() {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   useEffect(() => {
-    if (PREVIEW_FEATURES) getLearningPlan().then(setPlan);
+    getLearningPlan().then(setPlan);
   }, []);
 
   async function handleSignOut() {
@@ -245,7 +244,7 @@ export function SettingsPage() {
           <p className="text-ink-500 text-sm font-ui">Manage your app experience and notifications.</p>
         </div>
 
-        {PREVIEW_FEATURES && plan && (
+        {plan && (
           <div className="bg-ink-900 text-paper rounded-card p-4 sm:p-6 shadow-card flex flex-col gap-1 font-ui">
             <button onClick={() => navigate('/settings/plan')} className="flex items-center justify-between text-left">
               <div>
@@ -345,7 +344,7 @@ export function SettingsPage() {
             </div>
           </div>
 
-          {PREVIEW_FEATURES && plan && (
+          {plan && (
             <>
               <div className="h-px bg-line" />
               <div className="flex items-center justify-between gap-4">

@@ -15,9 +15,11 @@ No existing table is touched by any of this — everything here is new tables/co
 
 ## 1. Onboarding + learning plan
 
+**Priority note:** unlike every other item in this file, this one is **not** behind `PREVIEW_FEATURES` — every new signup (email+password and Google) now actually goes through this wizard, and Settings' "My learning plan" is always visible. Only the data persistence is mocked; the flow itself is real and live. Wire the real table first.
+
 **Service:** `src/services/onboarding.ts` (`getOnboardingDraft`, `updateOnboardingDraft`, `completeOnboarding`), `src/services/learningPlan.ts` (`getLearningPlan`, `updateLearningPlan`)
 
-**Screens:** `/onboarding/word-style` → `/level` → `/words-per-day` → `/fact-topics` → `/goal-reminder` → `/plan` (6 steps), `/settings/plan`, `/settings/plan/when`
+**Screens:** `/welcome` (real, not mocked) → `/signup` → `/onboarding/word-style` → `/level` → `/words-per-day` → `/fact-topics` → `/goal-reminder` → `/plan` (6 steps, all unconditional now) → `/install-nudge`. Also `/settings/plan`, `/settings/plan/when`.
 
 **Type:**
 ```ts
