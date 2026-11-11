@@ -60,6 +60,13 @@ export function ReviewSessionPage() {
           </div>
         )}
 
+        {stage === 'loading' && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
+            <Otter mood="thinking" size={72} breathe />
+            <p className="text-sm text-ink-500">Turning the pebble over…</p>
+          </div>
+        )}
+
         {stage === 'nothing' && (
           <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
             <Otter mood="sleepy" size={88} />

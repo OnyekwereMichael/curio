@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Flame } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
+import { Otter } from '../../components/Otter';
 import { getFriendsData, type FriendsData } from '../../services/social';
 import { cn } from '../../lib/utils';
 
@@ -23,6 +24,13 @@ export function FriendsPage() {
           </button>
           <h1 className="font-display text-title font-bold text-ink-900">Friends</h1>
         </div>
+
+        {!data && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-16">
+            <Otter mood="thinking" size={72} breathe />
+            <p className="text-sm text-ink-500">Turning the pebble over…</p>
+          </div>
+        )}
 
         {data && (
           <>
