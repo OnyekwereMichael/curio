@@ -1,23 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { peekFreshSignup, clearFreshSignup } from '../lib/pendingOnboarding';
+import { peekFreshSignup, consumeFreshSignup } from '../lib/pendingOnboarding';
 
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { user, loading } = useAuth();
     const location = useLocation();
 
-    // Captured once per mount via a pure read (safe even if StrictMode's dev
-    // double-render invokes this twice) — the actual localStorage clear
-    // happens in the effect below, not here during render, so it can't be
-    // silently undone by that double-invoke the way an in-render side
-    // effect was.
-    const [pendingOnboarding] = useState(peekFreshSignup);
+    // Derived fresh every render from current (not-yet-mutated) state, so
+    // this agrees across React StrictMode's dev double-render. The actual
+    // one-time "don't redirect again" latch is flipped in the effect below,
+    // not here — see src/lib/pendingOnboarding.ts for why that split matters.
+    //
+    // Gated on `!loading && !!user`: peekFreshSignup() must not even be
+    // called while auth is still resolving, or the effect below consumes
+    // the one-shot flag during that loading render — before this component
+    // ever gets to act on it — and the "real" render once auth resolves
+    // just sees it already gone.
+    const shouldEnterOnboarding =
+        !loading && !!user && !location.pathname.startsWith('/onboarding') && peekFreshSignup();
 
     useEffect(() => {
-        if (pendingOnboarding) clearFreshSignup();
-    }, [pendingOnboarding]);
+        if (shouldEnterOnboarding) consumeFreshSignup();
+    }, [shouldEnterOnboarding]);
 
     if (loading) {
         return (
@@ -30,14 +36,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     if (!user) return <Navigate to="/login" replace />;
 
     // Catches a fresh signup regardless of which protected route Supabase's
-    // email-confirmation or OAuth redirect actually lands on — the exact
-    // landing page isn't under our control (it depends on that project's
-    // Authentication > URL Configuration), so this check has to live
-    // somewhere every protected route passes through, not on one specific
-    // page. See src/lib/pendingOnboarding.ts for why.
-    if (pendingOnboarding && !location.pathname.startsWith('/onboarding')) {
-        return <Navigate to="/onboarding/word-style" replace />;
-    }
+    // email-confirmation or OAuth redirect actually lands on.
+    if (shouldEnterOnboarding) return <Navigate to="/onboarding/word-style" replace />;
 
     return <>{children}</>;
 }
