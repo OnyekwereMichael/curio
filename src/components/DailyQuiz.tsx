@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { createMilestoneImage, shareMilestone } from '../lib/milestoneShare';
 import { estimateQuizXp, syncXpAndNotify } from '../services/xp';
+import { MascotCompanion } from './MascotCompanion';
 
 interface Props {
     todaysWord: any;
@@ -337,7 +338,10 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                         className={`${cardBase} flex flex-col items-center gap-6 px-6 py-10 text-center`}
                     >
                         <Stage>
-                            <Mascot mood="idle" size={88} />
+                           <MascotCompanion
+            size={62}
+           
+          />
                         </Stage>
                         <div>
                             <p className="font-display text-2xl font-bold text-ink-900">Ready for today's quiz?</p>

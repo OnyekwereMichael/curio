@@ -39,7 +39,7 @@ export function WeeklyPrizesCard({ streak = 0 }: { streak?: number }) {
           </p>
         </div>
         <MascotCompanion
-          size={72}
+          size={62}
           context={{
             phase,
             rank: me?.rank,
