@@ -9,12 +9,15 @@ import type { Word, Fact } from '../pages/home/hooks';
 export interface SavedWordRow {
   word: Word;
   markedKnown: boolean;
+  mastery: 'new' | 'learning' | 'mastered';
+  /** null = never reviewed, so due now. */
+  dueAt: string | null;
 }
 
 export async function fetchSavedWordsWithStatus(userId: string): Promise<SavedWordRow[]> {
   const { data, error } = await supabase
     .from('user_word_progress')
-    .select('marked_known, words(*)')
+    .select('marked_known, mastery, due_at, words(*)')
     .eq('user_id', userId)
     .eq('saved', true)
     .order('first_seen_at', { ascending: false });
@@ -24,8 +27,15 @@ export async function fetchSavedWordsWithStatus(userId: string): Promise<SavedWo
     return [];
   }
 
-  const rows = (data ?? []) as unknown as { marked_known: boolean; words: Word | null }[];
-  return rows.filter((r) => r.words).map((r) => ({ word: r.words as Word, markedKnown: !!r.marked_known }));
+  const rows = (data ?? []) as unknown as {
+    marked_known: boolean;
+    mastery: SavedWordRow['mastery'];
+    due_at: string | null;
+    words: Word | null;
+  }[];
+  return rows
+    .filter((r) => r.words)
+    .map((r) => ({ word: r.words as Word, markedKnown: !!r.marked_known, mastery: r.mastery, dueAt: r.due_at }));
 }
 
 export interface SavedFactRow {

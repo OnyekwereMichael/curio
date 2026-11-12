@@ -6,8 +6,9 @@ import { AppShell } from '../../components/AppShell';
 import { cn } from '../../lib/utils';
 import { fetchSavedWordsWithStatus, fetchSavedFactsWithStatus, type SavedWordRow, type SavedFactRow } from '../../services/collection';
 import { getWordLists } from '../../services/collectionLists';
-import { type WordListFixture } from '../../mocks/collectionLists';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
+import { type WordListFixture } from '../../services/collectionLists';
+import { WordListsTab } from './WordListsTab';
+import { MASTERY_LABEL } from '../../services/review';
 import empty from '../../assets/empty.svg';
 
 function EmptyState({ message }: { message: string }) {
@@ -42,12 +43,18 @@ export function CollectionPage() {
     }, [user]);
 
     useEffect(() => {
-        if (PREVIEW_FEATURES) getWordLists().then(setLists);
+        getWordLists().then(setLists).catch((e) => console.error('getWordLists failed', e));
     }, []);
 
+    const now = Date.now();
+    const dueCount = Math.min(
+        words.filter((w) => !w.dueAt || new Date(w.dueAt).getTime() <= now).length,
+        8
+    );
+
     const filteredWords = words.filter((w) => {
-        if (wordFilter === 'new') return !w.markedKnown;
-        if (wordFilter === 'mastered') return w.markedKnown;
+        if (wordFilter === 'new') return w.mastery !== 'mastered';
+        if (wordFilter === 'mastered') return w.mastery === 'mastered';
         return true;
     });
 
@@ -59,16 +66,16 @@ export function CollectionPage() {
                     <Search size={20} className="text-ink-500" />
                 </div>
 
-                {PREVIEW_FEATURES && words.length > 0 && (
+                {dueCount > 0 && (
                     <button
                         onClick={() => navigate('/collection/review')}
                         className="flex items-center justify-between gap-3 rounded-card bg-gold-50 border border-gold-500/30 px-4 py-3.5 text-left font-ui hover:bg-gold-50/70 transition-colors"
                     >
                         <div>
                             <p className="text-sm font-semibold text-gold-700">
-                                {Math.min(words.length, 8)} word{Math.min(words.length, 8) !== 1 ? 's' : ''} ready to review
+                                {dueCount} word{dueCount !== 1 ? 's' : ''} ready to review
                             </p>
-                            <p className="text-xs text-ink-500 mt-0.5">About 2 minutes</p>
+                            <p className="text-xs text-ink-500 mt-0.5">About {Math.max(1, Math.ceil(dueCount / 4))} minute{dueCount > 4 ? 's' : ''}</p>
                         </div>
                         <ChevronRight size={18} className="text-gold-700 flex-shrink-0" />
                     </button>
@@ -79,7 +86,7 @@ export function CollectionPage() {
                     {([
                         { key: 'words' as const, label: `Words ${words.length}` },
                         { key: 'facts' as const, label: `Facts ${facts.length}` },
-                        ...(PREVIEW_FEATURES ? [{ key: 'lists' as const, label: `Lists ${lists.length}` }] : []),
+                        { key: 'lists' as const, label: `Lists ${lists.length}` },
                     ]).map((t) => (
                         <button
                             key={t.key}
@@ -98,8 +105,8 @@ export function CollectionPage() {
                     <div className="flex gap-2 font-ui">
                         {([
                             { key: 'all' as const, label: 'All' },
-                            { key: 'new' as const, label: `New ${words.filter((w) => !w.markedKnown).length}` },
-                            { key: 'mastered' as const, label: `Mastered ${words.filter((w) => w.markedKnown).length}` },
+                            { key: 'new' as const, label: `New ${words.filter((w) => w.mastery !== 'mastered').length}` },
+                            { key: 'mastered' as const, label: `Mastered ${words.filter((w) => w.mastery === 'mastered').length}` },
                         ]).map((f) => (
                             <button
                                 key={f.key}
@@ -122,7 +129,7 @@ export function CollectionPage() {
                         <EmptyState message="You haven't saved any words yet — tap the bookmark on a word to keep it here." />
                     ) : (
                         <div className="bg-surface rounded-card border border-line shadow-card divide-y divide-line">
-                            {filteredWords.map(({ word, markedKnown }) => (
+                            {filteredWords.map(({ word, mastery }) => (
                                 <div key={word.id} className="flex items-center gap-3 px-4 py-3.5 font-ui">
                                     <div className="flex-1 min-w-0">
                                         <p className="font-display text-base font-bold text-ink-900 truncate">{word.word}</p>
@@ -131,10 +138,10 @@ export function CollectionPage() {
                                     <span
                                         className={cn(
                                             'text-xs font-semibold px-2 py-1 rounded-tag flex-shrink-0',
-                                            markedKnown ? 'bg-moss-50 text-moss-600' : 'bg-ink-900/5 text-ink-500'
+                                            mastery === 'mastered' ? 'bg-moss-50 text-moss-600' : mastery === 'learning' ? 'bg-gold-50 text-gold-700' : 'bg-ink-900/5 text-ink-500'
                                         )}
                                     >
-                                        {markedKnown ? 'Mastered' : 'New'}
+                                        {MASTERY_LABEL[mastery]}
                                     </span>
                                 </div>
                             ))}
@@ -157,14 +164,7 @@ export function CollectionPage() {
                         </div>
                     )
                 ) : (
-                    <div className="bg-surface rounded-card border border-line shadow-card divide-y divide-line">
-                        {lists.map((list) => (
-                            <div key={list.id} className="flex items-center justify-between px-4 py-3.5 font-ui">
-                                <p className="text-sm font-semibold text-ink-900">{list.name}</p>
-                                <span className="text-xs text-ink-500">{list.count} words</span>
-                            </div>
-                        ))}
-                    </div>
+                    <WordListsTab lists={lists} setLists={setLists} savedWords={words.map((w) => w.word)} />
                 )}
             </div>
         </AppShell>

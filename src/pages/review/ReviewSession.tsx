@@ -5,12 +5,13 @@ import { AppShell } from '../../components/AppShell';
 import { Otter } from '../../components/Otter';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../contexts/AuthContext';
-import { getReviewQueue, RECALL_NEXT_LABEL, type ReviewQueueItem, type RecallRating } from '../../services/review';
+import { getReviewQueue, rateReview, nextIntervalLabel, MASTERY_LABEL, type ReviewQueueItem, type RecallRating } from '../../services/review';
+import { syncXpAndNotify } from '../../services/xp';
 import { cn } from '../../lib/utils';
 
 type Stage = 'loading' | 'nothing' | 'recall' | 'revealed' | 'done';
 
-/** Mock review/mastery session — see docs/BACKEND_TODO.md #4. Preview-only. */
+/** Spaced-repetition session over the user's due saved words; ratings are saved via rate_review. */
 export function ReviewSessionPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -21,14 +22,23 @@ export function ReviewSessionPage() {
 
   useEffect(() => {
     if (!user) return;
-    getReviewQueue(user.id).then((items) => {
-      setQueue(items);
-      setStage(items.length === 0 ? 'nothing' : 'recall');
-    });
+    getReviewQueue(user.id)
+      .then((items) => {
+        setQueue(items);
+        setStage(items.length === 0 ? 'nothing' : 'recall');
+      })
+      .catch((e) => {
+        console.error('getReviewQueue failed', e);
+        setStage('nothing');
+      });
   }, [user]);
 
   function handleRate(rating: RecallRating) {
     setResults((prev) => [...prev, rating]);
+    // Saved in the background so the session never stalls on the network.
+    rateReview(queue[index].word.id, rating)
+      .then(() => (index + 1 >= queue.length ? syncXpAndNotify() : undefined))
+      .catch((e) => console.error('rateReview failed', e));
     if (index + 1 >= queue.length) {
       setStage('done');
     } else {
@@ -80,7 +90,7 @@ export function ReviewSessionPage() {
 
         {stage === 'recall' && current && (
           <div className="flex-1 flex flex-col items-center justify-center text-center gap-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-gold-700">Learning · seen before</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-gold-700">{current.mastery === 'new' ? 'First review' : `${MASTERY_LABEL[current.mastery]} · seen before`}</p>
             <h2 className="font-display text-5xl font-bold text-ink-900">{current.word.word}</h2>
             <p className="text-sm text-ink-500">Say what it means in your head, then tap</p>
             <button
@@ -114,7 +124,7 @@ export function ReviewSessionPage() {
                 >
                   <span>{rating === 'not-yet' ? 'Not yet' : rating === 'sort-of' ? 'Sort of' : 'Knew it'}</span>
                   <span className={cn('text-[10px] font-normal', rating === 'knew-it' ? 'text-paper/70' : 'text-ink-500')}>
-                    {RECALL_NEXT_LABEL[rating]}
+                    {nextIntervalLabel(current.intervalStep, rating)}
                   </span>
                 </button>
               ))}
