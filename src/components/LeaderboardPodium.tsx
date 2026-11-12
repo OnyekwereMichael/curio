@@ -2,6 +2,7 @@ import type { Ref } from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Medal } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
+import { PrizeChip } from './PrizeChip';
 import { cn } from '../lib/utils';
 import { spring } from '../lib/motion';
 import { usePrefersReducedMotion } from '../lib/useReducedMotionPref';
@@ -14,7 +15,7 @@ const SLOTS = {
   3: { avatar: 'lg', ring: 'ring-ember-600', glow: '', accent: 'text-ember-600', pad: 'pt-8', step: 'h-8 text-heading', delay: 0.1 },
 } as const;
 
-function PodiumSpot({ entry, meRef, reduceMotion }: { entry: LeaderboardEntry; meRef?: Ref<HTMLDivElement>; reduceMotion: boolean }) {
+function PodiumSpot({ entry, prize, meRef, reduceMotion }: { entry: LeaderboardEntry; prize: number | null; meRef?: Ref<HTMLDivElement>; reduceMotion: boolean }) {
   const place = entry.rank as 1 | 2 | 3;
   const slot = SLOTS[place];
   const Icon = place === 1 ? Crown : Medal;
@@ -39,6 +40,7 @@ function PodiumSpot({ entry, meRef, reduceMotion }: { entry: LeaderboardEntry; m
         {entry.xp.toLocaleString()}
         <span className="text-xs font-ui font-semibold text-ink-500 ml-1">XP</span>
       </p>
+      {prize != null && <PrizeChip place={place} amount={prize} size={place === 1 ? 'md' : 'sm'} />}
       <div className={cn('w-full rounded-t-card bg-surface border border-line border-b-0 flex items-start justify-center font-display font-bold', slot.accent, slot.step)}>
         <span className="mt-1">{place}</span>
       </div>
@@ -51,10 +53,12 @@ interface LeaderboardPodiumProps {
   entries: LeaderboardEntry[];
   /** Attached to the current user's spot so the page can tell if they're on screen. */
   meRef?: Ref<HTMLDivElement>;
+  /** Prize shown under each winner; return null for none (e.g. not yet eligible). */
+  prizeFor?: (entry: LeaderboardEntry) => number | null;
 }
 
-/** Top-3 podium: 1st in the centre, large avatars, crown/medal accents and a gold glow on the winner. */
-export function LeaderboardPodium({ entries, meRef }: LeaderboardPodiumProps) {
+/** Top-3 podium: 1st in the centre, large avatars, crown/medal accents, a gold glow on the winner and an optional prize chip. */
+export function LeaderboardPodium({ entries, meRef, prizeFor }: LeaderboardPodiumProps) {
   const reduceMotion = usePrefersReducedMotion();
   const byRank = (r: number) => entries.find((e) => e.rank === r);
   const order = [byRank(2), byRank(1), byRank(3)];
@@ -62,7 +66,7 @@ export function LeaderboardPodium({ entries, meRef }: LeaderboardPodiumProps) {
   return (
     <div className="flex items-end gap-2 sm:gap-4 px-2 pt-2">
       {order.map((entry, i) =>
-        entry ? <PodiumSpot key={entry.id} entry={entry} meRef={meRef} reduceMotion={reduceMotion} /> : <div key={i} className="flex-1" />
+        entry ? <PodiumSpot key={entry.id} entry={entry} prize={prizeFor?.(entry) ?? null} meRef={meRef} reduceMotion={reduceMotion} /> : <div key={i} className="flex-1" />
       )}
     </div>
   );

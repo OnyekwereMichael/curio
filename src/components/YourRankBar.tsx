@@ -2,21 +2,13 @@ import { motion } from 'framer-motion';
 import { Avatar } from './ui/Avatar';
 import { spring } from '../lib/motion';
 import { usePrefersReducedMotion } from '../lib/useReducedMotionPref';
+import { describeStanding } from '../lib/leaderboardStanding';
 import type { LeaderboardMe } from '../services/leaderboard';
-
-function hint(me: LeaderboardMe): string {
-  if (me.rank === 1) return "You're in the lead — keep it up!";
-  if (me.xp === 0) return 'Earn XP to get on the board';
-  if (me.xpToPodium != null && me.xpToNext != null && me.xpToPodium > me.xpToNext) {
-    return `${me.xpToNext} XP to reach #${me.rank - 1} · ${me.xpToPodium} to the top 3`;
-  }
-  if (me.xpToPodium != null) return `${me.xpToPodium} XP to reach the top 3`;
-  return `${me.xpToNext} XP to reach #${me.rank - 1}`;
-}
 
 /** Pinned "Your rank" bar, shown above the mobile tab bar while the user's own row is off screen. */
 export function YourRankBar({ me }: { me: LeaderboardMe }) {
   const reduceMotion = usePrefersReducedMotion();
+  const { detail } = describeStanding(me);
   return (
     <motion.div
       initial={reduceMotion ? false : { y: 24, opacity: 0 }}
@@ -30,7 +22,7 @@ export function YourRankBar({ me }: { me: LeaderboardMe }) {
         <Avatar name={me.name} src={me.avatarUrl} size="sm" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold truncate">Your rank · {me.xp.toLocaleString()} XP</p>
-          <p className="text-xs text-paper/70 truncate">{hint(me)}</p>
+          <p className="text-xs text-paper/70 truncate">{detail}</p>
         </div>
       </div>
     </motion.div>

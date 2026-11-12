@@ -187,3 +187,32 @@
 .animate-otter-breathe {
   animation: otter-breathe 4s ease-in-out infinite;
 }
+
+/* Weekly prizes — soft gold shimmer on prize chips and a gentle trophy bounce.
+   Both are decorative, so they're switched off for reduced-motion users. */
+@keyframes prize-shimmer {
+  0% { background-position: -150% 0; }
+  100% { background-position: 250% 0; }
+}
+
+.animate-prize-shimmer {
+  background-image: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.45) 50%, transparent 65%);
+  background-size: 200% 100%;
+  animation: prize-shimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes trophy-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(-4deg); }
+}
+
+.animate-trophy-bounce {
+  animation: trophy-bounce 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-prize-shimmer,
+  .animate-trophy-bounce {
+    animation: none;
+  }
+}

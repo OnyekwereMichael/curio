@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Trophy } from 'lucide-react';
+import { CalendarClock, Trophy } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { ErrorState } from '../../components/ErrorState';
 import { LeaderboardPodium } from '../../components/LeaderboardPodium';
 import { LeaderboardRow } from '../../components/LeaderboardRow';
 import { PrizeBanner } from '../../components/PrizeBanner';
-import { WeekCountdown } from '../../components/WeekCountdown';
+import { StandingCallout } from '../../components/StandingCallout';
 import { YourRankBar } from '../../components/YourRankBar';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SegmentedControl } from '../../components/ui/SegmentedControl';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { useCompetitionPhase } from '../../hooks/useCompetitionPhase';
 import { useInView } from '../../hooks/useInView';
 import { useLeaderboard } from '../../hooks/useLeaderboard';
-import { LEADERBOARD_COPY, WEEKLY_PRIZES } from '../../lib/leaderboardConfig';
+import { COMPETITION, LEADERBOARD_COPY, WEEKLY_PRIZES, prizeFor } from '../../lib/leaderboardConfig';
 import type { LeaderboardPeriod } from '../../services/leaderboard';
 
 const PERIOD_OPTIONS: { value: LeaderboardPeriod; label: string }[] = [
@@ -64,6 +65,8 @@ function SkeletonBoard() {
 /** Global leaderboard: weekly (drives the prizes) and all-time, ranked by XP. */
 export function LeaderboardPage() {
   const [period, setPeriod] = useState<LeaderboardPeriod>('week');
+  const phase = useCompetitionPhase();
+  const upcoming = phase === 'upcoming';
   const { rows, me, periodEnd, loading, loadingMore, error, hasMore, reload, loadMore } = useLeaderboard(period);
 
   // Pin "Your rank" whenever the user's own row (podium or list) isn't visible.
@@ -82,6 +85,9 @@ export function LeaderboardPage() {
 
   const hasScores = rows.length > 0 && rows[0].xp > 0;
   const showBoard = !loading && !error && hasScores;
+  const weeklyBoard = period === 'week';
+  // The weekly board always shows the prizes; before launch it is a preview of this week's XP.
+  const podiumPrize = weeklyBoard ? (e: { rank: number; xp: number }) => prizeFor(e.rank, e.xp) : undefined;
 
   return (
     <AppShell title="Leaderboard">
@@ -96,12 +102,18 @@ export function LeaderboardPage() {
 
         <SegmentedControl aria-label="Leaderboard period" options={PERIOD_OPTIONS} value={period} onChange={setPeriod} />
 
-        {period === 'week' && (
-          <>
-            <WeekCountdown endsAt={periodEnd} />
-            <PrizeBanner prizes={WEEKLY_PRIZES} />
-          </>
+        <PrizeBanner prizes={WEEKLY_PRIZES} phase={phase} countdownTo={upcoming ? COMPETITION.startsAt : periodEnd} />
+
+        {weeklyBoard && upcoming && (
+          <p className="flex items-start gap-2 rounded-control bg-gold-50 px-3 py-2 text-xs text-gold-700 font-ui">
+            <CalendarClock size={14} className="flex-shrink-0 mt-0.5" />
+            <span>
+              <span className="font-semibold">Prizes start Monday.</span> This is a preview of this week’s ranking — the board resets when the competition begins at 12:00 AM Lagos time.
+            </span>
+          </p>
         )}
+
+        {showBoard && weeklyBoard && !upcoming && me && <StandingCallout me={me} />}
 
         {loading && <SkeletonBoard />}
 
@@ -116,7 +128,7 @@ export function LeaderboardPage() {
 
         {showBoard && (
           <>
-            <LeaderboardPodium entries={rows.slice(0, 3)} meRef={meRef} />
+            <LeaderboardPodium entries={rows.slice(0, 3)} meRef={meRef} prizeFor={podiumPrize} />
 
             {rows.length > 3 && (
               <div className="bg-surface rounded-card border border-line shadow-card divide-y divide-line">

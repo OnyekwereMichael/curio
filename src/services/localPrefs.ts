@@ -81,3 +81,22 @@ export function setSoundsHapticsPref(enabled: boolean) {
     // ignore
   }
 }
+
+const prizeCardDismissedKey = (weekKey: string) => `curi_prize_card_dismissed_${weekKey}`;
+
+/** The Home prize card is dismissed per competition week, so it returns after each reset. */
+export function isPrizeCardDismissed(weekKey: string): boolean {
+  try {
+    return localStorage.getItem(prizeCardDismissedKey(weekKey)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function dismissPrizeCard(weekKey: string) {
+  try {
+    localStorage.setItem(prizeCardDismissedKey(weekKey), '1');
+  } catch {
+    // localStorage unavailable — the card just comes back next visit
+  }
+}

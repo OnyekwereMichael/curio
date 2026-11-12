@@ -18,6 +18,7 @@ import { Otter } from '../../components/Otter';
 import { PlanRow, type PlanRowState } from '../../components/PlanRow';
 import { StreakAtRiskBanner } from '../../components/StreakAtRiskBanner';
 import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
+import { WeeklyPrizesCard } from '../../components/WeeklyPrizesCard';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
 import { isFactOpened } from '../../services/localPrefs';
 
@@ -203,6 +204,8 @@ useEffect(() => {
             />
           ))}
         </div>
+
+        <WeeklyPrizesCard />
 
         <StreakAtRiskBanner
           currentStreak={currentStreak}

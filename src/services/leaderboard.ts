@@ -1,4 +1,5 @@
 import { supabase } from '../lib/superbase';
+import { COMPETITION } from '../lib/leaderboardConfig';
 
 export type LeaderboardPeriod = 'week' | 'all';
 
@@ -21,6 +22,8 @@ export interface LeaderboardMe extends LeaderboardEntry {
 
 export interface LeaderboardPage {
   periodStart: Date;
+  /** Competition start as the database sees it. */
+  competitionStart: Date;
   periodEnd: Date;
   total: number;
   rows: LeaderboardEntry[];
@@ -62,12 +65,18 @@ export async function getLeaderboard(
   const d = data as {
     period_start: string;
     period_end: string;
+    competition_start: string;
     total: number;
     rows: RawEntry[];
     me: (RawEntry & { xp_to_next: number | null; xp_to_podium: number | null }) | null;
   };
+  const competitionStart = new Date(d.competition_start);
+  if (competitionStart.getTime() !== COMPETITION.startsAt.getTime()) {
+    console.warn('leaderboardConfig.COMPETITION.startsAt differs from the leaderboard_config table — keep them in sync');
+  }
   return {
     periodStart: new Date(d.period_start),
+    competitionStart,
     periodEnd: new Date(d.period_end),
     total: d.total,
     rows: d.rows.map(toEntry),
