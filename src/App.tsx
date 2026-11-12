@@ -23,6 +23,7 @@ import { PlanSummaryPage } from './pages/onboarding/PlanSummary';
 import { ReviewSessionPage } from './pages/review/ReviewSession';
 import { PlayHubPage } from './pages/play/PlayHub';
 import { WordDuelPage } from './pages/play/WordDuel';
+import { DailyChallengePage } from './pages/play/DailyChallenge';
 import { FriendsPage } from './pages/friends/Friends';
 import { ToastProvider } from './components/ui/Toast';
 import { AuthProvider } from './contexts/AuthContext';
@@ -66,6 +67,7 @@ function App() {
               <Route path="/settings/plan/when" element={<ProtectedRoute><PlanWhenPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/play" element={<ProtectedRoute><PlayHubPage /></ProtectedRoute>} />
+              <Route path="/play/daily" element={<ProtectedRoute><DailyChallengePage /></ProtectedRoute>} />
               <Route path="/play/:code" element={<ProtectedRoute><WordDuelPage /></ProtectedRoute>} />
               <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
 

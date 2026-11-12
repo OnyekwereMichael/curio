@@ -1,12 +1,10 @@
 
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { Swords, CheckCircle2, EyeOff, Users, ChevronRight, Share2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Swords, CheckCircle2, EyeOff, Users, ChevronRight, CalendarCheck } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { getPlayModes } from '../../services/games';
-import { ShareCardModal } from '../../components/ShareCardModal';
-import { useStreak } from '../../components/useStreak';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
+import { getDailyChallenge, type DailyChallengeState } from '../../services/dailyChallenge';
 
 const ICONS: Record<string, React.ElementType> = {
   'word-duel': Swords,
@@ -14,13 +12,16 @@ const ICONS: Record<string, React.ElementType> = {
   'bluff': EyeOff,
 };
 
-/** Play hub: start a live Word Duel or join one by room code. */
+/** Play hub: today's daily challenge, live Word Duel, and joining a duel by room code. */
 export function PlayHubPage() {
   const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState('');
-  const [challengeShareOpen, setChallengeShareOpen] = useState(false);
-  const { currentStreak } = useStreak();
+  const [challenge, setChallenge] = useState<DailyChallengeState | null>(null);
   const modes = getPlayModes();
+
+  useEffect(() => {
+    getDailyChallenge().then(setChallenge).catch((e) => console.warn('getDailyChallenge failed', e));
+  }, []);
 
   function handleJoin() {
     if (roomCode.trim().length === 4) navigate(`/play/${roomCode.trim().toUpperCase()}`);
@@ -31,19 +32,26 @@ export function PlayHubPage() {
       <div className="px-4 py-5 w-full flex flex-col gap-5">
         <h1 className="font-display text-display font-bold text-ink-900">Play</h1>
 
-        {/* The daily challenge game itself isn't built; this only demos its share card. */}
-        {PREVIEW_FEATURES && (
         <button
-          onClick={() => setChallengeShareOpen(true)}
-          className="flex items-center justify-between gap-3 rounded-card bg-gold-50 border border-gold-500/30 px-4 py-3.5 text-left font-ui"
+          onClick={() => navigate('/play/daily')}
+          className="flex items-center justify-between gap-3 rounded-card bg-gold-50 border border-gold-500/30 px-4 py-3.5 text-left font-ui hover:bg-gold-50/70 transition-colors"
         >
           <div>
-            <p className="text-sm font-semibold text-gold-700">Today's daily challenge</p>
-            <p className="text-xs text-ink-500 mt-0.5">Demo — share a sample result card</p>
+            <p className="text-sm font-semibold text-gold-700">
+              Today's daily challenge{challenge ? ` #${challenge.number}` : ''}
+            </p>
+            <p className="text-xs text-ink-500 mt-0.5">
+              {!challenge
+                ? 'Five words, one try'
+                : challenge.completed
+                  ? `Done · ${challenge.score}/${challenge.total} — tap to share`
+                  : challenge.answered > 0
+                    ? `${challenge.answered} of ${challenge.total} answered — keep going`
+                    : 'Five words, one try — same questions for everyone'}
+            </p>
           </div>
-          <Share2 size={16} className="text-gold-700 flex-shrink-0" />
+          <CalendarCheck size={18} className="text-gold-700 flex-shrink-0" />
         </button>
-        )}
 
         <div className="bg-ink-900 rounded-card p-4 flex items-center gap-3 font-ui">
           <span className="text-xs font-semibold text-paper/70 flex-shrink-0">Got a room code?</span>
@@ -101,12 +109,6 @@ export function PlayHubPage() {
           <ChevronRight size={16} className="text-ink-500" />
         </button>
       </div>
-
-      <ShareCardModal
-        isOpen={challengeShareOpen}
-        onClose={() => setChallengeShareOpen(false)}
-        data={{ type: 'dailyChallenge', challengeNumber: 214, score: 4, total: 5, streak: currentStreak }}
-      />
     </AppShell>
   );
 }

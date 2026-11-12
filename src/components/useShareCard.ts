@@ -17,7 +17,7 @@ export interface FactShareData {
   bullets: string[];
 }
 
-/** Mock-only — the daily challenge game itself doesn't exist yet (see docs/BACKEND_TODO.md #7). */
+/** Result of the real daily challenge (see pages/play/DailyChallenge.tsx). */
 export interface DailyChallengeShareData {
   type: 'dailyChallenge';
   challengeNumber: number;
