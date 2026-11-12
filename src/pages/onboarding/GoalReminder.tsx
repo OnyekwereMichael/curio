@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { OnboardingShell } from './OnboardingShell';
 import { Button } from '../../components/ui/Button';
-import { WEEKLY_GOAL_OPTIONS, REMINDER_TIME_OPTIONS } from '../../mocks/onboarding';
+import { WEEKLY_GOAL_OPTIONS, REMINDER_TIME_OPTIONS } from '../../lib/onboardingOptions';
 import { getOnboardingDraft, updateOnboardingDraft } from '../../services/onboarding';
 import { cn } from '../../lib/utils';
 

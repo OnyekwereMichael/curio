@@ -1,13 +1,26 @@
 import { supabase } from '../lib/superbase';
-import { MOCK_LEARNING_PLAN, type LearningPlanFixture } from '../mocks/learningPlan';
 
-export type { LearningPlanFixture };
+export interface LearningPlan {
+  wordStyle: string;
+  level: string;
+  wordsPerDay: number;
+  factTopics: string[];
+  weeklyGoalDays: number;
+  reminderTime: string;
+  eveningNudge: boolean;
+  weeklyRecapEmail: boolean;
+}
 
 // Defaults for a user who has no user_preferences row yet (existing users).
-const DEFAULT_PLAN: LearningPlanFixture = {
-  ...MOCK_LEARNING_PLAN,
+const DEFAULT_PLAN: LearningPlan = {
+  wordStyle: 'A mix',
+  level: 'Intermediate',
+  wordsPerDay: 3,
   factTopics: [],
+  weeklyGoalDays: 5,
   reminderTime: 'Morning',
+  eveningNudge: true,
+  weeklyRecapEmail: false,
 };
 
 type Row = {
@@ -21,7 +34,7 @@ type Row = {
   weekly_recap_email: boolean;
 };
 
-function fromRow(r: Row): LearningPlanFixture {
+function fromRow(r: Row): LearningPlan {
   return {
     wordStyle: r.word_style ?? DEFAULT_PLAN.wordStyle,
     level: r.level ?? DEFAULT_PLAN.level,
@@ -34,7 +47,7 @@ function fromRow(r: Row): LearningPlanFixture {
   };
 }
 
-function toRow(p: Partial<LearningPlanFixture>): Record<string, unknown> {
+function toRow(p: Partial<LearningPlan>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   if (p.wordStyle !== undefined) out.word_style = p.wordStyle;
   if (p.level !== undefined) out.level = p.level;
@@ -54,7 +67,7 @@ async function currentUserId(): Promise<string> {
   return id;
 }
 
-export async function getLearningPlan(): Promise<LearningPlanFixture> {
+export async function getLearningPlan(): Promise<LearningPlan> {
   const userId = await currentUserId();
   const { data, error } = await supabase
     .from('user_preferences')
@@ -67,9 +80,9 @@ export async function getLearningPlan(): Promise<LearningPlanFixture> {
 
 /** Upserts only the fields in `patch`; other columns keep their current/default values. */
 export async function updateLearningPlan(
-  patch: Partial<LearningPlanFixture>,
+  patch: Partial<LearningPlan>,
   extra: Record<string, unknown> = {},
-): Promise<LearningPlanFixture> {
+): Promise<LearningPlan> {
   const userId = await currentUserId();
   const { error } = await supabase
     .from('user_preferences')

@@ -6,7 +6,7 @@ import { AppShell } from '../../components/AppShell';
 import { cn } from '../../lib/utils';
 import { fetchSavedWordsWithStatus, fetchSavedFactsWithStatus, type SavedWordRow, type SavedFactRow } from '../../services/collection';
 import { getWordLists } from '../../services/collectionLists';
-import { type WordListFixture } from '../../services/collectionLists';
+import { type WordList } from '../../services/collectionLists';
 import { WordListsTab } from './WordListsTab';
 import { MASTERY_LABEL } from '../../services/review';
 import empty from '../../assets/empty.svg';
@@ -30,7 +30,7 @@ export function CollectionPage() {
     const [wordFilter, setWordFilter] = useState<WordFilter>('all');
     const [words, setWords] = useState<SavedWordRow[]>([]);
     const [facts, setFacts] = useState<SavedFactRow[]>([]);
-    const [lists, setLists] = useState<WordListFixture[]>([]);
+    const [lists, setLists] = useState<WordList[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

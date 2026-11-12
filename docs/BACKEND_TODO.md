@@ -1,5 +1,7 @@
 # Backend TODO — redesign preview features
 
+> **Status: complete.** All eight items below are live on Supabase and the `PREVIEW_FEATURES` flag, `PreviewRoute` and the mock fixtures have been removed. The schema is in `supabase/migrations/`. This file is kept as a record of the original plan; references below to the flag and mock data are historical.
+
 Every screen below is built and working in the UI, running on mock data behind the `VITE_PREVIEW_FEATURES` flag (see `src/lib/featureFlags.ts`). None of it touches Supabase. This is the punch list for taking each one live, **ordered simplest first** — pick them off top to bottom, or whichever matters most to you.
 
 **Recommended schema** below is adapted from the redesign's own handoff doc (`curio/redesign/Curi Redesign.pdf`, "Build it with Claude Code" page) — it already designed table shapes for all of this; I've cross-checked each against what the mocks actually need.

@@ -16,7 +16,7 @@ import {
   getSoundsHapticsPref,
   setSoundsHapticsPref,
 } from '../../services/localPrefs';
-import { getLearningPlan, updateLearningPlan, type LearningPlanFixture } from '../../services/learningPlan';
+import { getLearningPlan, updateLearningPlan, type LearningPlan } from '../../services/learningPlan';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -63,7 +63,7 @@ export function SettingsPage() {
   const [reduceMotion, setReduceMotion] = useState(getReduceMotionPref);
   const [soundsHaptics, setSoundsHaptics] = useState(getSoundsHapticsPref);
 
-  const [plan, setPlan] = useState<LearningPlanFixture | null>(null);
+  const [plan, setPlan] = useState<LearningPlan | null>(null);
 
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);

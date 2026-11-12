@@ -1,6 +1,6 @@
 import { supabase } from '../lib/superbase';
 
-export interface FriendFixture {
+export interface Friend {
   id: string;
   name: string;
   weeklyXp: number;
@@ -15,7 +15,7 @@ export interface StreakBuddy {
 }
 
 export interface FriendsData {
-  leaderboard: FriendFixture[];
+  leaderboard: Friend[];
   streakBuddy: StreakBuddy | null;
   friendsCount: number;
   /** Whether the current user has opted out of friends' leaderboards. */

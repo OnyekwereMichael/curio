@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { AppShell } from '../../../components/AppShell';
 import { Button } from '../../../components/ui/Button';
-import { getLearningPlan, updateLearningPlan, type LearningPlanFixture } from '../../../services/learningPlan';
+import { getLearningPlan, updateLearningPlan, type LearningPlan } from '../../../services/learningPlan';
 import { cn } from '../../../lib/utils';
 
-import { WORDS_PER_DAY_OPTIONS, TOPIC_OPTIONS } from '../../../mocks/onboarding';
+import { WORDS_PER_DAY_OPTIONS, TOPIC_OPTIONS } from '../../../lib/onboardingOptions';
 
 /** Backed by `user_preferences` via services/learningPlan. */
 export function LearningPlanSettingsPage() {
   const navigate = useNavigate();
-  const [plan, setPlan] = useState<LearningPlanFixture | null>(null);
+  const [plan, setPlan] = useState<LearningPlan | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {

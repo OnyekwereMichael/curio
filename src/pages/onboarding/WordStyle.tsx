@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import { OnboardingShell } from './OnboardingShell';
 import { Button } from '../../components/ui/Button';
 import { Otter } from '../../components/Otter';
-import { WORD_STYLE_OPTIONS } from '../../mocks/onboarding';
+import { WORD_STYLE_OPTIONS } from '../../lib/onboardingOptions';
 import { getOnboardingDraft, updateOnboardingDraft } from '../../services/onboarding';
 import { cn } from '../../lib/utils';
 

@@ -7,13 +7,13 @@ import {
   getListWords,
   addWordToList,
   removeWordFromList,
-  type WordListFixture,
+  type WordList,
 } from '../../services/collectionLists';
 import type { Word } from '../home/hooks';
 
 interface Props {
-  lists: WordListFixture[];
-  setLists: React.Dispatch<React.SetStateAction<WordListFixture[]>>;
+  lists: WordList[];
+  setLists: React.Dispatch<React.SetStateAction<WordList[]>>;
   savedWords: Word[];
 }
 

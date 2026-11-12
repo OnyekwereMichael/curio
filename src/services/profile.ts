@@ -2,13 +2,13 @@ import { supabase } from '../lib/superbase';
 import { syncXp } from './xp';
 import { getFriendsCount } from './social';
 
-export interface PebbleFixture {
+export interface Pebble {
   id: string;
   label: string;
   colorToken: 'ember' | 'ink' | 'moss' | 'gold';
 }
 
-export interface LevelFixture {
+export interface LevelProgress {
   level: number;
   title: string;
   xp: number;
@@ -17,8 +17,8 @@ export interface LevelFixture {
 }
 
 export interface ProfileExtras {
-  level: LevelFixture;
-  pebbleShelf: PebbleFixture[];
+  level: LevelProgress;
+  pebbleShelf: Pebble[];
   pebbleShelfTotal: number;
   /** null when the user has no friends yet. */
   friendsCount: number | null;
@@ -74,7 +74,7 @@ export async function getProfileExtras(): Promise<ProfileExtras> {
   const next = xpToReach(level + 1);
 
   const earned = (earnedRes.data ?? []) as unknown as {
-    badges: { key: string; name: string; color: PebbleFixture['colorToken'] } | null;
+    badges: { key: string; name: string; color: Pebble['colorToken'] } | null;
   }[];
 
   return {

@@ -1,7 +1,7 @@
 import { supabase } from '../lib/superbase';
 import type { Word } from '../pages/home/hooks';
 
-export interface WordListFixture {
+export interface WordList {
   id: string;
   name: string;
   count: number;
@@ -15,7 +15,7 @@ async function currentUserId(): Promise<string> {
 }
 
 /** The current user's lists with a word count each, newest first. */
-export async function getWordLists(): Promise<WordListFixture[]> {
+export async function getWordLists(): Promise<WordList[]> {
   const { data, error } = await supabase
     .from('word_lists')
     .select('id, name, word_list_items(count)')
@@ -25,7 +25,7 @@ export async function getWordLists(): Promise<WordListFixture[]> {
   return rows.map((r) => ({ id: r.id, name: r.name, count: r.word_list_items?.[0]?.count ?? 0 }));
 }
 
-export async function createWordList(name: string): Promise<WordListFixture> {
+export async function createWordList(name: string): Promise<WordList> {
   const userId = await currentUserId();
   const trimmed = name.trim();
   const { data, error } = await supabase

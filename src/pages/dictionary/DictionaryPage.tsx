@@ -5,10 +5,8 @@ import { DictionaryResult } from '../../components/DictionaryResult';
 import { useDictionary } from '../../hooks/useDictionary';
 import { Otter } from '../../components/Otter';
 import { addRecentSearch, getRecentSearches } from '../../services/localPrefs';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
 
 const SUGGESTIONS = ['Pragmatic', 'Ambivalent', 'Resilient', 'Eloquent', 'Nuance'];
-const NEWS_WORDS = ['Austerity', 'Resilience']; // editorial content — no real source yet
 
 export function DictionaryPage() {
   const { data, loading, error, searched, search } = useDictionary();
@@ -84,23 +82,6 @@ export function DictionaryPage() {
             <Otter mood="curious" size={72} breathe className="mb-3" />
             <p className="text-ink-500 text-sm font-ui">Ooh. What are we looking up?</p>
           </div>
-        )}
-
-        {PREVIEW_FEATURES && !searched && !loading && (
-          <section className="rounded-card border border-line bg-surface shadow-card divide-y divide-line">
-            <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-500 font-ui">
-              Words in the news this week
-            </p>
-            {NEWS_WORDS.map((word) => (
-              <button
-                key={word}
-                onClick={() => handleSearch(word)}
-                className="w-full text-left px-4 py-3 font-display text-base font-bold text-ink-900 hover:bg-ink-900/5 transition-colors"
-              >
-                {word}
-              </button>
-            ))}
-          </section>
         )}
 
         {/* Result / Skeleton / Error / Empty */}

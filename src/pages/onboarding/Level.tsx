@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { OnboardingShell } from './OnboardingShell';
 import { Button } from '../../components/ui/Button';
-import { LEVEL_OPTIONS } from '../../mocks/onboarding';
+import { LEVEL_OPTIONS } from '../../lib/onboardingOptions';
 import { getOnboardingDraft, updateOnboardingDraft } from '../../services/onboarding';
 import { cn } from '../../lib/utils';
 

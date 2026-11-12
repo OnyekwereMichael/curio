@@ -1,6 +1,6 @@
 import { supabase } from '../lib/superbase';
 
-export interface DailyQuestFixture {
+export interface DailyQuest {
   id: string;
   label: string;
   xp: number;
@@ -8,7 +8,7 @@ export interface DailyQuestFixture {
 }
 
 export interface DailyQuests {
-  quests: DailyQuestFixture[];
+  quests: DailyQuest[];
   completedCount: number;
 }
 
