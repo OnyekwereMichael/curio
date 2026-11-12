@@ -1,0 +1,219 @@
+# Backend TODO — redesign preview features
+
+Every screen below is built and working in the UI, running on mock data behind the VITE_PREVIEW_FEATURES flag (see src/lib/featureFlags.ts). None of it touches Supabase. This is the punch list for taking each one live, *ordered simplest first* — pick them off top to bottom, or whichever matters most to you.
+
+*Recommended schema* below is adapted from the redesign's own handoff doc (curio/redesign/Curi Redesign.pdf, "Build it with Claude Code" page) — it already designed table shapes for all of this; I've cross-checked each against what the mocks actually need.
+
+*The general pattern, every time:*
+1. Replace the mock implementation in the src/services/*.ts file listed — same function name/signature, same return type, now backed by a real Supabase query (and the real table from the migration you write).
+2. Test the screen(s) that call it, with VITE_PREVIEW_FEATURES=true.
+3. Delete that screen's <PreviewRoute> wrapper (and any inline PREVIEW_FEATURES && checks gating it) in src/App.tsx / the relevant component, so it ships to everyone. Once every item below is live, PREVIEW_FEATURES, PreviewRoute, and the flag itself can be deleted entirely.
+
+No existing table is touched by any of this — everything here is new tables/columns, additive to the schema inventoried at the top of this redesign (users, words, facts, user_word_progress, user_fact_progress, user_activity_log, feedback).
+
+---
+
+## 1. Onboarding + learning plan
+
+*Priority note:* unlike every other item in this file, this one is *not* behind PREVIEW_FEATURES — every new signup (email+password and Google) now actually goes through this wizard, and Settings' "My learning plan" is always visible. Only the data persistence is mocked; the flow itself is real and live. Wire the real table first.
+
+*Service:* src/services/onboarding.ts (getOnboardingDraft, updateOnboardingDraft, completeOnboarding), src/services/learningPlan.ts (getLearningPlan, updateLearningPlan)
+
+*Screens:* /welcome (real, not mocked) → /signup → /onboarding/word-style → /level → /words-per-day → /fact-topics → /goal-reminder → /plan (6 steps, all unconditional now) → /install-nudge. Also /settings/plan, /settings/plan/when.
+
+*Type:*
+ts
+interface LearningPlanFixture {
+  wordStyle: string;        // e.g. "A mix"
+  level: string;            // e.g. "Intermediate"
+  wordsPerDay: number;      // 1 | 3 | 5
+  factTopics: string[];
+  weeklyGoalDays: number;   // 3 | 5 | 7
+  reminderTime: string;     // "Morning" | "Lunch" | "Evening"
+  eveningNudge: boolean;
+  weeklyRecapEmail: boolean;
+}
+
+
+*Recommended table:*
+sql
+create table user_preferences (
+  user_id uuid primary key references users(id),
+  word_style text,
+  level text,
+  words_per_day int default 1,
+  fact_topics text[] default '{}',
+  weekly_goal int default 5,
+  reminder_time text,
+  timezone text,
+  evening_nudge boolean default true,
+  weekly_recap_email boolean default false,
+  hide_from_board boolean default false,
+  onboarded_at timestamptz,
+  pending jsonb,          -- a staged change, applied on pending_from
+  pending_from date
+);
+
+
+*Go-live:* getLearningPlan/updateLearningPlan become a select/upsert on user_preferences by auth.uid(). completeOnboarding (currently just seeds the plan) should also set onboarded_at = now(). Once this exists, delete the PreviewRoute wrapper on the 8 routes above and the PREVIEW_FEATURES branch in src/pages/sign-up/signup.tsx (it currently skips onboarding and goes straight to /install-nudge when the flag is off).
+
+---
+
+## 2. Word lists (Collection → Lists tab)
+
+*Service:* src/services/collectionLists.ts (getWordLists)
+
+*Screen:* /collection, Lists tab
+
+*Type:*
+ts
+interface WordListFixture { id: string; name: string; count: number }
+
+
+*Recommended tables:*
+sql
+create table word_lists (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id),
+  name text not null,
+  created_at timestamptz default now()
+);
+create table word_list_items (
+  list_id uuid references word_lists(id),
+  word_id uuid references words(id),
+  added_at timestamptz default now(),
+  primary key (list_id, word_id)
+);
+
+
+*Go-live:* getWordLists → select word_lists with a count of word_list_items per list, for the current user. There's no "create list" or "add to list" UI yet — build that alongside the real read.
+
+---
+
+## 3. Multi-word days / content pools
+
+*No dedicated service yet* — this is the one item that changes an existing real screen's assumption rather than adding a new mocked one. Today, Home (src/pages/home/hooks.ts, useTodaysWord) and the whole daily loop assume exactly one words row per publish_date. The redesign's plan-row UI (src/pages/home/Home.tsx) already renders "N words" generically but is fed a hardcoded single word.
+
+*Recommended schema additions:*
+sql
+alter table words add column styles text[]; -- which word_style tags this word fits
+alter table words add column level text;
+alter table words alter column publish_date drop not null; -- becomes a pool, not one-per-day
+alter table facts add column topic text;
+
+create table daily_plans (
+  user_id uuid references users(id),
+  plan_date date,
+  word_ids uuid[],
+  fact_id uuid,
+  quiz_ids jsonb,
+  completed_at timestamptz,
+  unique (user_id, plan_date)
+);
+
+
+*Go-live:* needs a new edge function (build-daily-plan, per the redesign doc) that picks words_per_day words from the pool filtered by the user's word_style/level, on first open each day, and writes a daily_plans row. useTodaysWord/useOldButGold in home/hooks.ts then read from daily_plans instead of a single publish_date match. This is the biggest item on this list — budget real time for it, and expect to touch the real (not mocked) Home/Word-focus/Fact-focus code once it's time.
+
+---
+
+## 4. XP, levels, quests, pebble shelf
+
+*Service:* src/services/xp.ts (getDailyQuests, estimateQuizXp), src/services/profileMock.ts (getProfileExtras)
+
+*Screens:* Home's Daily Quests panel + quiz result XP chip, /profile (Level/XP bar, Pebble shelf)
+
+*Types:*
+ts
+interface DailyQuestFixture { id: string; label: string; xp: number; completed: boolean }
+interface LevelFixture { level: number; title: string; xp: number; xpForNextLevel: number; nextTitle: string }
+interface PebbleFixture { id: string; label: string; colorToken: 'ember'|'ink'|'moss'|'gold' }
+
+
+*Recommended tables:*
+sql
+create table xp_events (id uuid primary key default gen_random_uuid(), user_id uuid references users(id), source text, amount int, ref_id uuid, created_at timestamptz default now());
+alter table users add column total_xp int default 0;
+alter table users add column level int default 1;
+create table daily_quests (user_id uuid references users(id), quest_date date, key text, target int, progress int default 0, completed_at timestamptz, xp int, primary key (user_id, quest_date, key));
+create table badges (key text primary key, name text, kind text, threshold int);
+create table user_badges (user_id uuid references users(id), badge_key text references badges(key), earned_at timestamptz default now(), primary key (user_id, badge_key));
+
+
+*Go-live:* getDailyQuests → select today's daily_quests row for the user (seeded by a job on first open, per quest key). estimateQuizXp → replace with a real xp_events insert on quiz completion, triggered from DailyQuiz.tsx's existing handleAnswered (that function already writes to user_activity_log — add the xp_events insert right next to it, don't restructure it). getProfileExtras → three reads: users.total_xp/level, user_badges joined to badges, and a friendships count (see #7).
+
+---
+
+## 5. Review / mastery
+
+*Service:* src/services/review.ts (getReviewQueue)
+
+*Screens:* /collection/review (recall → revealed → done), the "N ready to review" banner on /collection, "Nothing to review" state
+
+*Type:*
+ts
+interface ReviewQueueItem { word: Word }
+type RecallRating = 'not-yet' | 'sort-of' | 'knew-it';
+
+
+*Recommended columns (on the existing user_word_progress table):*
+sql
+alter table user_word_progress add column mastery text default 'new'; -- 'new' | 'learning' | 'mastered'
+alter table user_word_progress add column interval_step int default 0; -- index into [1,3,8,21,45,90] days
+alter table user_word_progress add column due_at timestamptz;
+alter table user_word_progress add column review_count int default 0;
+
+
+*Go-live:* getReviewQueue → select user_word_progress where due_at <= now(), ordered by due_at, joined to words (same shape as the real useSavedWords query it currently reuses). The rating buttons in ReviewSession.tsx (not-yet/sort-of/knew-it) need to write the new interval_step/due_at/mastery/review_count back — that write doesn't exist yet at all (the mock session just holds results in local state). This is also where Collection's "New/Mastered" filter (currently approximated from marked_known) should switch to reading mastery for real.
+
+---
+
+## 6. Weekly ring
+
+*No dedicated service built yet* — weeklyGoalDays exists on the mock LearningPlanFixture (#1) but nothing currently visualizes progress against it. The redesign's Progress screen (src/pages/progress/Progress.tsx) is the natural home for it once it's real.
+
+*Recommended:* derive from user_activity_log (already real — count completed days since last Monday) compared against user_preferences.weekly_goal (#1). No new table needed, just a new aggregate in src/services/progress.ts and a ring component on /progress.
+
+---
+
+## 7. Friends / streak buddies
+
+*Service:* src/services/social.ts (getFriendsData)
+
+*Screens:* /friends, the Play hub's "Friends and buddies" row, Profile's friends count
+
+*Type:*
+ts
+interface FriendFixture { id: string; name: string; weeklyXp: number }
+
+
+*Recommended tables:*
+sql
+create table friendships (user_id uuid references users(id), friend_id uuid references users(id), status text, created_at timestamptz default now(), primary key (user_id, friend_id));
+create table invites (code text primary key, inviter_id uuid references users(id), accepted_by uuid, accepted_at timestamptz);
+create table streak_buddies (user_a uuid references users(id), user_b uuid references users(id), started_on date, current boolean default true, primary key (user_a, user_b));
+
+
+*Go-live:* getFriendsData → select accepted friendships joined to users.total_xp (weekly — needs a weekly-windowed xp_events sum, not lifetime total_xp) for the leaderboard, and the active streak_buddies row. Needs an invite-accept flow (the invites table) that doesn't exist in the UI yet — Play hub currently only has a 4-letter room-code joiner for Word Duel (#8), not a friend-invite flow.
+
+---
+
+## 8. Games / daily challenge
+
+*Service:* src/services/games.ts (getPlayModes, createDuelRoom, getDuelPrompts), useShareCard.ts's dailyChallenge share type
+
+*Screens:* /play, /play/:code (Word Duel lobby → round → result), the Play hub's "Today's daily challenge" share demo
+
+*Types:*
+ts
+interface WordDuelPrompt { question: string; options: string[]; correctAnswer: string }
+interface DailyChallengeShareData { type: 'dailyChallenge'; challengeNumber: number; score: number; total: number; streak: number }
+
+
+*Recommended tables:*
+sql
+create table game_rooms (id uuid primary key default gen_random_uuid(), code char(4) unique, game text, host_id uuid references users(id), status text, settings jsonb, expires_at timestamptz);
+create table game_players (room_id uuid references game_rooms(id), user_id uuid references users(id), score int default 0, joined_at timestamptz default now(), primary key (room_id, user_id));
+create table game_rounds (room_id uuid references game_rooms(id), round int, prompt jsonb, answers jsonb, primary key (room_id, round));
+
+
+*Go-live:* this is the most involved item — real multiplayer needs Supabase Realtime (a channel per game_rooms.id), not just CRUD. WordDuel.tsx currently simulates a single bot opponent entirely client-side (random 70%-correct, randomized delay) — that whole simulation gets replaced by a Realtime subscription once rooms are real. The daily challenge game itself (the thing the dailyChallenge share card depicts) doesn't exist as a screen anywhere yet, mocked or otherwise — only its share-card design does; building the actual daily-challenge gameplay is a separate, unscoped feature beyond this redesign pass.
