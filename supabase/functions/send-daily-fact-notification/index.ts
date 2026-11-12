@@ -34,11 +34,24 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    const payload = JSON.stringify({
+    // The shared fact of the day, for people who have not finished onboarding.
+    const sharedPayload = JSON.stringify({
       title: notificationTitle,
       body: notificationBody,
       image: fact?.image_url || undefined,
     });
+
+    // Onboarded users get the fact from their own plan (chosen from their
+    // topics), the same one the app shows them.
+    const planFacts = new Map<string, { hook: string; image: string | null }>();
+    const { data: planRows, error: planError } = await supabase.rpc("notification_plans", { p_date: today });
+    if (planError) {
+      console.error("notification_plans failed, using shared fact:", planError.message);
+    }
+    for (const p of planRows ?? []) {
+      if (p.fact_hook) planFacts.set(p.user_id, { hook: p.fact_hook, image: p.fact_image });
+    }
+    let personalised = 0;
 
     let sent = 0;
     let failed = 0;
@@ -50,6 +63,12 @@ Deno.serve(async (req) => {
         : (user.notification_token ? [user.notification_token] : []);
         
       if (tokens.length === 0) continue;
+
+      const own = planFacts.get(user.id);
+      if (own) personalised++;
+      const payload = own
+        ? JSON.stringify({ title: notificationTitle, body: own.hook, image: own.image || undefined })
+        : sharedPayload;
 
       let hasSuccess = false;
       const deadEndpoints = new Set<string>();
@@ -102,7 +121,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ sent, failed, cleaned, total: users?.length ?? 0 }),
+      JSON.stringify({ sent, failed, cleaned, personalised, total: users?.length ?? 0 }),
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (err: any) {
