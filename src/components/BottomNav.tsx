@@ -3,7 +3,7 @@ import { cn } from '../lib/utils';
 import { NAV_ITEMS } from './Sidebar';
 
 /**
- * Mobile tab bar — fixed to the bottom, same five routes as the desktop
+ * Mobile tab bar — fixed to the bottom, same routes as the desktop
  * rail. Active tab gets ember text, a bolder icon and a top indicator bar.
  */
 export function BottomNav() {

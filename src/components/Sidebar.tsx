@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, LogOut, Download, LineChart, User, Gamepad2 } from 'lucide-react';
+import { Home, BookOpen, LogOut, Download, LineChart, User, Gamepad2, Trophy } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { usePlatform } from '../lib/usePlatform';
@@ -10,6 +10,7 @@ export const NAV_ITEMS = [
   { to: '/home', icon: Home, label: 'Today' },
   { to: '/collection', icon: BookOpen, label: 'Review' },
   { to: '/play', icon: Gamepad2, label: 'Play' },
+  { to: '/leaderboard', icon: Trophy, label: 'Ranks' },
   { to: '/progress', icon: LineChart, label: 'Progress' },
   { to: '/profile', icon: User, label: 'You' },
 ];

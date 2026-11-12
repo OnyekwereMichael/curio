@@ -25,6 +25,7 @@ import { PlayHubPage } from './pages/play/PlayHub';
 import { WordDuelPage } from './pages/play/WordDuel';
 import { DailyChallengePage } from './pages/play/DailyChallenge';
 import { FriendsPage } from './pages/friends/Friends';
+import { LeaderboardPage } from './pages/leaderboard/Leaderboard';
 import { ToastProvider } from './components/ui/Toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -69,6 +70,7 @@ function App() {
               <Route path="/play" element={<ProtectedRoute><PlayHubPage /></ProtectedRoute>} />
               <Route path="/play/daily" element={<ProtectedRoute><DailyChallengePage /></ProtectedRoute>} />
               <Route path="/play/:code" element={<ProtectedRoute><WordDuelPage /></ProtectedRoute>} />
+              <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
               <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
 
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

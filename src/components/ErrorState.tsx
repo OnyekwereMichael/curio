@@ -1,17 +1,20 @@
 import { Otter } from './Otter';
+import { cn } from '../lib/utils';
 
 interface Props {
   message?: string;
   onRetry?: () => void;
+  /** Inline block instead of a full-screen takeover — for a section that failed to load. */
+  compact?: boolean;
 }
 
 /**
  * Router-independent by design — used as the Sentry ErrorBoundary fallback
  * in main.tsx, which can render outside the Router if App itself throws.
  */
-export function ErrorState({ message, onRetry }: Props) {
+export function ErrorState({ message, onRetry, compact }: Props) {
   return (
-    <div className="min-h-screen bg-paper flex flex-col items-center justify-center px-6 text-center font-ui">
+    <div className={cn('flex flex-col items-center justify-center px-6 text-center font-ui', compact ? 'py-10' : 'min-h-screen bg-paper')}>
       <Otter mood="thinking" size={96} className="mb-5" />
       <h1 className="font-display text-title font-bold text-ink-900 mb-2">Something got tangled</h1>
       <p className="text-sm text-ink-500 leading-relaxed max-w-xs mb-6">
