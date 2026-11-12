@@ -205,7 +205,7 @@ useEffect(() => {
           ))}
         </div>
 
-        <WeeklyPrizesCard />
+        <WeeklyPrizesCard streak={currentStreak} />
 
         <StreakAtRiskBanner
           currentStreak={currentStreak}

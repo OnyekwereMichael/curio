@@ -9,7 +9,10 @@ export type OtterMood =
   | 'sleepy'
   | 'thinking'
   | 'supportive'
-  | 'shielded';
+  | 'shielded'
+  | 'excited'
+  | 'waving'
+  | 'grumpy';
 
 interface OtterProps {
   mood?: OtterMood;
@@ -17,6 +20,8 @@ interface OtterProps {
   className?: string;
   /** Gentle idle breathing loop — off by default so static spots (cards, lists) stay still. */
   breathe?: boolean;
+  /** Occasional eye blink (a quick squash of the eyes) — off by default, skipped for reduced motion. */
+  blink?: boolean;
 }
 
 // Flat fur + cream palette. Intentionally not theme-token driven — the
@@ -35,10 +40,21 @@ function Eyes({ mood }: { mood: OtterMood }) {
   switch (mood) {
     case 'proud':
     case 'cheering':
+    case 'excited':
       return (
         <>
           <path d="M80 92 Q86 85 92 92" fill="none" stroke={INK} strokeWidth={4} strokeLinecap="round" />
           <path d="M108 92 Q114 85 120 92" fill="none" stroke={INK} strokeWidth={4} strokeLinecap="round" />
+        </>
+      );
+    case 'grumpy':
+      return (
+        <>
+          <circle cx={87} cy={94} r={4.8} fill={INK} />
+          <circle cx={113} cy={94} r={4.8} fill={INK} />
+          {/* furrowed brows, angled in */}
+          <path d="M76 83 Q86 80 94 85" fill="none" stroke={INK} strokeWidth={3.2} strokeLinecap="round" />
+          <path d="M124 83 Q114 80 106 85" fill="none" stroke={INK} strokeWidth={3.2} strokeLinecap="round" />
         </>
       );
     case 'sleepy':
@@ -80,6 +96,15 @@ function Eyes({ mood }: { mood: OtterMood }) {
 
 function Mouth({ mood }: { mood: OtterMood }) {
   switch (mood) {
+    case 'excited':
+      return (
+        <>
+          <path d="M84 104 Q100 128 116 104 Z" fill={INK} stroke={INK} strokeWidth={3} strokeLinejoin="round" />
+          <ellipse cx={100} cy={116} rx={7} ry={4} fill="#E8472A" />
+        </>
+      );
+    case 'grumpy':
+      return <path d="M90 112 Q100 103 110 112" fill="none" stroke={INK} strokeWidth={3.2} strokeLinecap="round" />;
     case 'cheering':
       return <path d="M86 106 Q100 118 114 106" fill="none" stroke={INK} strokeWidth={3.5} strokeLinecap="round" />;
     case 'proud':
@@ -97,6 +122,15 @@ function Mouth({ mood }: { mood: OtterMood }) {
 
 function Extras({ mood }: { mood: OtterMood }) {
   switch (mood) {
+    case 'grumpy':
+      return (
+        <g aria-hidden="true">
+          {/* puffed, blushing cheeks — cute, not cross */}
+          <circle cx={70} cy={106} r={9} fill="#E8472A" opacity={0.22} />
+          <circle cx={130} cy={106} r={9} fill="#E8472A" opacity={0.22} />
+        </g>
+      );
+    case 'excited':
     case 'cheering':
       return (
         <g aria-hidden="true">
@@ -134,7 +168,36 @@ function Extras({ mood }: { mood: OtterMood }) {
 
 /** Paws + whatever they're holding — pebble by default, free for cheering/thinking, a shield for "shielded". */
 function PawsAndHold({ mood }: { mood: OtterMood }) {
-  if (mood === 'cheering') {
+  const reduceMotion = usePrefersReducedMotion();
+  if (mood === 'grumpy') {
+    return (
+      <g aria-hidden="true">
+        <circle cx={100} cy={180} r={12} fill={PEBBLE} />
+        {/* crossed arms */}
+        <ellipse cx={86} cy={146} rx={26} ry={11} fill={FUR} stroke={FUR_DARK} strokeWidth={1.5} transform="rotate(-10 86 146)" />
+        <ellipse cx={114} cy={150} rx={26} ry={11} fill={FUR} stroke={FUR_DARK} strokeWidth={1.5} transform="rotate(10 114 150)" />
+      </g>
+    );
+  }
+  if (mood === 'waving') {
+    return (
+      <g aria-hidden="true">
+        <ellipse cx={78} cy={162} rx={13} ry={16} fill={FUR} />
+        <circle cx={100} cy={168} r={14} fill={PEBBLE} />
+        <circle cx={95} cy={163} r={2.6} fill={PEBBLE_FLECK} />
+        {/* raised waving paw, pivoting at the shoulder */}
+        <motion.g
+          animate={reduceMotion ? undefined : { rotate: [0, 22, -8, 22, -8, 0] }}
+          transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 0.2, ease: 'easeInOut' }}
+          style={{ transformBox: 'view-box', transformOrigin: '150px 140px' }}
+        >
+          <ellipse cx={166} cy={104} rx={15} ry={22} fill={FUR} transform="rotate(20 166 104)" />
+          <ellipse cx={166} cy={92} rx={7} ry={9} fill={CREAM} opacity={0.55} transform="rotate(20 166 104)" />
+        </motion.g>
+      </g>
+    );
+  }
+  if (mood === 'cheering' || mood === 'excited') {
     return (
       <g aria-hidden="true">
         <ellipse cx={58} cy={118} rx={13} ry={16} fill={FUR} transform="rotate(-35 58 118)" />
@@ -176,7 +239,7 @@ function PawsAndHold({ mood }: { mood: OtterMood }) {
   );
 }
 
-export function Otter({ mood = 'idle', size = 96, className, breathe = false }: OtterProps) {
+export function Otter({ mood = 'idle', size = 96, className, breathe = false, blink = false }: OtterProps) {
   const reduceMotion = usePrefersReducedMotion();
   const tilt = mood === 'curious' ? -7 : 0;
   const Wrapper = breathe ? motion.svg : 'svg';
@@ -219,7 +282,23 @@ export function Otter({ mood = 'idle', size = 96, className, breathe = false }: 
         <ellipse cx={100} cy={100} rx={36} ry={30} fill={CREAM} />
         <ellipse cx={100} cy={104} rx={18} ry={14} fill={CREAM_LIGHT} />
 
-        <Eyes mood={mood} />
+        {/* eyes: look around when curious, blink when asked to */}
+        <motion.g
+          animate={mood === 'curious' && !reduceMotion ? { x: [0, -4, 4, 0] } : { x: 0 }}
+          transition={mood === 'curious' ? { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } : { duration: 0 }}
+        >
+          {blink && !reduceMotion ? (
+            <motion.g
+              animate={{ scaleY: [1, 1, 0.1, 1, 1] }}
+              transition={{ duration: 3.2, times: [0, 0.88, 0.93, 0.98, 1], repeat: Infinity }}
+              style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+            >
+              <Eyes mood={mood} />
+            </motion.g>
+          ) : (
+            <Eyes mood={mood} />
+          )}
+        </motion.g>
         <ellipse cx={100} cy={99} rx={3.5} ry={2.6} fill={INK} />
         <Mouth mood={mood} />
       </g>

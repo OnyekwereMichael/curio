@@ -14,7 +14,7 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { useCompetitionPhase } from '../../hooks/useCompetitionPhase';
 import { useInView } from '../../hooks/useInView';
 import { useLeaderboard } from '../../hooks/useLeaderboard';
-import { COMPETITION, LEADERBOARD_COPY, WEEKLY_PRIZES, prizeFor } from '../../lib/leaderboardConfig';
+import { COMPETITION, LEADERBOARD_COPY, WEEKLY_PRIZES, formatStartDate, prizeFor } from '../../lib/leaderboardConfig';
 import type { LeaderboardPeriod } from '../../services/leaderboard';
 
 const PERIOD_OPTIONS: { value: LeaderboardPeriod; label: string }[] = [
@@ -108,7 +108,7 @@ export function LeaderboardPage() {
           <p className="flex items-start gap-2 rounded-control bg-gold-50 px-3 py-2 text-xs text-gold-700 font-ui">
             <CalendarClock size={14} className="flex-shrink-0 mt-0.5" />
             <span>
-              <span className="font-semibold">Prizes start Monday.</span> This is a preview of this week’s ranking — the board resets when the competition begins at 12:00 AM Lagos time.
+              <span className="font-semibold">Prizes start {formatStartDate()}.</span> This is a preview of this week’s ranking — the board resets when the competition begins at 12:00 AM Lagos time.
             </span>
           </p>
         )}

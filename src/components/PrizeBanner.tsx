@@ -1,7 +1,7 @@
 import { Gift } from 'lucide-react';
 import { PrizeChip } from './PrizeChip';
 import { WeekCountdown } from './WeekCountdown';
-import { COMPETITION, TOP_PRIZE, formatPrize, type CompetitionPhase, type LeaderboardPrize } from '../lib/leaderboardConfig';
+import { COMPETITION, TOP_PRIZE, formatPrize, competitionStatusText, formatStartDate, type CompetitionPhase, type LeaderboardPrize } from '../lib/leaderboardConfig';
 
 const ORDINAL = { 1: '1st', 2: '2nd', 3: '3rd' } as const;
 const MEDAL = { 1: '🥇', 2: '🥈', 3: '🥉' } as const;
@@ -23,7 +23,7 @@ export function PrizeBanner({ prizes, phase, countdownTo }: PrizeBannerProps) {
           <Gift size={13} className="text-gold-500" />
           Weekly prizes
         </p>
-        <span className="text-[11px] font-semibold text-gold-700 bg-gold-50 px-2 py-0.5 rounded-full">{upcoming ? 'Starting soon' : 'Live'}</span>
+        <span className="text-[11px] font-semibold text-gold-700 bg-gold-50 px-2 py-0.5 rounded-full">{competitionStatusText(phase)}</span>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
@@ -40,7 +40,7 @@ export function PrizeBanner({ prizes, phase, countdownTo }: PrizeBannerProps) {
         <WeekCountdown endsAt={countdownTo} label={upcoming ? 'Prizes start in' : 'Ends in'} />
         <p className="text-xs text-ink-500">
           {upcoming
-            ? 'Prizes start Monday, 12:00 AM Lagos time. Only XP earned from then counts toward the prizes.'
+            ? `Prizes start ${formatStartDate()}, 12:00 AM Lagos time. Only XP earned from then counts toward the prizes.`
             : `Top 3 win every week. Earn at least ${COMPETITION.minWeeklyXp} XP to qualify, then climb for up to ${formatPrize(TOP_PRIZE)}.`}
         </p>
       </div>

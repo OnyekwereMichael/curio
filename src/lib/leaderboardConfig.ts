@@ -14,8 +14,6 @@ export const COMPETITION = {
   /** Monday 16 Nov 2026, 00:00 Lagos (WAT, UTC+1, no DST). */
   startsAt: new Date('2026-11-16T00:00:00+01:00'),
   timezone: 'Africa/Lagos',
-  /** Fixed UTC offset of the competition timezone, in hours — used for week keys. */
-  utcOffsetHours: 1,
   locale: 'en-NG',
   currency: 'NGN',
   /** Weekly XP needed to be eligible for a prize. */
@@ -63,10 +61,17 @@ export function prizeForPlace(place: number): number | null {
   return WEEKLY_PRIZES.find((p) => p.place === place)?.amount ?? null;
 }
 
-/** Identifies the competition week containing `now` (Monday's date in Lagos), e.g. "2026-11-16". */
-export function weekKey(now: number = Date.now()): string {
-  const shifted = new Date(now + COMPETITION.utcOffsetHours * 3600000);
-  const day = (shifted.getUTCDay() + 6) % 7; // Monday = 0
-  shifted.setUTCDate(shifted.getUTCDate() - day);
-  return shifted.toISOString().slice(0, 10);
+/** The competition start in Lagos time, e.g. "Monday, Nov 16". */
+export function formatStartDate(): string {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: COMPETITION.timezone,
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  }).format(COMPETITION.startsAt);
+}
+
+/** The one status line for both phases — used by the Home banner and the leaderboard. */
+export function competitionStatusText(phase: CompetitionPhase): string {
+  return phase === 'upcoming' ? `Starts ${formatStartDate()}` : 'Resets every Monday';
 }

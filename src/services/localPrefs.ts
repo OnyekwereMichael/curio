@@ -82,21 +82,41 @@ export function setSoundsHapticsPref(enabled: boolean) {
   }
 }
 
-const prizeCardDismissedKey = (weekKey: string) => `curi_prize_card_dismissed_${weekKey}`;
+const LAST_VISIT_KEY = 'curi_last_visit_at';
+const LAST_RANK_KEY = 'curi_last_weekly_rank';
 
-/** The Home prize card is dismissed per competition week, so it returns after each reset. */
-export function isPrizeCardDismissed(weekKey: string): boolean {
+/** When the user last opened Home (ms epoch), or null on the first ever visit. */
+export function getLastVisitAt(): number | null {
   try {
-    return localStorage.getItem(prizeCardDismissedKey(weekKey)) === '1';
+    const raw = localStorage.getItem(LAST_VISIT_KEY);
+    return raw ? Number(raw) : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
-export function dismissPrizeCard(weekKey: string) {
+export function touchLastVisit() {
   try {
-    localStorage.setItem(prizeCardDismissedKey(weekKey), '1');
+    localStorage.setItem(LAST_VISIT_KEY, String(Date.now()));
   } catch {
-    // localStorage unavailable — the card just comes back next visit
+    // ignore
+  }
+}
+
+/** Last weekly rank the user saw, tagged with the week it belongs to. */
+export function getLastRank(): { week: number; rank: number } | null {
+  try {
+    const raw = localStorage.getItem(LAST_RANK_KEY);
+    return raw ? (JSON.parse(raw) as { week: number; rank: number }) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setLastRank(week: number, rank: number) {
+  try {
+    localStorage.setItem(LAST_RANK_KEY, JSON.stringify({ week, rank }));
+  } catch {
+    // ignore
   }
 }
