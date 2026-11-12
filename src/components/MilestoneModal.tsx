@@ -6,7 +6,7 @@ import { getMilestoneCopy } from '../lib/streakLogic';
 import { createMilestoneImage, shareMilestone } from '../lib/milestoneShare';
 import { cn } from '../lib/utils';
 import { Otter } from './Otter';
-import { PREVIEW_FEATURES } from '../lib/featureFlags';
+import { MILESTONE_XP } from '../services/xp';
 
 const SHOW_DELAY_MS = 1200; // lets them see their quiz result first
 const MILESTONES = [7, 30, 60, 100];
@@ -148,10 +148,10 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
                     <span>{copy.shieldLine}</span>
                   </div>
                 )}
-                {PREVIEW_FEATURES && (
+                {(
                   <>
                     <div className="inline-flex items-center gap-1.5 rounded-tag bg-cream/10 px-3 py-2 text-xs font-medium text-gold-500">
-                      +100 XP
+                      +{MILESTONE_XP} XP
                     </div>
                     <div className="inline-flex items-center gap-1.5 rounded-tag bg-cream/10 px-3 py-2 text-xs font-medium text-cream">
                       New pebble

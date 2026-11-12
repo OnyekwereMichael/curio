@@ -7,8 +7,7 @@ import { buildFactQuizQuestions } from '../hooks/useFactQuizQuestions';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { createMilestoneImage, shareMilestone } from '../lib/milestoneShare';
-import { estimateQuizXp } from '../services/xp';
-import { PREVIEW_FEATURES } from '../lib/featureFlags';
+import { estimateQuizXp, syncXpAndNotify } from '../services/xp';
 
 interface Props {
     todaysWord: any;
@@ -270,6 +269,8 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                 }
 
                 await commitStreak();
+                // Server recomputes XP, quests and badges from the quiz just saved.
+                await syncXpAndNotify();
             }
         }
     }
@@ -446,11 +447,9 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                                     : 'Your streak is safe. A new quiz unlocks tomorrow.'}
                             </p>
                         </div>
-                        {PREVIEW_FEATURES && (
-                            <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-3 py-1.5 rounded-tag font-ui">
-                                +{estimateQuizXp(correctCount, total)} XP
-                            </span>
-                        )}
+                        <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-3 py-1.5 rounded-tag font-ui">
+                            +{estimateQuizXp(correctCount, total)} XP
+                        </span>
                         <PrimaryButton onClick={() => setDayFinished(true)}>Finish the day</PrimaryButton>
                     </motion.div>
                 )}

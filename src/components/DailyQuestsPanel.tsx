@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { getDailyQuests, type DailyQuests } from '../services/xp';
+import { getDailyQuests, XP_UPDATED_EVENT, type DailyQuests } from '../services/xp';
 
-/** Preview-only — XP/quests have no backend yet. Render this only behind PREVIEW_FEATURES. */
+/** Today's quests, read from `daily_quests`. Refreshes when XP changes (quiz done, word learned). */
 export function DailyQuestsPanel() {
   const [data, setData] = useState<DailyQuests | null>(null);
 
   useEffect(() => {
-    getDailyQuests().then(setData);
+    const load = () => getDailyQuests().then(setData).catch((e) => console.error('getDailyQuests failed', e));
+    load();
+    window.addEventListener(XP_UPDATED_EVENT, load);
+    return () => window.removeEventListener(XP_UPDATED_EVENT, load);
   }, []);
 
   if (!data) return null;

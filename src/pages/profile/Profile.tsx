@@ -5,8 +5,7 @@ import { AppShell } from '../../components/AppShell';
 import { useAuth } from '../../contexts/AuthContext';
 import { useStreak } from '../../components/useStreak';
 import { fetchWordStats, type WordStats } from '../../services/progress';
-import { getProfileExtras, type ProfileExtras } from '../../services/profileMock';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
+import { getProfileExtras, type ProfileExtras } from '../../services/profile';
 import { cn } from '../../lib/utils';
 
 const PEBBLE_COLORS: Record<string, string> = {
@@ -28,7 +27,7 @@ export function ProfilePage() {
   }, [user]);
 
   useEffect(() => {
-    if (PREVIEW_FEATURES) getProfileExtras().then(setExtras);
+    getProfileExtras().then(setExtras).catch((e) => console.error('getProfileExtras failed', e));
   }, []);
 
   const fullName =
@@ -57,14 +56,14 @@ export function ProfilePage() {
 
         <div>
           <h1 className="font-display text-title font-bold text-ink-900">{fullName}</h1>
-          {PREVIEW_FEATURES && extras && (
+          {extras && (
             <span className="inline-block mt-1 text-xs font-semibold text-gold-700 bg-gold-50 px-2.5 py-1 rounded-tag">
               Level {extras.level.level} · {extras.level.title}
             </span>
           )}
         </div>
 
-        {PREVIEW_FEATURES && extras && (
+        {extras && (
           <div className="w-full max-w-xs">
             <div className="flex items-center justify-between text-xs text-ink-500 mb-1 font-ui">
               <span>To Level {extras.level.level + 1} · {extras.level.nextTitle}</span>
@@ -90,18 +89,29 @@ export function ProfilePage() {
           </div>
           <div className="bg-surface rounded-card border border-line shadow-card p-3">
             <p className="text-xl font-display font-bold text-ink-900">
-              {PREVIEW_FEATURES && extras ? extras.friendsCount : longestStreak}
+              {extras?.friendsCount != null ? extras.friendsCount : longestStreak}
             </p>
-            <p className="text-[11px] text-ink-500 mt-0.5">{PREVIEW_FEATURES && extras ? 'friends' : 'best streak'}</p>
+            <p className="text-[11px] text-ink-500 mt-0.5">{extras?.friendsCount != null ? 'friends' : 'best streak'}</p>
           </div>
         </div>
 
-        {PREVIEW_FEATURES && extras && (
+        <button
+          onClick={() => navigate('/friends')}
+          className="w-full max-w-xs flex items-center justify-between rounded-card bg-surface border border-line shadow-card px-4 py-3 text-sm font-semibold text-ink-900 font-ui hover:bg-ink-900/5 transition-colors"
+        >
+          Friends and streak buddies
+          <span className="text-ink-500">›</span>
+        </button>
+
+        {extras && (
           <div className="w-full text-left">
             <div className="flex items-baseline justify-between mb-2">
               <h2 className="font-display text-heading font-bold text-ink-900">Pebble shelf</h2>
               <span className="text-xs text-ink-500 font-ui">See all {extras.pebbleShelfTotal}</span>
             </div>
+            {extras.pebbleShelf.length === 0 && (
+              <p className="text-xs text-ink-500 font-ui">Keep your streak going and finish quizzes to earn your first pebble.</p>
+            )}
             <div className="grid grid-cols-4 gap-2">
               {extras.pebbleShelf.map((p) => (
                 <div key={p.id} className="flex flex-col items-center gap-1.5">

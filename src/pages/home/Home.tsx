@@ -5,7 +5,7 @@ import { DailyQuiz } from '../../components/DailyQuiz';
 import { StreakLossModal } from '../../components/StreakLossModal';
 import { MilestoneModal } from '../../components/MilestoneModal';
 
-import { useTodaysWord, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
+import { useTodaysWord, useTodaysWords, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
@@ -20,7 +20,6 @@ import { StreakAtRiskBanner } from '../../components/StreakAtRiskBanner';
 import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
 import { isFactOpened } from '../../services/localPrefs';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
 
 function SkeletonCard() {
   return (
@@ -44,6 +43,7 @@ function FallbackCard({ message }: { message: string }) {
 export function HomeScreen() {
   const navigate = useNavigate();
   const todaysWord = useTodaysWord();
+  const todaysWords = useTodaysWords();
   const oldButGold = useOldButGold();
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
@@ -106,9 +106,11 @@ useEffect(() => {
   const quizSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user || !todaysWord.data) return;
-    fetchWordProgress(user.id, todaysWord.data.id).then((status) => setWordDone(status?.markedKnown ?? false));
-  }, [user, todaysWord.data]);
+    if (!user || todaysWords.data.length === 0) return;
+    Promise.all(todaysWords.data.map((w) => fetchWordProgress(user.id, w.id))).then((statuses) =>
+      setWordDone(statuses.every((s) => s?.markedKnown ?? false))
+    );
+  }, [user, todaysWords.data]);
 
   useEffect(() => {
     if (!user) return;
@@ -120,8 +122,8 @@ useEffect(() => {
       key: 'word',
       done: wordDone,
       icon: <BookOpen size={16} />,
-      title: "Today's word",
-      subtitle: todaysWord.data?.word ?? 'Loading…',
+      title: todaysWords.data.length > 1 ? `Today's ${todaysWords.data.length} words` : "Today's word",
+      subtitle: todaysWords.data.length > 0 ? todaysWords.data.map((w) => w.word).join(', ') : 'Loading…',
       onAction: () => navigate('/learn/word'),
     },
     {
@@ -175,7 +177,11 @@ useEffect(() => {
       {firstName}, here's your daily dose.
     </h1>
     <p className="text-ink-500 text-sm font-ui mt-1">
-      {[todaysWord.data && '1 word', todaysFact.data && '1 fact', '1 quiz'].filter(Boolean).join(', ')} · about 4 min
+      {[
+        todaysWords.data.length > 0 && `${todaysWords.data.length} word${todaysWords.data.length !== 1 ? 's' : ''}`,
+        todaysFact.data && '1 fact',
+        '1 quiz',
+      ].filter(Boolean).join(', ')} · about {3 + todaysWords.data.length} min
     </p>
     <div className="mt-4 cursor-pointer">
       <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
@@ -205,7 +211,7 @@ useEffect(() => {
           onStart={() => quizSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
         />
 
-        {PREVIEW_FEATURES && <DailyQuestsPanel />}
+        <DailyQuestsPanel />
 
         {/* The full word/fact reading experience now lives at /learn/word
             and /learn/fact (see the "Start" actions above) — the plan-row
