@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/superbase';
+import { getDailyPlan } from '../../services/dailyPlan';
 
 
 export interface Word {
@@ -29,35 +30,29 @@ export interface Fact {
   created_at: string;
 }
 
-export function useTodaysWord() {
+// Today's words come from the user's daily plan (see get_or_build_daily_plan):
+// words_per_day words matched to their style/level, or the single publish_date
+// word for users who haven't been through onboarding.
+export function useTodaysWords() {
   const { user } = useAuth();
-  const [data, setData] = useState<Word | null>(null);
+  const [data, setData] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchWord = async () => {
+    const fetchWords = async () => {
       try {
         setLoading(true);
-        const today = new Date().toISOString().split('T')[0];
+        const plan = await getDailyPlan(user.id);
+        setData(plan.words);
 
-        const { data: word, error: fetchError } = await supabase
-          .from('words')
-          .select('*')
-          .eq('publish_date', today)
-          .maybeSingle();
-
-        if (fetchError) throw fetchError;
-
-        setData(word);
-
-        if (word) {
+        if (plan.words.length > 0) {
           const { error: upsertError } = await supabase
             .from('user_word_progress')
             .upsert(
-              { user_id: user.id, word_id: word.id },
+              plan.words.map((w) => ({ user_id: user.id, word_id: w.id })),
               { onConflict: 'user_id,word_id', ignoreDuplicates: true }
             );
 
@@ -72,10 +67,16 @@ export function useTodaysWord() {
       }
     };
 
-    fetchWord();
+    fetchWords();
   }, [user]);
 
   return { data, loading, error };
+}
+
+/** The first word of today's plan — what the quiz and "Old but gold" key off. */
+export function useTodaysWord() {
+  const { data, loading, error } = useTodaysWords();
+  return { data: data[0] ?? null, loading, error };
 }
 
 export function useOldButGold() {
@@ -146,15 +147,7 @@ export function useTodaysFact() {
     const fetchFact = async () => {
       try {
         setLoading(true);
-        const today = new Date().toISOString().split('T')[0];
-
-        const { data: fact, error: fetchError } = await supabase
-          .from('facts')
-          .select('*')
-          .eq('publish_date', today)
-          .maybeSingle();
-
-        if (fetchError) throw fetchError;
+        const { fact } = await getDailyPlan(user.id);
 
         setData(fact);
 

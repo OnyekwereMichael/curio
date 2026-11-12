@@ -7,11 +7,17 @@ import { getOnboardingDraft, completeOnboarding } from '../../services/onboardin
 export function PlanSummaryPage() {
   const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
-  const draft = getOnboardingDraft();
+  const [draft] = useState(getOnboardingDraft);
 
   async function handleStart() {
     setStarting(true);
-    await completeOnboarding();
+    try {
+      await completeOnboarding();
+    } catch (e) {
+      // Don't trap the user in the wizard over a save failure — their
+      // per-step answers were already saved; Settings can fix the rest.
+      console.error('completeOnboarding failed', e);
+    }
     // Onboarding is done — continue into the real install-nudge flow.
     navigate('/install-nudge');
   }

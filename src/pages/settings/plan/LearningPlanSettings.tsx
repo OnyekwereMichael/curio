@@ -6,10 +6,9 @@ import { Button } from '../../../components/ui/Button';
 import { getLearningPlan, updateLearningPlan, type LearningPlanFixture } from '../../../services/learningPlan';
 import { cn } from '../../../lib/utils';
 
-const WORDS_PER_DAY_OPTIONS = [1, 3, 5];
-const TOPIC_OPTIONS = ['Animals', 'Space', 'History', 'Science', 'Culture', 'Technology'];
+import { WORDS_PER_DAY_OPTIONS, TOPIC_OPTIONS } from '../../../mocks/onboarding';
 
-/** Mock — see docs/BACKEND_TODO.md #1 (user_preferences). Preview-only. */
+/** Backed by `user_preferences` via services/learningPlan. */
 export function LearningPlanSettingsPage() {
   const navigate = useNavigate();
   const [plan, setPlan] = useState<LearningPlanFixture | null>(null);
@@ -36,9 +35,14 @@ export function LearningPlanSettingsPage() {
   async function handleSave() {
     if (!plan) return;
     setSaving(true);
-    await updateLearningPlan(plan);
-    setSaving(false);
-    navigate('/settings/plan/when');
+    try {
+      await updateLearningPlan(plan);
+      navigate('/settings/plan/when');
+    } catch (e) {
+      console.error('save learning plan failed', e);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
