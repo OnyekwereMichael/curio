@@ -118,3 +118,61 @@ export async function fetchQuizAccuracy(userId: string): Promise<QuizAccuracy> {
   const perfect = rows.filter((r) => r.quiz_perfect).length;
   return { accuracyPct: Math.round((perfect / rows.length) * 100), quizzesTaken: rows.length };
 }
+
+export interface WeeklyProgress {
+  /** The user's chosen weekly goal (3, 5 or 7 days). */
+  goalDays: number;
+  /** Days this week (Monday-first, UTC like activity_date) with a completed quiz. */
+  doneDays: number;
+  /** Mon..Sun, true where that day was completed. */
+  week: boolean[];
+  /** Index (0 = Monday) of today within `week`. */
+  todayIndex: number;
+}
+
+const DEFAULT_WEEKLY_GOAL = 5;
+
+/** Completed days since Monday against user_preferences.weekly_goal. No extra table: derived from user_activity_log. */
+export async function fetchWeeklyProgress(userId: string): Promise<WeeklyProgress> {
+  const now = new Date();
+  const todayIndex = (now.getUTCDay() + 6) % 7;
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - todayIndex));
+  const mondayKey = monday.toISOString().split('T')[0];
+
+  const [prefs, log] = await Promise.all([
+    supabase.from('user_preferences').select('weekly_goal').eq('user_id', userId).maybeSingle(),
+    supabase
+      .from('user_activity_log')
+      .select('activity_date')
+      .eq('user_id', userId)
+      .eq('quiz_completed', true)
+      .gte('activity_date', mondayKey),
+  ]);
+  if (log.error) console.error('fetchWeeklyProgress failed:', log.error.message);
+
+  const week = Array<boolean>(7).fill(false);
+  for (const row of log.data ?? []) {
+    const offset = Math.round((Date.parse(row.activity_date as string) - monday.getTime()) / 86400000);
+    if (offset >= 0 && offset < 7) week[offset] = true;
+  }
+  return {
+    goalDays: prefs.data?.weekly_goal ?? DEFAULT_WEEKLY_GOAL,
+    doneDays: week.filter(Boolean).length,
+    week,
+    todayIndex,
+  };
+}
+
+/** Words whose review mastery has reached 'mastered' (see rate_review). */
+export async function fetchMasteredCount(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('user_word_progress')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('mastery', 'mastered');
+  if (error) {
+    console.error('fetchMasteredCount failed:', error.message);
+    return 0;
+  }
+  return count ?? 0;
+}

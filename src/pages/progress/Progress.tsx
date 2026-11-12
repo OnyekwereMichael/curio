@@ -3,8 +3,8 @@ import { Flame, Shield, Star, Circle } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { useAuth } from '../../contexts/AuthContext';
 import { useStreak } from '../../components/useStreak';
-import { fetchActivityRange, fetchWordStats, fetchQuizAccuracy, type MonthActivityDay, type WordStats, type QuizAccuracy } from '../../services/progress';
-import { PREVIEW_FEATURES } from '../../lib/featureFlags';
+import { fetchActivityRange, fetchWordStats, fetchQuizAccuracy, fetchWeeklyProgress, fetchMasteredCount, type MonthActivityDay, type WordStats, type QuizAccuracy, type WeeklyProgress } from '../../services/progress';
+import { WeeklyRing } from '../../components/WeeklyRing';
 import { cn } from '../../lib/utils';
 
 const DAYS_PER_SHIELD = 7;
@@ -30,6 +30,8 @@ export function ProgressPage() {
   const [activity, setActivity] = useState<MonthActivityDay[]>([]);
   const [wordStats, setWordStats] = useState<WordStats>({ wordsLearned: 0, topicsExplored: 0 });
   const [accuracy, setAccuracy] = useState<QuizAccuracy>({ accuracyPct: null, quizzesTaken: 0 });
+  const [weekly, setWeekly] = useState<WeeklyProgress | null>(null);
+  const [mastered, setMastered] = useState(0);
 
   const today = new Date();
   const year = today.getFullYear();
@@ -41,6 +43,8 @@ export function ProgressPage() {
     fetchActivityRange(user.id, monthStart).then(setActivity);
     fetchWordStats(user.id).then(setWordStats);
     fetchQuizAccuracy(user.id).then(setAccuracy);
+    fetchWeeklyProgress(user.id).then(setWeekly);
+    fetchMasteredCount(user.id).then(setMastered);
   }, [user, year, month]);
 
   const activityByDate = new Map(activity.map((a) => [a.activityDate, a]));
@@ -71,6 +75,8 @@ export function ProgressPage() {
             </p>
           </div>
         </div>
+
+        {weekly && <WeeklyRing progress={weekly} />}
 
         <div className="bg-surface rounded-card border border-line shadow-card p-5 font-ui">
           <div className="flex items-center justify-between mb-4">
@@ -132,12 +138,10 @@ export function ProgressPage() {
             </p>
             <p className="text-xs text-ink-500 mt-1">perfect quiz days</p>
           </div>
-          {PREVIEW_FEATURES && (
-            <div className="bg-surface rounded-card border border-line shadow-card p-4 text-center opacity-70">
-              <p className="text-2xl font-display font-bold text-ink-900">—</p>
-              <p className="text-xs text-ink-500 mt-1">words mastered</p>
-            </div>
-          )}
+          <div className="bg-surface rounded-card border border-line shadow-card p-4 text-center">
+            <p className="text-2xl font-display font-bold text-ink-900">{mastered}</p>
+            <p className="text-xs text-ink-500 mt-1">words mastered</p>
+          </div>
         </div>
       </div>
     </AppShell>
