@@ -33,6 +33,8 @@ export const MASCOT_TIMING = {
   bubbleMinMs: 3000,
   bubbleMaxMs: 4000,
   greetDelayMs: 600,
+  /** First unprompted reaction, counted from when the mascot becomes visible. */
+  firstAutoMs: 5000,
   sleepAfterMs: 45000,
   tapCooldownMs: 350,
   rapidTapWindowMs: 1600,
@@ -76,6 +78,37 @@ export const MASCOT_LINES: Record<'happy' | 'excited' | 'curious' | 'grumpy' | '
   ],
   sleepy: [{ text: 'Zzz… tap me to wake me up. 😴' }],
 };
+
+/** What the mascot voices when it talks (browser speech): pitch/rate per mood, so the voice matches the face. */
+export const MASCOT_VOICE: Record<MascotMood, { pitch: number; rate: number }> = {
+  happy: { pitch: 1.35, rate: 1.05 },
+  excited: { pitch: 1.6, rate: 1.2 },
+  waving: { pitch: 1.4, rate: 1.05 },
+  curious: { pitch: 1.3, rate: 1 },
+  grumpy: { pitch: 0.9, rate: 0.95 },
+  sleepy: { pitch: 0.8, rate: 0.75 },
+};
+
+export interface MascotBeat {
+  mood: MascotMood;
+  /** Lines to pick from; some data lines are skipped when their data isn't available. */
+  lines: MascotLine[];
+  /** Body reactions to play on their own — one is chosen at random. */
+  effects: MascotEffect[];
+}
+
+/**
+ * The unprompted "things that happen" — the same reactions a tap gives, played
+ * automatically every few seconds. A function only because it reads
+ * MASCOT_SPECIAL_LINES, which is declared further down.
+ */
+export const MASCOT_AMBIENT_BEATS = (): MascotBeat[] => [
+  { mood: 'happy', lines: MASCOT_LINES.happy, effects: ['giggle'] },
+  { mood: 'happy', lines: MASCOT_LINES.happy, effects: [] },
+  { mood: 'waving', lines: MASCOT_SPECIAL_LINES.tap.wave, effects: ['wave'] },
+  { mood: 'curious', lines: MASCOT_LINES.curious, effects: [] },
+  { mood: 'excited', lines: MASCOT_LINES.excited, effects: ['jump', 'spin', 'cheer'] },
+];
 
 /** One-off situations: greeting, rank news, waking up, tap reactions. */
 export const MASCOT_SPECIAL_LINES = {

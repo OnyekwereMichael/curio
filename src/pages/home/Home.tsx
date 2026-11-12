@@ -21,6 +21,7 @@ import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
 import { WeeklyPrizesCard } from '../../components/WeeklyPrizesCard';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
 import { isFactOpened } from '../../services/localPrefs';
+import { MascotCompanion } from '../../components/MascotCompanion';
 
 function SkeletonCard() {
   return (
@@ -171,7 +172,10 @@ useEffect(() => {
 />
       <div className="px-2 py-5 w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
       <div className="flex items-start gap-4">
-  <Otter mood="idle" size={56} breathe className="flex-shrink-0 mt-1" />
+  {/* <MascotCompanion
+            size={72}
+           
+          /> */}
   <div>
     <p className="text-ink-500 text-base font-medium mb-1 font-ui">{greeting} 👋</p>
     <h1 className="font-display text-display font-bold text-ink-900 leading-tight">

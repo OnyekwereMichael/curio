@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  MASCOT_AMBIENT_BEATS,
   MASCOT_LINES,
   MASCOT_REACTIONS,
   MASCOT_SPECIAL_LINES,
@@ -9,6 +10,7 @@ import {
   type MascotLine,
   type MascotMood,
 } from '../lib/mascotConfig';
+import { speakAloud, stopSpeaking } from '../lib/mascotVoice';
 import { getSoundsHapticsPref } from '../services/localPrefs';
 
 export interface MascotView {
@@ -69,6 +71,7 @@ export function useMascotBehavior({ active, context }: Options) {
   /** Show a mood + bubble (+ body effect), then settle back after a few seconds. */
   const speak = useCallback((mood: MascotMood, message: string | null, effect: MascotEffect | null = null) => {
     clearTimeout(timers.current.hide);
+    if (message && getSoundsHapticsPref()) speakAloud(message, mood);
     setView((v) => ({ mood, message, bubbleKey: v.bubbleKey + 1, effect, effectKey: effect ? v.effectKey + 1 : v.effectKey }));
     timers.current.hide = setTimeout(
       () => setView((v) => ({ ...v, mood: sleeping.current ? 'sleepy' : 'happy', message: null, effect: null })),
@@ -98,21 +101,21 @@ export function useMascotBehavior({ active, context }: Options) {
       }, MASCOT_TIMING.greetDelayMs);
     }
 
-    const loop = () => {
+    const loop = (delay: number) => {
       ambient = setTimeout(() => {
         if (!sleeping.current) {
           const c = ctx.current;
-          const moods: Exclude<MascotMood, 'waving' | 'sleepy'>[] = ['happy', 'happy', 'curious'];
-          if (c.trend === 'up' || (c.rank != null && c.rank <= 3 && c.phase === 'live')) moods.push('excited');
-          if (c.trend === 'down') moods.push('grumpy');
-          const mood = moods[Math.floor(Math.random() * moods.length)];
-          const text = pick(MASCOT_LINES[mood]);
-          if (text) speak(mood, text);
+          const beats = MASCOT_AMBIENT_BEATS();
+          if (c.trend === 'down') beats.push({ mood: 'grumpy', lines: MASCOT_LINES.grumpy, effects: ['giggle'] });
+          const beat = beats[Math.floor(Math.random() * beats.length)];
+          const text = pick(beat.lines);
+          const effect = beat.effects.length ? beat.effects[Math.floor(Math.random() * beat.effects.length)] : null;
+          if (text) speak(beat.mood, text, effect);
         }
-        loop();
-      }, rand(MASCOT_TIMING.ambientMinMs, MASCOT_TIMING.ambientMaxMs));
+        loop(rand(MASCOT_TIMING.ambientMinMs, MASCOT_TIMING.ambientMaxMs));
+      }, delay);
     };
-    loop();
+    loop(MASCOT_TIMING.firstAutoMs);
     armSleep();
 
     return () => {
@@ -120,6 +123,7 @@ export function useMascotBehavior({ active, context }: Options) {
       clearTimeout(greet);
       clearTimeout(timers.current.hide);
       clearTimeout(timers.current.sleep);
+      stopSpeaking();
       setView((v) => ({ ...v, mood: sleeping.current ? 'sleepy' : 'happy', message: null, effect: null }));
     };
   }, [active, speak, pick, armSleep]);
