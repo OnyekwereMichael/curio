@@ -13,7 +13,6 @@ import { ProgressPage } from './pages/progress/Progress';
 import { ProfilePage } from './pages/profile/Profile';
 import { LearningPlanSettingsPage } from './pages/settings/plan/LearningPlanSettings';
 import { PlanWhenPage } from './pages/settings/plan/PlanWhen';
-import { PreviewRoute } from './components/PreviewRoute';
 import { NotFoundPage } from './pages/NotFound';
 import { WordStylePage } from './pages/onboarding/WordStyle';
 import { LevelPage } from './pages/onboarding/Level';
@@ -60,15 +59,15 @@ function App() {
               <Route path="/learn/fact" element={<ProtectedRoute><FactFocusScreen /></ProtectedRoute>} />
               <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
               <Route path="/collection" element={<ProtectedRoute><CollectionPage /></ProtectedRoute>} />
-              <Route path="/collection/review" element={<ProtectedRoute><PreviewRoute><ReviewSessionPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/collection/review" element={<ProtectedRoute><ReviewSessionPage /></ProtectedRoute>} />
               <Route path="/dictionary" element={<ProtectedRoute><DictionaryPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/settings/plan" element={<ProtectedRoute><LearningPlanSettingsPage /></ProtectedRoute>} />
               <Route path="/settings/plan/when" element={<ProtectedRoute><PlanWhenPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-              <Route path="/play" element={<ProtectedRoute><PreviewRoute><PlayHubPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/play/:code" element={<ProtectedRoute><PreviewRoute><WordDuelPage /></PreviewRoute></ProtectedRoute>} />
-              <Route path="/friends" element={<ProtectedRoute><PreviewRoute><FriendsPage /></PreviewRoute></ProtectedRoute>} />
+              <Route path="/play" element={<ProtectedRoute><PlayHubPage /></ProtectedRoute>} />
+              <Route path="/play/:code" element={<ProtectedRoute><WordDuelPage /></ProtectedRoute>} />
+              <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
 
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/activity" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

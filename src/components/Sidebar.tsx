@@ -4,13 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { usePlatform } from '../lib/usePlatform';
 import { cn } from '../lib/utils';
-import { PREVIEW_FEATURES } from '../lib/featureFlags';
 import logo from '../../public/icon-192.png'
 
 export const NAV_ITEMS = [
   { to: '/home', icon: Home, label: 'Today' },
   { to: '/collection', icon: BookOpen, label: 'Review' },
-  ...(PREVIEW_FEATURES ? [{ to: '/play', icon: Gamepad2, label: 'Play' }] : []),
+  { to: '/play', icon: Gamepad2, label: 'Play' },
   { to: '/progress', icon: LineChart, label: 'Progress' },
   { to: '/profile', icon: User, label: 'You' },
 ];
