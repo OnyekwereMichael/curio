@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
+import { PrivacyPolicy } from './pages/legal/PrivacyPolicy';
+import { TermsOfService } from './pages/legal/TermsOfService';
 import { SplashScreen } from './pages/splash/Splash';
 import { SignupScreen } from './pages/sign-up/signup';
 import { LoginScreen } from './pages/login/login';
@@ -44,6 +46,8 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/welcome" element={<SplashScreen />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
               <Route path="/signup" element={<SignupScreen />} />
               <Route path="/login" element={<LoginScreen />} />
               {/* Public route — no session exists yet at this point, so it can't be behind ProtectedRoute */}

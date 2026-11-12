@@ -3,13 +3,15 @@ import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useGetStarted } from '../hooks/useGetStarted';
+import { NAV_LINKS } from '../lib/siteConfig';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const navigate = useNavigate();
+  const getStarted = useGetStarted();
   const { session } = useAuth();
 
   useEffect(() => {
@@ -53,6 +55,13 @@ export function Navbar() {
         <Link to="/" className="font-display font-semibold text-xl text-ink-900 tracking-tight flex items-center gap-2">
           Curi
         </Link>
+        <nav aria-label="Sections" className="hidden md:flex items-center gap-6 ml-10 mr-auto">
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} className="text-sm font-medium text-ink-500 hover:text-ink-900 transition-colors">
+              {link.label}
+            </a>
+          ))}
+        </nav>
         <div className="flex items-center gap-6">
           <button
             onClick={toggleTheme}
@@ -67,12 +76,12 @@ export function Navbar() {
             </Link>
           )}
           <motion.button
-            onClick={() => navigate(session ? '/home' : '/welcome')}
+            onClick={getStarted.go}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-ember-600 text-on-ember font-medium text-sm px-5 py-2.5 rounded-control shadow-card hover:brightness-105 transition-all cursor-pointer"
           >
-            {session ? 'Go to home' : 'Get Started'}
+            {getStarted.signedIn ? 'Go to home' : 'Get Started'}
           </motion.button>
         </div>
       </div>
