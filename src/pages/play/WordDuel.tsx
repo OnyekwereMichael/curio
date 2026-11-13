@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { X, Share2 } from 'lucide-react';
+import { X, Copy, Check } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { Otter } from '../../components/Otter';
 import { Button } from '../../components/ui/Button';
@@ -35,6 +35,7 @@ export function WordDuelPage() {
   const [now, setNow] = useState(Date.now());
   const [mine, setMine] = useState<{ round: number; option: string; result: AnswerResult } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
   const advancing = useRef<number | null>(null);
   const xpSynced = useRef(false);
 
@@ -179,15 +180,17 @@ export function WordDuelPage() {
     }
   }
 
-  async function handleShare() {
+  // Copies the code itself, not a link — send it any way you like (text,
+  // DM, voice call) and your friend types it into "Got a room code?" on
+  // the Play tab themselves. Works the same in reverse for joining theirs.
+  async function handleCopyCode() {
     if (!room) return;
-    const link = `${window.location.origin}/play/${room.code}`;
-    const text = `Join my Word Duel on Curi. Room code: ${room.code}`;
     try {
-      if (navigator.share) await navigator.share({ title: 'Word Duel', text, url: link });
-      else await navigator.clipboard.writeText(`${text} ${link}`);
+      await navigator.clipboard.writeText(`Join my Word Duel on Curi — enter code ${room.code} on the Play tab.`);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 1500);
     } catch {
-      // share sheet dismissed
+      // clipboard unavailable — the code is already shown on screen to copy by hand
     }
   }
 
@@ -248,9 +251,9 @@ export function WordDuelPage() {
                   </div>
                 ))}
               </div>
-              <button onClick={handleShare} className="flex items-center gap-1.5 text-xs font-semibold text-ember-600 hover:text-ember-700">
-                <Share2 size={13} />
-                Share invite link
+              <button onClick={handleCopyCode} className="flex items-center gap-1.5 text-xs font-semibold text-ember-600 hover:text-ember-700">
+                {codeCopied ? <Check size={13} /> : <Copy size={13} />}
+                {codeCopied ? 'Copied' : 'Copy code'}
               </button>
             </div>
 
