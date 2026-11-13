@@ -14,14 +14,12 @@ import { supabase } from '../../lib/superbase';
 import { StreakCalendar } from '../../components/Streakcalendar';
 import { ShieldProgress } from '../../components/ShieldProgress';
 import { ShieldSavedNotice } from '../../components/ShieldSavedNotice';
-import { Otter } from '../../components/Otter';
 import { PlanRow, type PlanRowState } from '../../components/PlanRow';
 import { StreakAtRiskBanner } from '../../components/StreakAtRiskBanner';
 import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
 import { WeeklyPrizesCard } from '../../components/WeeklyPrizesCard';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
 import { isFactOpened } from '../../services/localPrefs';
-import { MascotCompanion } from '../../components/MascotCompanion';
 
 function SkeletonCard() {
   return (
@@ -50,15 +48,15 @@ export function HomeScreen() {
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
   const oldButGoldFact = useOldButGoldFact();
-const {
-  commitStreak, currentStreak, shieldCount, shieldsJustUsed, shieldJustEarned,
-  lostStreak, missedDays, reconcileStreak, recoverStreak, dismissLostStreak,
-  milestoneReached, dismissMilestone,
-} = useStreak();
+  const {
+    commitStreak, currentStreak, shieldCount, shieldsJustUsed, shieldJustEarned,
+    lostStreak, missedDays, reconcileStreak, recoverStreak, dismissLostStreak,
+    milestoneReached, dismissMilestone,
+  } = useStreak();
 
-useEffect(() => {
-  reconcileStreak();
-}, [reconcileStreak]);
+  useEffect(() => {
+    reconcileStreak();
+  }, [reconcileStreak]);
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -164,35 +162,35 @@ useEffect(() => {
       <ShieldSavedNotice shieldsUsed={shieldsJustUsed} shieldsLeft={shieldCount} />
       <MilestoneModal milestone={milestoneReached} shieldEarned={shieldJustEarned} onClose={dismissMilestone} />
       <StreakLossModal
-  lostStreak={lostStreak}
-  missedDays={missedDays}
-  shieldCount={shieldCount}
-  onRestore={recoverStreak}
-  onStartFresh={dismissLostStreak}
-/>
+        lostStreak={lostStreak}
+        missedDays={missedDays}
+        shieldCount={shieldCount}
+        onRestore={recoverStreak}
+        onStartFresh={dismissLostStreak}
+      />
       <div className="px-2 py-5 w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
-      <div className="flex items-start gap-4">
-  {/* <MascotCompanion
+        <div className="flex items-start gap-4">
+          {/* <MascotCompanion
             size={72}
            
           /> */}
-  <div>
-    <p className="text-ink-500 text-base font-medium mb-1 font-ui">{greeting} 👋</p>
-    <h1 className="font-display text-display font-bold text-ink-900 leading-tight">
-      {firstName}, here's your daily dose.
-    </h1>
-    <p className="text-ink-500 text-sm font-ui mt-1">
-      {[
-        todaysWords.data.length > 0 && `${todaysWords.data.length} word${todaysWords.data.length !== 1 ? 's' : ''}`,
-        todaysFact.data && '1 fact',
-        '1 quiz',
-      ].filter(Boolean).join(', ')} · about {3 + todaysWords.data.length} min
-    </p>
-    <div className="mt-4 cursor-pointer">
-      <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
-    </div>
-  </div>
-</div>
+          <div>
+            <p className="text-ink-500 text-base font-medium mb-1 font-ui">{greeting} 👋</p>
+            <h1 className="font-display text-display font-bold text-ink-900 leading-tight">
+              {firstName}, here's your daily dose.
+            </h1>
+            <p className="text-ink-500 text-sm font-ui mt-1">
+              {[
+                todaysWords.data.length > 0 && `${todaysWords.data.length} word${todaysWords.data.length !== 1 ? 's' : ''}`,
+                todaysFact.data && '1 fact',
+                '1 quiz',
+              ].filter(Boolean).join(', ')} · about {3 + todaysWords.data.length} min
+            </p>
+            <div className="mt-4 cursor-pointer">
+              <ShieldProgress currentStreak={currentStreak} shieldCount={shieldCount} />
+            </div>
+          </div>
+        </div>
 
         {/* Today's plan — overview of the word/fact/quiz row, real done/now/next state */}
         <div className="bg-surface rounded-sheet border border-line shadow-card p-2 flex flex-col gap-1">
