@@ -168,7 +168,7 @@ export function HomeScreen() {
         onRestore={recoverStreak}
         onStartFresh={dismissLostStreak}
       />
-      <div className="px-2 py-5 w-full flex flex-col gap-10 max-sm:px-4 max-md:p-4 max-lg:p-4">
+      <div className="py-5 w-full flex flex-col gap-10">
         <div className="flex items-start gap-4">
           {/* <MascotCompanion
             size={72}

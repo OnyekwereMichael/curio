@@ -16,7 +16,7 @@ export function PlanWhenPage() {
 
   return (
     <AppShell title="When should it start?">
-      <div className="px-4 py-5 max-w-lg mx-auto w-full flex flex-col gap-5">
+      <div className="py-5 max-w-lg mx-auto w-full flex flex-col gap-5">
         <h1 className="font-display text-display font-bold text-ink-900 leading-tight">
           When should your plan start?
         </h1>

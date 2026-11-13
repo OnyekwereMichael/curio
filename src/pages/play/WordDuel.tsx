@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { X, Share2 } from 'lucide-react';
+import { X, Copy, Check } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { Otter } from '../../components/Otter';
 import { Button } from '../../components/ui/Button';
@@ -35,6 +35,7 @@ export function WordDuelPage() {
   const [now, setNow] = useState(Date.now());
   const [mine, setMine] = useState<{ round: number; option: string; result: AnswerResult } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
   const advancing = useRef<number | null>(null);
   const xpSynced = useRef(false);
 
@@ -179,15 +180,18 @@ export function WordDuelPage() {
     }
   }
 
-  async function handleShare() {
+  // Copies just the bare code (not a sentence around it) so a friend can
+  // paste it straight into "Got a room code?" on the Play tab — pasting
+  // any extra wording would get truncated to the box's first 4 characters.
+  // Works the same in reverse for joining theirs.
+  async function handleCopyCode() {
     if (!room) return;
-    const link = `${window.location.origin}/play/${room.code}`;
-    const text = `Join my Word Duel on Curi. Room code: ${room.code}`;
     try {
-      if (navigator.share) await navigator.share({ title: 'Word Duel', text, url: link });
-      else await navigator.clipboard.writeText(`${text} ${link}`);
+      await navigator.clipboard.writeText(room.code);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 1500);
     } catch {
-      // share sheet dismissed
+      // clipboard unavailable — the code is already shown on screen to copy by hand
     }
   }
 
@@ -195,7 +199,7 @@ export function WordDuelPage() {
   if (error) {
     return (
       <AppShell title="Word Duel">
-        <div className="px-4 py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
+        <div className="py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
           <Otter mood="sleepy" size={80} />
           <p className="text-sm text-ink-900 font-ui">{error}</p>
           <Button onClick={() => navigate('/play')}>Back to Play</Button>
@@ -216,7 +220,7 @@ export function WordDuelPage() {
   if (room.status === 'cancelled') {
     return (
       <AppShell title="Word Duel">
-        <div className="px-4 py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
+        <div className="py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
           <Otter mood="sleepy" size={80} />
           <p className="text-sm text-ink-900 font-ui">This game was closed.</p>
           <Button onClick={() => navigate('/play')}>Back to Play</Button>
@@ -229,7 +233,7 @@ export function WordDuelPage() {
 
   return (
     <AppShell title="Word Duel">
-      <div className="px-4 py-5 max-w-md mx-auto w-full flex flex-col gap-5 min-h-[70vh]">
+      <div className="py-5 max-w-md mx-auto w-full flex flex-col gap-5 min-h-[70vh]">
         {room.status === 'lobby' && (
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">
@@ -248,9 +252,9 @@ export function WordDuelPage() {
                   </div>
                 ))}
               </div>
-              <button onClick={handleShare} className="flex items-center gap-1.5 text-xs font-semibold text-ember-600 hover:text-ember-700">
-                <Share2 size={13} />
-                Share invite link
+              <button onClick={handleCopyCode} className="flex items-center gap-1.5 text-xs font-semibold text-ember-600 hover:text-ember-700">
+                {codeCopied ? <Check size={13} /> : <Copy size={13} />}
+                {codeCopied ? 'Copied' : 'Copy code'}
               </button>
             </div>
 

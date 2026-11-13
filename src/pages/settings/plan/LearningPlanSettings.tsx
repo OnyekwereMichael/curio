@@ -21,7 +21,7 @@ export function LearningPlanSettingsPage() {
   if (!plan) {
     return (
       <AppShell title="My learning plan">
-        <div className="px-4 py-5 max-w-lg mx-auto w-full animate-pulse h-64 bg-surface rounded-card border border-line" />
+        <div className="py-5 max-w-lg mx-auto w-full animate-pulse h-64 bg-surface rounded-card border border-line" />
       </AppShell>
     );
   }
@@ -47,7 +47,7 @@ export function LearningPlanSettingsPage() {
 
   return (
     <AppShell title="My learning plan">
-      <div className="px-4 py-5 max-w-lg mx-auto w-full flex flex-col gap-5">
+      <div className="py-5 max-w-lg mx-auto w-full flex flex-col gap-5">
         <button
           onClick={() => navigate('/settings')}
           className="flex items-center gap-1 text-ink-500 hover:text-ink-900 transition-colors text-sm font-ui self-start"

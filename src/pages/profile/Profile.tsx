@@ -37,7 +37,7 @@ export function ProfilePage() {
 
   return (
     <AppShell title="You">
-      <div className="px-4 py-5 w-full flex flex-col gap-6 items-center text-center">
+      <div className="py-5 w-full flex flex-col gap-6 items-center text-center">
         <button
           onClick={() => navigate('/settings')}
           aria-label="Settings"
