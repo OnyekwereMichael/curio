@@ -1,0 +1,26 @@
+{
+  "name": "curi-video",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Remotion project that renders the Curi walkthrough from ../storyboard.json and ../screenshots. Separate from the app.",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "dev": "npm run sync && remotion studio src/index.ts",
+    "render": "npm run sync && remotion render src/index.ts Walkthrough out/curi-walkthrough.mp4",
+    "render:vertical": "npm run sync && remotion render src/index.ts WalkthroughVertical out/curi-walkthrough-9x16.mp4",
+    "still": "npm run sync && remotion still src/index.ts Walkthrough out/frame.png --frame=2400",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.543",
+    "@remotion/google-fonts": "4.0.543",
+    "msedge-tts": "^2.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.543"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}

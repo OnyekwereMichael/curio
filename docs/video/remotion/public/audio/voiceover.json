@@ -1,0 +1,250 @@
+{
+  "voice": "en-US-AvaMultilingualNeural",
+  "rate": "+5%",
+  "total": 124,
+  "beats": [
+    {
+      "scene": 1,
+      "beat": 1,
+      "file": "vo-1-1.mp3",
+      "text": "Hey! How often do you pick up your phone?",
+      "at": 0.3,
+      "sec": 2.54,
+      "start": 0.3
+    },
+    {
+      "scene": 1,
+      "beat": 2,
+      "file": "vo-1-2.mp3",
+      "text": "What if just two minutes of it made you sharper... and even paid you back?",
+      "at": 3.9,
+      "sec": 3.91,
+      "start": 3.9
+    },
+    {
+      "scene": 2,
+      "beat": 1,
+      "file": "vo-2-1.mp3",
+      "text": "Meet Curi. Every day, you get a fresh word and a fun fact.",
+      "at": 0.3,
+      "sec": 4.87,
+      "start": 9.3
+    },
+    {
+      "scene": 2,
+      "beat": 2,
+      "file": "vo-2-2.mp3",
+      "text": "Two minutes, no pressure, and an otter cheering you on.",
+      "at": 5.42,
+      "sec": 3.55,
+      "start": 14.42
+    },
+    {
+      "scene": 3,
+      "beat": 1,
+      "file": "vo-3-1.mp3",
+      "text": "Open the app, and your day is ready: words, a fact, and a quiz.",
+      "at": 0.3,
+      "sec": 4.87,
+      "start": 18.8
+    },
+    {
+      "scene": 3,
+      "beat": 2,
+      "file": "vo-3-2.mp3",
+      "text": "About five minutes. And that banner? Weekly prizes. More soon.",
+      "at": 5.42,
+      "sec": 5.23,
+      "start": 23.92
+    },
+    {
+      "scene": 4,
+      "beat": 1,
+      "file": "vo-4-1.mp3",
+      "text": "Hear a new word, see it in a sentence, then pick up a fun fact.",
+      "at": 0.1,
+      "sec": 4.22,
+      "start": 30.1
+    },
+    {
+      "scene": 4,
+      "beat": 2,
+      "file": "vo-4-2.mp3",
+      "text": "Save a word, and it returns right before you would forget it. So it sticks.",
+      "at": 6.5,
+      "sec": 4.9,
+      "start": 36.5
+    },
+    {
+      "scene": 5,
+      "beat": 1,
+      "file": "vo-5-1.mp3",
+      "text": "Then it is game time. A daily challenge, the same for everyone,",
+      "at": 0.2,
+      "sec": 4.63,
+      "start": 42.2
+    },
+    {
+      "scene": 5,
+      "beat": 2,
+      "file": "vo-5-2.mp3",
+      "text": "and Word Duel, a live one-on-one against a friend.",
+      "at": 5.08,
+      "sec": 3.67,
+      "start": 47.08
+    },
+    {
+      "scene": 6,
+      "beat": 1,
+      "file": "vo-6-1.mp3",
+      "text": "Everything earns XP. Keep your streak alive, with shields for busy days.",
+      "at": 0.2,
+      "sec": 5.28,
+      "start": 51.7
+    },
+    {
+      "scene": 6,
+      "beat": 2,
+      "file": "vo-6-2.mp3",
+      "text": "Level up, and collect badges.",
+      "at": 5.9,
+      "sec": 2.16,
+      "start": 57.4
+    },
+    {
+      "scene": 7,
+      "beat": 1,
+      "file": "vo-7-1.mp3",
+      "text": "Add friends with a code, see who is winning this week, and even keep a streak together.",
+      "at": 0.3,
+      "sec": 5.11,
+      "start": 60.8
+    },
+    {
+      "scene": 8,
+      "beat": 1,
+      "file": "vo-8-1.mp3",
+      "text": "Then take on everyone. The global leaderboard has a podium, and a live countdown.",
+      "at": 0.3,
+      "sec": 5.62,
+      "start": 67.8
+    },
+    {
+      "scene": 8,
+      "beat": 2,
+      "file": "vo-8-2.mp3",
+      "text": "Your rank stays in view, weekly or all time.",
+      "at": 6.17,
+      "sec": 3.36,
+      "start": 73.67
+    },
+    {
+      "scene": 9,
+      "beat": 1,
+      "file": "vo-9-1.mp3",
+      "text": "And here is the best part. Every week, the top three win real cash.",
+      "at": 0.3,
+      "sec": 4.94,
+      "start": 77.8
+    },
+    {
+      "scene": 9,
+      "beat": 2,
+      "file": "vo-9-2.mp3",
+      "text": "Second place: one thousand five hundred naira.",
+      "at": 5.49,
+      "sec": 3.43,
+      "start": 82.99
+    },
+    {
+      "scene": 9,
+      "beat": 3,
+      "file": "vo-9-3.mp3",
+      "text": "Third place: one thousand naira.",
+      "at": 9.17,
+      "sec": 2.52,
+      "start": 86.67
+    },
+    {
+      "scene": 9,
+      "beat": 4,
+      "file": "vo-9-4.mp3",
+      "text": "And first place wins two thousand five hundred naira!",
+      "at": 12,
+      "sec": 3.79,
+      "start": 89.5
+    },
+    {
+      "scene": 9,
+      "beat": 5,
+      "file": "vo-9-5.mp3",
+      "text": "It resets every Monday, starting the sixteenth of November.",
+      "at": 16.1,
+      "sec": 3.98,
+      "start": 93.6
+    },
+    {
+      "scene": 10,
+      "beat": 1,
+      "file": "vo-10-1.mp3",
+      "text": "And Curi is always there, cheering you on, celebrating your wins, and keeping it fun.",
+      "at": 0.3,
+      "sec": 5.47,
+      "start": 98.8
+    },
+    {
+      "scene": 11,
+      "beat": 1,
+      "file": "vo-11-1.mp3",
+      "text": "Sign up, it is free.",
+      "at": 0.4,
+      "sec": 1.85,
+      "start": 105.4
+    },
+    {
+      "scene": 11,
+      "beat": 2,
+      "file": "vo-11-2.mp3",
+      "text": "Learn and earn XP.",
+      "at": 2.5,
+      "sec": 2.02,
+      "start": 107.5
+    },
+    {
+      "scene": 11,
+      "beat": 3,
+      "file": "vo-11-3.mp3",
+      "text": "Play, and climb the ranks.",
+      "at": 4.77,
+      "sec": 1.87,
+      "start": 109.77
+    },
+    {
+      "scene": 11,
+      "beat": 4,
+      "file": "vo-11-4.mp3",
+      "text": "Win weekly prizes. Simple as that.",
+      "at": 6.89,
+      "sec": 3.07,
+      "start": 111.89
+    },
+    {
+      "scene": 12,
+      "beat": 1,
+      "file": "vo-12-1.mp3",
+      "text": "That is Curi. One word, one fact, every day.",
+      "at": 0.4,
+      "sec": 4.22,
+      "start": 115.9
+    },
+    {
+      "scene": 12,
+      "beat": 2,
+      "file": "vo-12-2.mp3",
+      "text": "Start free today at try Curi dot app.",
+      "at": 4.87,
+      "sec": 2.78,
+      "start": 120.37
+    }
+  ]
+}
