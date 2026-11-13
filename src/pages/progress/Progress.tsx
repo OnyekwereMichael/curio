@@ -54,7 +54,7 @@ export function ProgressPage() {
 
   return (
     <AppShell title="Progress">
-      <div className="px-4 py-5 w-full flex flex-col gap-6">
+      <div className="py-5 w-full flex flex-col gap-6">
         <h1 className="font-display text-display font-bold text-ink-900">Progress</h1>
 
         <div className="grid grid-cols-2 gap-3">

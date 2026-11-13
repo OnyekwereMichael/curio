@@ -238,7 +238,7 @@ export function SettingsPage() {
 
   return (
     <AppShell title="Settings">
-      <div className="px-4 py-4 mx-auto w-full flex flex-col gap-6">
+      <div className="py-4 w-full flex flex-col gap-6">
         <div>
           <h1 className="font-display text-title font-bold text-ink-900 mb-2">Preferences</h1>
           <p className="text-ink-500 text-sm font-ui">Manage your app experience and notifications.</p>

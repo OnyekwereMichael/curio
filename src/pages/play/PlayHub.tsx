@@ -29,7 +29,7 @@ export function PlayHubPage() {
 
   return (
     <AppShell title="Play">
-      <div className="px-4 py-5 w-full flex flex-col gap-5">
+      <div className="py-5 w-full flex flex-col gap-5">
         <h1 className="font-display text-display font-bold text-ink-900">Play</h1>
 
         <button

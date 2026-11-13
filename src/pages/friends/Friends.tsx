@@ -89,7 +89,7 @@ export function FriendsPage() {
 
   return (
     <AppShell title="Friends">
-      <div className="px-4 py-5 max-w-md mx-auto w-full flex flex-col gap-5">
+      <div className="py-5 max-w-md mx-auto w-full flex flex-col gap-5">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/profile')} aria-label="Back" className="text-ink-500 hover:text-ink-900">
             <ChevronLeft size={20} />

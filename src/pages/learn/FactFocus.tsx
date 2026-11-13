@@ -28,7 +28,7 @@ export function FactFocusScreen() {
 
   return (
     <AppShell title="Today's fact">
-      <div className="px-4 py-5 max-w-lg mx-auto w-full flex flex-col gap-5">
+      <div className="py-5 max-w-lg mx-auto w-full flex flex-col gap-5">
         <button
           onClick={() => navigate('/home')}
           className="flex items-center gap-1 text-ink-500 hover:text-ink-900 transition-colors text-sm font-ui self-start"

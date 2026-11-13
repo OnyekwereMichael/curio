@@ -52,7 +52,7 @@ export function ReviewSessionPage() {
 
   return (
     <AppShell title="Review">
-      <div className="px-4 py-5 max-w-md mx-auto w-full flex flex-col gap-5 min-h-[70vh]">
+      <div className="py-5 max-w-md mx-auto w-full flex flex-col gap-5 min-h-[70vh]">
         {stage !== 'loading' && stage !== 'nothing' && stage !== 'done' && (
           <div className="flex items-center gap-3">
             <button onClick={() => navigate('/collection')} aria-label="Close" className="text-ink-500 hover:text-ink-900">

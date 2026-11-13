@@ -121,9 +121,13 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
         <EmailVerificationBanner />
         <NotificationReEnableBanner />
 
-        {/* Page content — full width; room at the bottom for the mobile tab bar. */}
+        {/* Page content — one consistent gutter for every screen (pages that
+            want a narrower reading column nest their own max-w-* inside
+            this), with room at the bottom for the mobile tab bar. */}
         <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-          {children}
+          <div className="max-w-5xl mx-auto w-full px-4 sm:px-6">
+            {children}
+          </div>
         </main>
       </div>
 

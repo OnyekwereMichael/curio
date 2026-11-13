@@ -195,7 +195,7 @@ export function WordDuelPage() {
   if (error) {
     return (
       <AppShell title="Word Duel">
-        <div className="px-4 py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
+        <div className="py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
           <Otter mood="sleepy" size={80} />
           <p className="text-sm text-ink-900 font-ui">{error}</p>
           <Button onClick={() => navigate('/play')}>Back to Play</Button>
@@ -216,7 +216,7 @@ export function WordDuelPage() {
   if (room.status === 'cancelled') {
     return (
       <AppShell title="Word Duel">
-        <div className="px-4 py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
+        <div className="py-10 max-w-md mx-auto w-full flex flex-col items-center text-center gap-4">
           <Otter mood="sleepy" size={80} />
           <p className="text-sm text-ink-900 font-ui">This game was closed.</p>
           <Button onClick={() => navigate('/play')}>Back to Play</Button>
@@ -229,7 +229,7 @@ export function WordDuelPage() {
 
   return (
     <AppShell title="Word Duel">
-      <div className="px-4 py-5 max-w-md mx-auto w-full flex flex-col gap-5 min-h-[70vh]">
+      <div className="py-5 max-w-md mx-auto w-full flex flex-col gap-5 min-h-[70vh]">
         {room.status === 'lobby' && (
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">
