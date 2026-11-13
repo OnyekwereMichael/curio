@@ -180,13 +180,14 @@ export function WordDuelPage() {
     }
   }
 
-  // Copies the code itself, not a link — send it any way you like (text,
-  // DM, voice call) and your friend types it into "Got a room code?" on
-  // the Play tab themselves. Works the same in reverse for joining theirs.
+  // Copies just the bare code (not a sentence around it) so a friend can
+  // paste it straight into "Got a room code?" on the Play tab — pasting
+  // any extra wording would get truncated to the box's first 4 characters.
+  // Works the same in reverse for joining theirs.
   async function handleCopyCode() {
     if (!room) return;
     try {
-      await navigator.clipboard.writeText(`Join my Word Duel on Curi — enter code ${room.code} on the Play tab.`);
+      await navigator.clipboard.writeText(room.code);
       setCodeCopied(true);
       setTimeout(() => setCodeCopied(false), 1500);
     } catch {

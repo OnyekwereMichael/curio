@@ -57,7 +57,7 @@ export function PlayHubPage() {
           <span className="text-xs font-semibold text-paper/70 flex-shrink-0">Got a room code?</span>
           <input
             value={roomCode}
-            onChange={(e) => setRoomCode(e.target.value.toUpperCase().slice(0, 4))}
+            onChange={(e) => setRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4))}
             placeholder="····"
             maxLength={4}
             className="flex-1 bg-transparent text-paper text-center tracking-[0.3em] font-display text-lg font-bold outline-none placeholder:text-paper/30"
