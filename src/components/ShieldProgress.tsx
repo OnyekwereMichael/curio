@@ -35,7 +35,7 @@ function ShieldSlot({ state, fill }: { state: SlotState; fill: number }) {
         <>
           <path
             d={SHIELD_PATH}
-            className="fill-moss stroke-moss"
+            className="fill-moss-600 stroke-moss-600"
             strokeWidth={1.5}
             strokeLinejoin="round"
           />
@@ -63,7 +63,7 @@ function ShieldSlot({ state, fill }: { state: SlotState; fill: number }) {
               y={1.5}
               width={24}
               height={25}
-              className="fill-moss/80 transition-transform duration-700 ease-out motion-reduce:transition-none"
+              className="fill-moss-600/80 transition-transform duration-700 ease-out motion-reduce:transition-none"
               style={{
                 transform: `scaleY(${fill})`,
                 transformOrigin: '12px 26.5px',
@@ -73,7 +73,7 @@ function ShieldSlot({ state, fill }: { state: SlotState; fill: number }) {
           <path
             d={SHIELD_PATH}
             fill="none"
-            className="stroke-moss"
+            className="stroke-moss-600"
             strokeWidth={1.5}
             strokeLinejoin="round"
           />
@@ -84,7 +84,7 @@ function ShieldSlot({ state, fill }: { state: SlotState; fill: number }) {
         <path
           d={SHIELD_PATH}
           fill="none"
-          className="stroke-ink/25"
+          className="stroke-ink-900/25"
           strokeWidth={1.5}
           strokeLinejoin="round"
           strokeDasharray="2.5 2.5"
@@ -129,7 +129,7 @@ export function ShieldProgress({ currentStreak, shieldCount }: Props) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={`${shieldCount} of ${MAX_SHIELDS} Shields held. ${title}. Learn how Shields work`}
-        className="group w-full max-w-md grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 sm:gap-x-4 gap-y-2 rounded-2xl border border-ink/10 bg-paper px-4 py-3.5 text-left transition-colors hover:border-ink/20 active:bg-ink/[0.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-moss/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+        className="group w-full max-w-md grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 sm:gap-x-4 gap-y-2 rounded-card border border-line bg-surface px-4 py-3.5 text-left transition-colors hover:border-line-strong active:bg-ink-900/[0.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-moss-600/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper shadow-card font-ui"
       >
         <span className="flex items-center gap-1.5">
           {slots.map((state, i) => (
@@ -138,12 +138,12 @@ export function ShieldProgress({ currentStreak, shieldCount }: Props) {
         </span>
 
         <span className="min-w-0">
-          <span className="block text-[14px] font-semibold leading-5 text-ink">{title}</span>
-          <span className="block mt-0.5 text-[13px] leading-5 text-faded-ink">{detail}</span>
+          <span className="block text-[14px] font-semibold leading-5 text-ink-900">{title}</span>
+          <span className="block mt-0.5 text-[13px] leading-5 text-ink-500">{detail}</span>
         </span>
 
         {/* Sits under the text on phones, at the end of the row from sm up */}
-        <span className="col-start-2 sm:col-start-3 sm:row-start-1 whitespace-nowrap text-[13px] font-medium text-faded-ink underline decoration-ink/20 underline-offset-4 group-hover:text-ink group-hover:decoration-ink/50 transition-colors">
+        <span className="col-start-2 sm:col-start-3 sm:row-start-1 whitespace-nowrap text-[13px] font-medium text-ink-500 underline decoration-ink-900/20 underline-offset-4 group-hover:text-ink-900 group-hover:decoration-ink-900/50 transition-colors">
           How it works
         </span>
       </button>

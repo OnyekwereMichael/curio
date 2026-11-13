@@ -5,6 +5,7 @@ import posthog from 'posthog-js'
 import './index.css'
 import App from './App.tsx'
 import { registerSW } from 'virtual:pwa-register'
+import { ErrorState } from './components/ErrorState.tsx'
 
 Sentry.init({
   dsn: 'https://681e74739716b56eb1e7071cdbb33caa@o4508211596951552.ingest.us.sentry.io/4512068204494848',
@@ -32,7 +33,7 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Sentry.ErrorBoundary fallback={<div className="p-6 text-center text-amber-900 font-serif">Something went wrong. Please refresh the page.</div>}>
+    <Sentry.ErrorBoundary fallback={<ErrorState />}>
       <App />
     </Sentry.ErrorBoundary>
   </StrictMode>,

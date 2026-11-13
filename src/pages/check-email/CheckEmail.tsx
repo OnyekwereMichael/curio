@@ -4,6 +4,7 @@ import { Mail, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/Toast';
 import { supabase } from '../../lib/superbase';
+import { Otter } from '../../components/Otter';
 
 export function CheckEmailScreen() {
     const location = useLocation();
@@ -17,9 +18,10 @@ export function CheckEmailScreen() {
     // the page), there's nothing useful to show — send them back to sign up.
     if (!email) {
         return (
-            <div className="min-h-screen bg-paper flex flex-col items-center justify-center px-6 text-center">
-                <p className="text-faded-ink text-sm mb-4">We couldn't find that session.</p>
-                <Link to="/signup" className="text-ember font-medium hover:underline text-sm">
+            <div className="min-h-screen bg-paper flex flex-col items-center justify-center px-6 text-center font-ui">
+                <Otter mood="thinking" size={72} className="mb-4" />
+                <p className="text-ink-500 text-sm mb-4">We couldn't find that session.</p>
+                <Link to="/signup" className="text-ember-600 font-medium hover:underline text-sm">
                     Back to sign up
                 </Link>
             </div>
@@ -49,11 +51,11 @@ export function CheckEmailScreen() {
     }
 
     return (
-        <div className="min-h-screen bg-paper flex flex-col font-ui text-ink">
+        <div className="min-h-screen bg-paper flex flex-col font-ui text-ink-900">
             <header className="p-6 max-w-lg mx-auto w-full">
                 <button
                     onClick={() => navigate('/signup')}
-                    className="flex items-center gap-2 text-faded-ink hover:text-ink transition-colors text-sm"
+                    className="flex items-center gap-2 text-ink-500 hover:text-ink-900 transition-colors text-sm"
                 >
                     <ArrowLeft size={16} />
                     Back
@@ -62,16 +64,17 @@ export function CheckEmailScreen() {
 
             <main className="flex-1 flex flex-col justify-center items-center px-6 pb-20 text-center">
                 <div className="w-full max-w-md">
-                    <div className="w-14 h-14 rounded-full bg-ember/10 flex items-center justify-center mx-auto mb-6">
-                        <Mail size={26} className="text-ember" />
+                    <Otter mood="thinking" size={72} className="mx-auto mb-4" breathe />
+                    <div className="w-14 h-14 rounded-full bg-ember-50 flex items-center justify-center mx-auto mb-6">
+                        <Mail size={26} className="text-ember-600" />
                     </div>
 
-                    <h1 className="font-display text-3xl font-bold text-ink mb-3">Check your email</h1>
-                    <p className="text-faded-ink text-sm leading-relaxed mb-1">
+                    <h1 className="font-display text-display font-bold text-ink-900 mb-3">Check your email</h1>
+                    <p className="text-ink-500 text-sm leading-relaxed mb-1">
                         We sent a confirmation link to
                     </p>
-                    <p className="text-ink font-medium text-sm mb-8">{email}</p>
-                    <p className="text-faded-ink text-sm leading-relaxed mb-8">
+                    <p className="text-ink-900 font-medium text-sm mb-8">{email}</p>
+                    <p className="text-ink-500 text-sm leading-relaxed mb-8">
                         Click the link in that email to activate your account. Once confirmed, come back and log in.
                     </p>
 
@@ -86,8 +89,8 @@ export function CheckEmailScreen() {
                         {cooldown ? 'Email sent — try again shortly' : 'Resend confirmation email'}
                     </Button>
 
-                    <p className="text-sm text-ink">
-                        Already confirmed? <Link to="/login" className="text-ember font-medium hover:underline">Log in</Link>
+                    <p className="text-sm text-ink-900">
+                        Already confirmed? <Link to="/login" className="text-ember-600 font-medium hover:underline">Log in</Link>
                     </p>
                 </div>
             </main>

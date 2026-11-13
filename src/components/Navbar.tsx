@@ -3,13 +3,15 @@ import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useGetStarted } from '../hooks/useGetStarted';
+import { NAV_LINKS } from '../lib/siteConfig';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const navigate = useNavigate();
+  const getStarted = useGetStarted();
   const { session } = useAuth();
 
   useEffect(() => {
@@ -45,34 +47,41 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-all duration-300 ease-in-out py-4",
-        scrolled ? "bg-paper/80 backdrop-blur-md border-b border-ink/5 shadow-sm py-3" : "bg-transparent"
+        "fixed top-0 inset-x-0 z-50 transition-all duration-300 ease-in-out py-4 font-ui",
+        scrolled ? "bg-paper/80 backdrop-blur-md border-b border-line shadow-card py-3" : "bg-transparent"
       )}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <Link to="/" className="font-display font-semibold text-xl text-ink tracking-tight flex items-center gap-2">
+        <Link to="/" className="font-display font-semibold text-xl text-ink-900 tracking-tight flex items-center gap-2">
           Curi
         </Link>
+        <nav aria-label="Sections" className="hidden md:flex items-center gap-6 ml-10 mr-auto">
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} className="text-sm font-medium text-ink-500 hover:text-ink-900 transition-colors">
+              {link.label}
+            </a>
+          ))}
+        </nav>
         <div className="flex items-center gap-6">
           <button
             onClick={toggleTheme}
-            className="text-ink/70 hover:text-ink transition-colors p-2 rounded-full hover:bg-ink/5"
+            className="text-ink-900/70 hover:text-ink-900 transition-colors p-2 rounded-full hover:bg-ink-900/5"
             aria-label="Toggle Theme"
           >
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
           </button>
           {!session && (
-            <Link to="/login" className="text-sm font-medium text-ink hover:text-ink/70 transition-colors hidden sm:block">
+            <Link to="/login" className="text-sm font-medium text-ink-900 hover:text-ink-900/70 transition-colors hidden sm:block">
               Log In
             </Link>
           )}
           <motion.button
-            onClick={() => navigate(session ? '/home' : '/signup')}
+            onClick={getStarted.go}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-ember text-paper font-medium text-sm px-5 py-2.5 rounded-lg shadow-sm hover:shadow-md hover:bg-ember/90 transition-all cursor-pointer"
+            className="bg-ember-600 text-on-ember font-medium text-sm px-5 py-2.5 rounded-control shadow-card hover:brightness-105 transition-all cursor-pointer"
           >
-            {session ? 'Go to home' : 'Get Started'}
+            {getStarted.signedIn ? 'Go to home' : 'Get Started'}
           </motion.button>
         </div>
       </div>

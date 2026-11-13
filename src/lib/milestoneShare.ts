@@ -3,7 +3,7 @@
 
 const PAPER = '#F6F4EF';
 const INK = '#1C2B3A';
-const EMBER = '#D8492F';
+const EMBER = '#C73B20';
 const GOLD = '#C7962E';
 const FADED = '#7C8A93';
 

@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Navbar } from '../components/Navbar';
 import { Hero } from '../components/Hero';
+import { FeaturesSection } from '../components/FeaturesSection';
 import { HowItWorks } from '../components/HowItWorks';
-import { ProductPreview } from '../components/ProductPreview';
-import { WhyItWorks } from '../components/WhyItWorks';
+import { VideoShowcase } from '../components/VideoShowcase';
+import { PrizesSpotlight } from '../components/PrizesSpotlight';
 import { FounderNote } from '../components/FounderNote';
 import { CTA } from '../components/CTA';
 import { Footer } from '../components/Footer';
@@ -22,24 +23,15 @@ export function LandingPage() {
   }, [session, loading, navigate]);
 
   return (
-    <div className="min-h-screen bg-paper flex flex-col font-ui text-ink selection:bg-ember/20 selection:text-ink">
+    <div className="min-h-screen bg-paper flex flex-col font-ui text-ink-900 selection:bg-ember-500/20 selection:text-ink-900">
       <Navbar />
 
       <main className="flex-grow">
         <Hero />
+        <VideoShowcase src={vid} title="Curi product demo" />
+        <FeaturesSection />
         <HowItWorks />
-        <ProductPreview />
-        <div className="flex justify-center">
-          <video
-            src={vid}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full max-w-3xl max-sm:w-[87%] max-sm:mx-10 mb-16 rounded-2xl border-3 border-ember/20 object-cover"
-          />
-        </div>
-        <WhyItWorks />
+        <PrizesSpotlight />
         <FounderNote />
         <CTA />
       </main>

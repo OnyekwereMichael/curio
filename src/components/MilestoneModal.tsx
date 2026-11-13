@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Share2, Shield, Check, X } from 'lucide-react';
+import { Share2, Shield, Check, X } from 'lucide-react';
 import { getMilestoneCopy } from '../lib/streakLogic';
 import { createMilestoneImage, shareMilestone } from '../lib/milestoneShare';
 import { cn } from '../lib/utils';
+import { Otter } from './Otter';
+import { MILESTONE_XP } from '../services/xp';
 
 const SHOW_DELAY_MS = 1200; // lets them see their quiz result first
 const MILESTONES = [7, 30, 60, 100];
@@ -76,7 +78,7 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
     <AnimatePresence>
       {visible && copy && milestone !== null && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-night/70 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -92,70 +94,71 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-            className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-ink/10 bg-paper font-ui shadow-2xl"
+            className="relative w-full max-w-sm overflow-hidden rounded-sheet bg-night font-ui shadow-raised text-cream"
           >
             {/* Close button */}
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute right-3 top-3 z-20 cursor-pointer rounded-full p-2 text-faded-ink transition-colors hover:bg-ink/5 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/40"
+              className="absolute right-3 top-3 z-20 cursor-pointer rounded-full p-2 text-cream-dim transition-colors hover:bg-cream/10 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
             >
               <X size={18} aria-hidden="true" />
             </button>
 
-            {/* Hero */}
-            <div className="relative flex flex-col items-center overflow-hidden bg-gradient-to-b from-gold-stamp/15 to-transparent px-7 pb-6 pt-9">
-              {/* Decorative rings */}
-              <div
-                className="pointer-events-none absolute left-1/2 top-[52px] h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold-stamp/20"
-                aria-hidden="true"
-              />
-              <div
-                className="pointer-events-none absolute left-1/2 top-[52px] h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold-stamp/10"
-                aria-hidden="true"
-              />
+            <p className="pt-7 text-center text-[11px] font-bold uppercase tracking-[0.25em] text-gold-500">
+              Milestone
+            </p>
 
-              {/* Flame badge */}
+            {/* Hero */}
+            <div className="relative flex flex-col items-center overflow-hidden px-7 pb-2 pt-3">
               <motion.div
-                initial={{ scale: 0, rotate: -25 }}
+                initial={{ scale: 0, rotate: -15 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.05, type: 'spring', stiffness: 240, damping: 16 }}
-                className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-gold-stamp/30 bg-paper shadow-md"
+                className="relative flex items-center justify-center"
               >
-                <Flame size={30} className="text-gold-stamp" aria-hidden="true" />
+                <Otter mood="proud" size={110} />
+                <span className="absolute -right-2 -top-1 flex h-12 w-12 items-center justify-center rounded-full bg-ember-600 font-display text-xl font-bold text-on-ember shadow-raised">
+                  {milestone}
+                </span>
               </motion.div>
 
-              {/* Big number */}
               <motion.p
-                initial={{ opacity: 0, scale: 0.8, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 0.15, type: 'spring', stiffness: 260, damping: 18 }}
-                className="relative z-10 mt-5 font-display text-8xl font-bold leading-none tracking-tight text-ink"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="mt-4 font-display text-3xl font-bold leading-none tracking-tight"
               >
-                {milestone}
+                {milestone} days in a row.
               </motion.p>
-              <p className="relative z-10 mt-3 text-[11px] font-bold uppercase tracking-[0.25em] text-gold-stamp">
-                Day streak
-              </p>
             </div>
 
             {/* Content */}
             <div className="px-7 pb-7 text-center">
-              <h2
-                id="milestone-title"
-                className="mb-2 font-display text-xl font-bold leading-snug text-ink"
-              >
+              <h2 id="milestone-title" className="sr-only">
                 {copy.title}
               </h2>
-              <p className="mb-5 text-sm leading-relaxed text-faded-ink">{copy.body}</p>
+              <p className="mb-5 text-sm leading-relaxed text-cream-dim">{copy.body}</p>
 
-              {copy.shieldLine && (
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-moss/20 bg-moss/10 px-4 py-2 text-sm font-medium text-moss">
-                  <Shield size={15} aria-hidden="true" />
-                  <span>{copy.shieldLine}</span>
-                </div>
-              )}
+              <div className="mb-5 flex items-center justify-center gap-2">
+                {copy.shieldLine && (
+                  <div className="inline-flex items-center gap-2 rounded-tag bg-cream/10 px-3 py-2 text-xs font-medium text-cream">
+                    <Shield size={14} className="text-moss-600" aria-hidden="true" />
+                    <span>{copy.shieldLine}</span>
+                  </div>
+                )}
+                {(
+                  <>
+                    <div className="inline-flex items-center gap-1.5 rounded-tag bg-cream/10 px-3 py-2 text-xs font-medium text-gold-500">
+                      +{MILESTONE_XP} XP
+                    </div>
+                    <div className="inline-flex items-center gap-1.5 rounded-tag bg-cream/10 px-3 py-2 text-xs font-medium text-cream">
+                      New pebble
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* Milestone progress */}
               <ol
@@ -172,10 +175,10 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
                           className={cn(
                             'flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold transition-colors',
                             current
-                              ? 'border-gold-stamp bg-gold-stamp text-white shadow-sm'
+                              ? 'border-gold-500 bg-gold-500 text-night shadow-card'
                               : reached
-                              ? 'border-gold-stamp/40 bg-gold-stamp/10 text-gold-stamp'
-                              : 'border-ink/15 bg-paper text-faded-ink/60'
+                              ? 'border-gold-500/40 bg-gold-500/10 text-gold-500'
+                              : 'border-cream/15 bg-transparent text-cream-dim'
                           )}
                           aria-current={current ? 'step' : undefined}
                         >
@@ -184,7 +187,7 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
                         <span
                           className={cn(
                             'text-[10px] font-semibold uppercase tracking-wider',
-                            reached ? 'text-ink' : 'text-faded-ink/60'
+                            reached ? 'text-cream' : 'text-cream-dim'
                           )}
                         >
                           {reached && !current ? `${m}d` : current ? 'Now' : `${m}d`}
@@ -194,7 +197,7 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
                         <span
                           className={cn(
                             'mx-1 mb-5 h-0.5 flex-1 rounded-full',
-                            MILESTONES[i + 1] <= milestone ? 'bg-gold-stamp/40' : 'bg-ink/10'
+                            MILESTONES[i + 1] <= milestone ? 'bg-gold-500/40' : 'bg-cream/10'
                           )}
                           aria-hidden="true"
                         />
@@ -209,7 +212,7 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
                 type="button"
                 onClick={handleShare}
                 disabled={shareState === 'working'}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-ember py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ember/90 active:bg-ember/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-control border border-cream/25 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/50 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {shareState === 'copied' ? (
                   <Check size={16} aria-hidden="true" />
@@ -220,7 +223,7 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
               </button>
 
               {shareState === 'failed' && (
-                <p role="alert" className="mt-2 text-xs text-ember">
+                <p role="alert" className="mt-2 text-xs text-ember-500">
                   Couldn't share from this device. Try again in a moment.
                 </p>
               )}
@@ -228,7 +231,7 @@ export function MilestoneModal({ milestone, shieldEarned, onClose }: Props) {
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-2 w-full cursor-pointer rounded-xl py-3 text-sm font-medium text-faded-ink transition-colors hover:bg-ink/5 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/20"
+                className="mt-2 w-full cursor-pointer rounded-control bg-ember-600 py-3 text-sm font-semibold text-on-ember transition-colors hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream/30"
               >
                 Keep going
               </button>

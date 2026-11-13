@@ -1,0 +1,1 @@
+{ "name": "curi-video-capture", "private": true, "type": "module", "description": "Screenshot harness for the Curi video brief. Not part of the app.", "dependencies": { "puppeteer-core": "^24.0.0" } }

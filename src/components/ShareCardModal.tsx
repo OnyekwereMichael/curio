@@ -19,8 +19,9 @@ const CARD_WIDTH = 440;
 const INK = '#1C2B3A';
 const MUTED = '#6B7882';
 const RULE = 'rgba(28, 43, 58, 0.12)';
-const EMBER = '#D8492F';
+const EMBER = '#C73B20';
 const MOSS = '#3E6259';
+const PAPER = '#F6F4EF';
 
 /* -------------------------------------------------------------------------- */
 /*  Card                                                                      */
@@ -52,7 +53,7 @@ function CardShell({
         padding: '36px 40px 32px',
         display: 'flex',
         flexDirection: 'column',
-        background: '#FBF9F4',
+        background: PAPER,
         borderRadius: 16,
         border: `1px solid ${RULE}`,
         fontFamily: "'Sora', sans-serif",
@@ -151,6 +152,44 @@ function wordSize(word: string) {
 }
 
 function ShareCardContent({ data }: { data: ShareData }) {
+  if (data.type === 'dailyChallenge') {
+    const squares = Array.from({ length: data.total }, (_, i) => i < data.score);
+    return (
+      <CardShell accent={EMBER} label="Daily challenge">
+        <h2
+          style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: 28,
+            fontWeight: 700,
+            lineHeight: 1.2,
+            letterSpacing: '-0.02em',
+            margin: '0 0 20px',
+          }}
+        >
+          Curi #{data.challengeNumber} · {data.score}/{data.total}
+        </h2>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
+          {squares.map((hit, i) => (
+            <div
+              key={i}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: hit ? MOSS : 'transparent',
+                border: hit ? 'none' : `1.5px solid ${RULE}`,
+              }}
+            />
+          ))}
+        </div>
+        <div style={{ fontSize: 14, color: EMBER, fontWeight: 600 }}>🔥 {data.streak} day streak</div>
+        <p style={{ fontSize: 13, color: MUTED, marginTop: 20, maxWidth: 320 }}>
+          No spoilers. Copies as text too.
+        </p>
+      </CardShell>
+    );
+  }
+
   if (data.type === 'word') {
     return (
       <CardShell accent={EMBER} label="Word of the day">
@@ -346,6 +385,8 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
     const filename =
       data.type === 'word'
         ? `curi-word-${data.word.toLowerCase().replace(/\s+/g, '-')}.png`
+        : data.type === 'dailyChallenge'
+        ? `curi-challenge-${data.challengeNumber}.png`
         : `curi-fact-${Date.now()}.png`;
     downloadImage(generatedUrl, filename);
     setDownloadSuccess(true);
@@ -354,7 +395,7 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
 
   const handleShare = useCallback(async () => {
     if (!generatedUrl || !data) return;
-    const title = data.type === 'word' ? `Word: ${data.word}` : 'Fact of the Day';
+    const title = data.type === 'word' ? `Word: ${data.word}` : data.type === 'dailyChallenge' ? 'Daily Challenge' : 'Fact of the Day';
     const shared = await nativeShare(generatedUrl, title);
     if (!shared) handleDownload();
   }, [generatedUrl, data, nativeShare, handleDownload]);
@@ -374,13 +415,13 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
       }}
     >
       <div
-        className="absolute inset-0 bg-ink/50 pointer-events-none"
+        className="absolute inset-0 bg-ink-900/50 pointer-events-none"
         style={{ animation: 'shareFade 0.2s ease-out' }}
       />
 
       {/* Sheet on mobile, dialog on larger screens */}
       <div
-        className="relative bg-paper w-full sm:max-w-[520px] flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl shadow-2xl"
+        className="relative bg-paper w-full sm:max-w-[520px] flex flex-col overflow-hidden rounded-t-sheet sm:rounded-sheet shadow-raised"
         style={{
           maxHeight: 'calc(100dvh - env(safe-area-inset-top, 0px) - 8px)',
           animation: 'shareRise 0.25s ease-out',
@@ -388,10 +429,10 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between pl-5 pr-3 h-14 shrink-0">
-          <h3 className="font-display text-base font-bold text-ink">Share</h3>
+          <h3 className="font-display text-base font-bold text-ink-900">Share</h3>
           <button
             onClick={onClose}
-            className="h-10 w-10 -mr-1 inline-flex items-center justify-center rounded-full text-faded-ink hover:text-ink hover:bg-ink/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30"
+            className="h-10 w-10 -mr-1 inline-flex items-center justify-center rounded-full text-ink-500 hover:text-ink-900 hover:bg-ink-900/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900/30"
             aria-label="Close"
             type="button"
           >
@@ -400,7 +441,7 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
         </div>
 
         {/* Preview */}
-        <div className="flex-1 min-h-0 overflow-y-auto bg-ink/[0.04] px-4 py-5 sm:px-6 sm:py-6">
+        <div className="flex-1 min-h-0 overflow-y-auto bg-ink-900/[0.04] px-4 py-5 sm:px-6 sm:py-6">
           <div ref={previewBoxRef} className="mx-auto w-full" style={{ maxWidth: CARD_WIDTH }}>
             <div
               style={{
@@ -427,12 +468,12 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
 
         {/* Actions */}
         <div
-          className="flex items-center gap-3 px-4 sm:px-6 pt-4 shrink-0 border-t border-ink/10"
+          className="flex items-center gap-3 px-4 sm:px-6 pt-4 shrink-0 border-t border-line"
           style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
         >
           {busy ? (
             <div
-              className="flex items-center justify-center gap-2 w-full h-11 text-sm text-faded-ink"
+              className="flex items-center justify-center gap-2 w-full h-11 text-sm text-ink-500"
               role="status"
             >
               <Loader2 size={16} className="animate-spin" />
@@ -443,12 +484,12 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
               <button
                 onClick={handleDownload}
                 className={cn(
-                  'flex-1 h-11 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30',
+                  'flex-1 h-11 rounded-control text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900/30',
                   downloadSuccess
-                    ? 'bg-moss/10 text-moss'
+                    ? 'bg-moss-50 text-moss-600'
                     : canNativeShare
-                      ? 'bg-ink/5 text-ink hover:bg-ink/10'
-                      : 'bg-ember text-paper hover:bg-ember/90'
+                      ? 'bg-ink-900/5 text-ink-900 hover:bg-ink-900/10'
+                      : 'bg-ember-600 text-on-ember hover:brightness-105'
                 )}
                 type="button"
               >
@@ -458,7 +499,7 @@ export function ShareCardModal({ isOpen, onClose, data }: ShareCardModalProps) {
               {canNativeShare && (
                 <button
                   onClick={handleShare}
-                  className="flex-1 h-11 rounded-xl bg-ember text-paper text-sm font-semibold hover:bg-ember/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+                  className="flex-1 h-11 rounded-control bg-ember-600 text-on-ember text-sm font-semibold hover:brightness-105 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
                   type="button"
                 >
                   Share

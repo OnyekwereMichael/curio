@@ -6,7 +6,7 @@ import { Eye, EyeOff, X } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/superbase';
-
+import { markFreshSignup } from '../../lib/pendingOnboarding';
 
 export function SignupScreen() {
     const navigate = useNavigate();
@@ -36,6 +36,12 @@ export function SignupScreen() {
             const seed = values.name || values.email;
             const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&mouth=smile,twinkle,default`;
 
+            // Breadcrumb for install-nudge: this is a brand-new account, route
+            // it through onboarding. Set before the request — emailRedirectTo
+            // below only takes effect after a page reload (the confirmation
+            // link), so there's no later point in this component to set it.
+            markFreshSignup();
+
             const { data, error } = await supabase.auth.signUp({
                 email: values.email,
                 password: values.password,
@@ -44,6 +50,10 @@ export function SignupScreen() {
                         full_name: values.name,
                         avatar_url: avatarUrl
                     },
+                    // Keep this the already-allow-listed /install-nudge — Supabase
+                    // silently falls back to the project's Site URL for any
+                    // emailRedirectTo that isn't in its own allow-list, which is
+                    // indistinguishable from "onboarding doesn't show."
                     emailRedirectTo: `${window.location.origin}/install-nudge`,
                 },
             });
@@ -77,6 +87,7 @@ export function SignupScreen() {
     async function handleGoogleSignUp() {
         setFormError(null);
         setGoogleLoading(true);
+        markFreshSignup();
 
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',

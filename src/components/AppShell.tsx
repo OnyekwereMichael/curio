@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Sidebar, SidebarToggle } from './Sidebar';
+import { Sidebar } from './Sidebar';
+import { BottomNav } from './BottomNav';
 import { EmailVerificationBanner } from './EmailVerificationBanner';
 import { NotificationReEnableBanner } from './NotificationReEnableBanner';
+import { OfflineBanner } from './OfflineBanner';
 import { useAuth } from '../contexts/AuthContext';
 
 import { StreakCounter } from './StreakCounter';
@@ -17,7 +19,7 @@ interface AppShellProps {
   title?: string;
 }
 
-function TopNav({ title, onMenuClick, onOpenDictionary }: { title: string; onMenuClick: () => void; onOpenDictionary: () => void }) {
+function TopNav({ title, onOpenDictionary }: { title: string; onOpenDictionary: () => void }) {
   const { user } = useAuth();
 const { currentStreak, justIncremented, shieldCount } = useStreak();
 
@@ -43,27 +45,21 @@ const { currentStreak, justIncremented, shieldCount } = useStreak();
   });
 
   return (
-    <header className="sticky top-0 z-30 bg-paper/95 backdrop-blur-md border-b border-ink/8 px-4 sm:px-6 py-3 flex items-center gap-4">
-      <div className="lg:hidden">
-        <SidebarToggle onClick={onMenuClick} />
-      </div>
+    <header className="sticky top-0 z-20 bg-paper/95 backdrop-blur-md border-b border-line px-4 sm:px-6 py-3 flex items-center gap-4">
       <div className="flex items-center gap-2 lg:hidden">
-        <div className="w-6 h-6 rounded-md bg-ember flex items-center justify-center">
-          <img src={logo} alt="Curi Logo" className="" />
-        </div>
-        <span className="font-display font-bold text-lg text-ink tracking-tight">Curi</span>
+        <img src={logo} alt="Curi" className="w-7 h-7 rounded-md" />
+        <span className="font-display font-bold text-lg text-ink-900 tracking-tight">Curi</span>
       </div>
 
       <div className="hidden lg:flex flex-col">
-        <h1 className="font-display font-bold text-xl text-ink leading-none">{title}</h1>
-        {/* <p className="text-xs text-faded-ink mt-0.5">{dateLabel}</p> */}
+        <h1 className="font-display font-bold text-title text-ink-900 leading-none">{title}</h1>
       </div>
 
       <div className="flex-1" />
 
       <button
         onClick={onOpenDictionary}
-        className="p-2 rounded-full text-faded-ink hover:text-ink hover:bg-ink/5 transition-colors mr-2 sm:mr-4"
+        className="p-2 rounded-full text-ink-500 hover:text-ink-900 hover:bg-ink-900/5 transition-colors mr-2 sm:mr-4"
         aria-label="Open Dictionary"
         title="Lookup a word (Cmd+K)"
       >
@@ -72,8 +68,8 @@ const { currentStreak, justIncremented, shieldCount } = useStreak();
 
      <StreakCounter count={currentStreak} shieldCount={shieldCount} justIncremented={justIncremented} />
 
-      <div className="hidden sm:flex items-center gap-1.5 bg-ink/[0.04] border border-ink/8 rounded-full px-4 py-1.5">
-        <span className="text-xs font-medium text-faded-ink">{dateLabel}</span>
+      <div className="hidden sm:flex items-center gap-1.5 bg-ink-900/[0.04] border border-line rounded-full px-4 py-1.5">
+        <span className="text-xs font-medium text-ink-500 font-ui">{dateLabel}</span>
       </div>
 
       <div className="flex items-center gap-2 ml-2 max-sm:hidden">
@@ -81,14 +77,14 @@ const { currentStreak, justIncremented, shieldCount } = useStreak();
           <img
             src={avatarUrl}
             alt={fullName}
-            className="w-8 h-8 rounded-full object-cover ring-2 ring-ember/20"
+            className="w-8 h-8 rounded-full object-cover ring-2 ring-ember-500/20"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-ember/15 text-ember flex items-center justify-center text-xs font-bold">
+          <div className="w-8 h-8 rounded-full bg-ember-50 text-ember-600 flex items-center justify-center text-xs font-bold font-ui">
             {initials}
           </div>
         )}
-        <span className="hidden sm:block text-sm font-medium text-ink max-w-[120px] truncate">
+        <span className="hidden sm:block text-sm font-medium text-ink-900 max-w-[120px] truncate font-ui">
           {fullName}
         </span>
       </div>
@@ -98,7 +94,6 @@ const { currentStreak, justIncremented, shieldCount } = useStreak();
 
 export { TopNav };
 export function AppShell({ children, title = 'Home' }: AppShellProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dictionaryOpen, setDictionaryOpen] = useState(false);
 
   useEffect(() => {
@@ -114,23 +109,25 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
 
 
   return (
-    <div className="min-h-screen bg-paper font-ui text-ink flex">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <div className="min-h-screen bg-paper font-ui text-ink-900 flex">
+      <Sidebar />
 
       {/* Main content column */}
       <div className="flex-1 flex flex-col min-w-0">
-        <TopNav title={title} onMenuClick={() => setSidebarOpen(true)} onOpenDictionary={() => setDictionaryOpen(true)} />
+        <TopNav title={title} onOpenDictionary={() => setDictionaryOpen(true)} />
 
         {/* Verification banner */}
+        <OfflineBanner />
         <EmailVerificationBanner />
         <NotificationReEnableBanner />
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
+        {/* Page content — full width; room at the bottom for the mobile tab bar. */}
+        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
           {children}
         </main>
       </div>
+
+      <BottomNav />
 
       <DictionaryModal isOpen={dictionaryOpen} onClose={() => setDictionaryOpen(false)} />
     </div>

@@ -1,0 +1,510 @@
+{
+  "_note": "Single source of truth for the storyboard, voiceover, captions and the Remotion project. README tables, SRT and word counts are generated from this by build-readme.mjs. Times are seconds.",
+  "scenes": [
+    {
+      "id": 1,
+      "name": "Hook",
+      "start": 0,
+      "dur": 9,
+      "screenshot": [
+        "10-home-top.png"
+      ],
+      "visual": "Warm paper background. Big serif headline types on. A phone floats up from below with the Home screen.",
+      "motion": "Headline word-by-word reveal (0-3s). Phone rises with a soft shadow and a 3-degree tilt that settles flat (3-6s). Slow push-in on the greeting.",
+      "text": [
+        "Two minutes. That's all it takes.",
+        "Learn. Earn. Win."
+      ],
+      "vo": "Hey! How often do you pick up your phone? What if just two minutes of it made you sharper... and even paid you back?",
+      "sfx": "Soft whoosh on phone rise; a single warm chime on 'paid you back'.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.3,
+          "text": "Hey! How often do you pick up your phone?",
+          "plan": 0.3,
+          "file": "vo-1-1.mp3",
+          "sec": 2.54
+        },
+        {
+          "at": 3.9,
+          "text": "What if just two minutes of it made you sharper... and even paid you back?",
+          "plan": 3.9,
+          "file": "vo-1-2.mp3",
+          "sec": 3.91
+        }
+      ],
+      "planDur": 9
+    },
+    {
+      "id": 2,
+      "name": "Meet Curi",
+      "start": 9,
+      "dur": 9.5,
+      "screenshot": [
+        "01-landing-hero.png",
+        "31-mascot-moment-1.png"
+      ],
+      "visual": "Curi wordmark and app icon centre-stage, then the otter pops in beside the phone with a speech bubble.",
+      "motion": "Logo scales in with a gentle overshoot. Landing hero slides in from the right; zoom to the headline. Otter bounce-in with a wave.",
+      "text": [
+        "Meet Curi",
+        "One word. One fact. Every day."
+      ],
+      "vo": "Meet Curi. Every day, you get a fresh word and a fun fact. Two minutes, no pressure, and an otter cheering you on.",
+      "sfx": "Pop on the logo; a friendly 'boing' when the otter lands.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.3,
+          "text": "Meet Curi. Every day, you get a fresh word and a fun fact.",
+          "plan": 0.3,
+          "file": "vo-2-1.mp3",
+          "sec": 4.87
+        },
+        {
+          "at": 5.42,
+          "text": "Two minutes, no pressure, and an otter cheering you on.",
+          "plan": 5,
+          "file": "vo-2-2.mp3",
+          "sec": 3.55
+        }
+      ],
+      "cuts": [
+        0,
+        5.22
+      ],
+      "planDur": 9
+    },
+    {
+      "id": 3,
+      "name": "Home & daily habit",
+      "start": 18.5,
+      "dur": 11.5,
+      "screenshot": [
+        "10-home-top.png",
+        "11-home-prize-banner.png"
+      ],
+      "visual": "Home screen. Callouts highlight the streak flame, the daily checklist, and the prize banner.",
+      "motion": "Phone centred; ring highlight pulses on the streak chip, then the checklist (words, fact, quiz). Scroll the Home screen down to the prize banner (use the two screenshots as a tall stitched scroll).",
+      "text": [
+        "Your day, ready to go",
+        "2 words · 1 fact · 1 quiz",
+        "About 5 minutes"
+      ],
+      "vo": "Open the app, and your day is ready: words, a fact, and a quiz. About five minutes. And that banner? Weekly prizes. More soon.",
+      "sfx": "Light tick as each checklist item is highlighted.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.3,
+          "text": "Open the app, and your day is ready: words, a fact, and a quiz.",
+          "plan": 0.3,
+          "file": "vo-3-1.mp3",
+          "sec": 4.87
+        },
+        {
+          "at": 5.42,
+          "text": "About five minutes. And that banner? Weekly prizes. More soon.",
+          "plan": 5.2,
+          "file": "vo-3-2.mp3",
+          "sec": 5.23
+        }
+      ],
+      "cuts": [
+        0,
+        5.22
+      ],
+      "planDur": 9
+    },
+    {
+      "id": 4,
+      "name": "Learn",
+      "start": 30,
+      "dur": 12,
+      "screenshot": [
+        "14-learn-word.png",
+        "15-learn-fact.png",
+        "16-collection-saved-words.png"
+      ],
+      "visual": "Word card, fact card, then saved words with learning / mastered tags (spaced review).",
+      "motion": "Cards slide in from alternating sides with 0.3s overlap. Zoom to the word 'Resilient' and its example sentence; zoom to the 'Mastered / Learning' tags; end on the Play hub with a highlight on Word Duel.",
+      "text": [
+        "Words & facts that stick",
+        "Spaced review: old words return"
+      ],
+      "vo": "Hear a new word, see it in a sentence, then pick up a fun fact. Save a word, and it returns right before you would forget it. So it sticks.",
+      "sfx": "Card swish per slide; soft click on the highlighted tags; a quick game-start sting on the Play hub.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.1,
+          "text": "Hear a new word, see it in a sentence, then pick up a fun fact.",
+          "plan": 0.1,
+          "file": "vo-4-1.mp3",
+          "sec": 4.22
+        },
+        {
+          "at": 6.5,
+          "text": "Save a word, and it returns right before you would forget it. So it sticks.",
+          "plan": 6.5,
+          "file": "vo-4-2.mp3",
+          "sec": 4.9
+        }
+      ],
+      "cuts": [
+        0,
+        2.72,
+        6.3
+      ],
+      "planDur": 11
+    },
+    {
+      "id": 5,
+      "name": "Play",
+      "start": 42,
+      "dur": 9.5,
+      "screenshot": [
+        "12-play-hub.png",
+        "13b-daily-challenge-question.png"
+      ],
+      "visual": "Play tab with the daily challenge and Word Duel, then a daily-challenge question.",
+      "motion": "Cards slide in from alternating sides with 0.3s overlap. Zoom to the word 'Resilient' and its example sentence; zoom to the 'Mastered / Learning' tags; end on the Play hub with a highlight on Word Duel.",
+      "text": [
+        "Time to play",
+        "Daily challenge · Word Duel"
+      ],
+      "vo": "Then it is game time. A daily challenge, the same for everyone, and Word Duel, a live one-on-one against a friend.",
+      "sfx": "Card swish per slide; soft click on the highlighted tags; a quick game-start sting on the Play hub.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.2,
+          "text": "Then it is game time. A daily challenge, the same for everyone,",
+          "plan": 0.2,
+          "file": "vo-5-1.mp3",
+          "sec": 4.63
+        },
+        {
+          "at": 5.08,
+          "text": "and Word Duel, a live one-on-one against a friend.",
+          "plan": 4.8,
+          "file": "vo-5-2.mp3",
+          "sec": 3.67
+        }
+      ],
+      "cuts": [
+        0,
+        4.88
+      ],
+      "planDur": 9
+    },
+    {
+      "id": 6,
+      "name": "XP, levels & streaks",
+      "start": 51.5,
+      "dur": 9,
+      "screenshot": [
+        "17-progress-xp-streak.png",
+        "19-profile-pebble-shelf.png"
+      ],
+      "visual": "Progress screen (streak, shields, weekly ring) then the profile with level bar and the pebble shelf of badges.",
+      "motion": "Weekly ring animates to fill (re-create in motion graphics from the screenshot). Counter ticks up on XP. Badges pop onto the shelf one by one.",
+      "text": [
+        "Earn XP for everything",
+        "Level up · Collect badges",
+        "Streak shields have your back"
+      ],
+      "vo": "Everything earns XP. Keep your streak alive, with shields for busy days. Level up, and collect badges.",
+      "sfx": "Rising tick for XP counter; small 'ding' per badge; whoosh on the streak flame.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.2,
+          "text": "Everything earns XP. Keep your streak alive, with shields for busy days.",
+          "plan": 0.2,
+          "file": "vo-6-1.mp3",
+          "sec": 5.28
+        },
+        {
+          "at": 5.9,
+          "text": "Level up, and collect badges.",
+          "plan": 5.9,
+          "file": "vo-6-2.mp3",
+          "sec": 2.16
+        }
+      ],
+      "cuts": [
+        0,
+        5.7
+      ],
+      "planDur": 9
+    },
+    {
+      "id": 7,
+      "name": "Friends",
+      "start": 60.5,
+      "dur": 7,
+      "screenshot": [
+        "20-friends-board.png"
+      ],
+      "visual": "Friends screen: the weekly friends board and the streak-buddy card.",
+      "motion": "Phone slides to the left third; callout lines draw to 'This week' board and 'Streak buddies'. Gentle highlight on your row.",
+      "text": [
+        "Friends, weekly",
+        "Streak buddies"
+      ],
+      "vo": "Add friends with a code, see who is winning this week, and even keep a streak together.",
+      "sfx": "Two soft pops as callouts appear.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.3,
+          "text": "Add friends with a code, see who is winning this week, and even keep a streak together.",
+          "plan": 0.3,
+          "file": "vo-7-1.mp3",
+          "sec": 5.11
+        }
+      ],
+      "planDur": 7
+    },
+    {
+      "id": 8,
+      "name": "Global leaderboard",
+      "start": 67.5,
+      "dur": 10,
+      "screenshot": [
+        "21-leaderboard-weekly.png",
+        "22-leaderboard-your-rank.png",
+        "23-leaderboard-all-time.png"
+      ],
+      "visual": "The global leaderboard: podium, countdown, ranked list, 'Your rank' bar; then the toggle to All-time.",
+      "motion": "Zoom to the podium; pan to the countdown; scroll the ranked list so the highlighted 'You' row and the sticky 'Your rank' bar slide in; cross-fade to All-time.",
+      "text": [
+        "Everyone. One leaderboard.",
+        "Weekly or all-time",
+        "Your rank, always in view"
+      ],
+      "vo": "Then take on everyone. The global leaderboard has a podium, and a live countdown. Your rank stays in view, weekly or all time.",
+      "sfx": "Rank-up 'whoosh' as the list scrolls; soft tick on the toggle.",
+      "kind": "generic",
+      "beats": [
+        {
+          "at": 0.3,
+          "text": "Then take on everyone. The global leaderboard has a podium, and a live countdown.",
+          "plan": 0.3,
+          "file": "vo-8-1.mp3",
+          "sec": 5.62
+        },
+        {
+          "at": 6.17,
+          "text": "Your rank stays in view, weekly or all time.",
+          "plan": 5.9,
+          "file": "vo-8-2.mp3",
+          "sec": 3.36
+        }
+      ],
+      "cuts": [
+        0,
+        5.87,
+        8.02
+      ],
+      "planDur": 10
+    },
+    {
+      "id": 9,
+      "name": "Weekly prizes (emotional high point)",
+      "start": 77.5,
+      "dur": 21,
+      "screenshot": [
+        "04-landing-prizes.png",
+        "11-home-prize-banner.png",
+        "21-leaderboard-weekly.png"
+      ],
+      "visual": "Dark 'night' scene. The podium rises, then the three prize amounts light up in turn. Calendar tile shows Monday.",
+      "motion": "Podium blocks rise 2nd, 3rd, then 1st. Amounts count up: ₦1,000 then ₦1,500 then ₦2,500 (gold glow on first place). Confetti burst on N2,500. End with a Monday calendar flip and the line 'Resets every Monday'. Do NOT show 'winner' names or payouts as if they have happened.",
+      "text": [
+        "Win real cash. Every week.",
+        "1st ₦2,500 · 2nd ₦1,500 · 3rd ₦1,000",
+        "Resets every Monday",
+        "Starts Monday, Nov 16"
+      ],
+      "vo": "And here is the best part. Every week, the top three win real cash. Second place: one thousand five hundred naira. Third place: one thousand naira. And first place wins two thousand five hundred naira! It resets every Monday, starting the sixteenth of November.",
+      "sfx": "Deep riser into the podium rise; coin/shimmer on each amount; celebratory hit and confetti pop on ₦2,500; a calendar 'flip' on Monday. Music swells here, then settles.",
+      "kind": "prize",
+      "beats": [
+        {
+          "at": 0.3,
+          "text": "And here is the best part. Every week, the top three win real cash.",
+          "plan": 0.3,
+          "file": "vo-9-1.mp3",
+          "sec": 4.94
+        },
+        {
+          "at": 5.49,
+          "text": "Second place: one thousand five hundred naira.",
+          "plan": 5.1,
+          "file": "vo-9-2.mp3",
+          "sec": 3.43
+        },
+        {
+          "at": 9.17,
+          "text": "Third place: one thousand naira.",
+          "plan": 8.9,
+          "file": "vo-9-3.mp3",
+          "sec": 2.52
+        },
+        {
+          "at": 12,
+          "text": "And first place wins two thousand five hundred naira!",
+          "plan": 12,
+          "file": "vo-9-4.mp3",
+          "sec": 3.79
+        },
+        {
+          "at": 16.1,
+          "text": "It resets every Monday, starting the sixteenth of November.",
+          "plan": 16.1,
+          "file": "vo-9-5.mp3",
+          "sec": 3.98
+        }
+      ],
+      "prize": {
+        "riseAt": {
+          "1": 11.85,
+          "2": 5.34,
+          "3": 9.02
+        },
+        "chipsAt": 16.1
+      },
+      "planDur": 20
+    },
+    {
+      "id": 10,
+      "name": "Mascot moments",
+      "start": 98.5,
+      "dur": 6.5,
+      "screenshot": [
+        "31-mascot-moment-1.png",
+        "32-mascot-moment-2.png",
+        "33-mascot-moment-3.png",
+        "34-mascot-moment-4.png",
+        "35-mascot-moment-5.png",
+        "36-mascot-moment-6.png"
+      ],
+      "visual": "Playful grid/carousel of the six mascot banner crops, each with its speech bubble. Use the phone clip of the mascot animating here if available.",
+      "motion": "Six crops pop in with a springy stagger, then the best one (spin) scales up. The tone here is fun: bouncier easing, small confetti, sticker-like outlines.",
+      "text": [
+        "Meet your cheerleader",
+        "Curi reacts to you"
+      ],
+      "vo": "And Curi is always there, cheering you on, celebrating your wins, and keeping it fun.",
+      "sfx": "Boing, giggle-style pops, a cheer sting. Keep them short and quiet under the voice.",
+      "kind": "mascot",
+      "beats": [
+        {
+          "plan": 0.3,
+          "at": 0.3,
+          "text": "And Curi is always there, cheering you on, celebrating your wins, and keeping it fun.",
+          "file": "vo-10-1.mp3",
+          "sec": 5.47
+        }
+      ],
+      "planDur": 6
+    },
+    {
+      "id": 11,
+      "name": "How it works",
+      "start": 105,
+      "dur": 10.5,
+      "screenshot": [
+        "03-landing-how-it-works.png"
+      ],
+      "visual": "Four-step horizontal timeline on paper background with icons: Sign up, Learn & earn XP, Play & climb, Win weekly prizes.",
+      "motion": "Line draws left to right; each step icon pops in on the beat as the VO names it; the last step glows gold.",
+      "text": [
+        "1 Sign up free",
+        "2 Learn & earn XP",
+        "3 Play & climb",
+        "4 Win weekly prizes"
+      ],
+      "vo": "Sign up, it is free. Learn and earn XP. Play, and climb the ranks. Win weekly prizes. Simple as that.",
+      "sfx": "Four rising notes, one per step.",
+      "kind": "steps",
+      "beats": [
+        {
+          "at": 0.4,
+          "text": "Sign up, it is free.",
+          "plan": 0.4,
+          "file": "vo-11-1.mp3",
+          "sec": 1.85
+        },
+        {
+          "at": 2.5,
+          "text": "Learn and earn XP.",
+          "plan": 2,
+          "file": "vo-11-2.mp3",
+          "sec": 2.02
+        },
+        {
+          "at": 4.77,
+          "text": "Play, and climb the ranks.",
+          "plan": 3.6,
+          "file": "vo-11-3.mp3",
+          "sec": 1.87
+        },
+        {
+          "at": 6.89,
+          "text": "Win weekly prizes. Simple as that.",
+          "plan": 5.2,
+          "file": "vo-11-4.mp3",
+          "sec": 3.07
+        }
+      ],
+      "planDur": 8,
+      "stepAt": [
+        0.3,
+        2.4,
+        4.67,
+        6.79
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Closing CTA",
+      "start": 115.5,
+      "dur": 8.5,
+      "screenshot": [
+        "05-landing-hero-desktop.png",
+        "01-landing-hero.png"
+      ],
+      "visual": "Logo lock-up with the otter waving, the URL, and a 'Get started: it's free' button.",
+      "motion": "Everything settles to a calm hold. Button gently pulses once. Fade to the paper colour.",
+      "text": [
+        "Curi",
+        "One word. One fact. Every day.",
+        "Start free at trycuri.app"
+      ],
+      "vo": "That is Curi. One word, one fact, every day. Start free today at try Curi dot app.",
+      "sfx": "Final warm chime; music resolves.",
+      "kind": "cta",
+      "beats": [
+        {
+          "at": 0.4,
+          "text": "That is Curi. One word, one fact, every day.",
+          "plan": 0.4,
+          "file": "vo-12-1.mp3",
+          "sec": 4.22
+        },
+        {
+          "at": 4.87,
+          "text": "Start free today at try Curi dot app.",
+          "plan": 3.3,
+          "file": "vo-12-2.mp3",
+          "sec": 2.78
+        }
+      ],
+      "planDur": 7
+    }
+  ]
+}
