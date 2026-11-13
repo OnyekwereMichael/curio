@@ -53,22 +53,24 @@ export function PlayHubPage() {
           <CalendarCheck size={18} className="text-gold-700 flex-shrink-0" />
         </button>
 
-        <div className="bg-ink-900 rounded-card p-4 flex items-center gap-3 font-ui">
+        <div className="bg-ink-900 rounded-card p-4 flex flex-col sm:flex-row sm:items-center gap-3 font-ui">
           <span className="text-xs font-semibold text-paper/70 flex-shrink-0">Got a room code?</span>
-          <input
-            value={roomCode}
-            onChange={(e) => setRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4))}
-            placeholder="····"
-            maxLength={4}
-            className="flex-1 bg-transparent text-paper text-center tracking-[0.3em] font-display text-lg font-bold outline-none placeholder:text-paper/30"
-          />
-          <button
-            onClick={handleJoin}
-            disabled={roomCode.length !== 4}
-            className="px-4 py-2 rounded-control bg-ember-600 text-on-ember text-sm font-semibold disabled:opacity-40 hover:brightness-105 transition-all flex-shrink-0"
-          >
-            Join
-          </button>
+          <div className="flex items-center gap-3 min-w-0 sm:flex-1">
+            <input
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4))}
+              placeholder="····"
+              maxLength={4}
+              className="flex-1 min-w-0 bg-transparent text-paper text-center tracking-[0.3em] font-display text-lg font-bold outline-none placeholder:text-paper/30"
+            />
+            <button
+              onClick={handleJoin}
+              disabled={roomCode.length !== 4}
+              className="px-4 py-2 rounded-control bg-ember-600 text-on-ember text-sm font-semibold disabled:opacity-40 hover:brightness-105 transition-all flex-shrink-0"
+            >
+              Join
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3 font-ui">
