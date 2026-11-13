@@ -10,7 +10,7 @@ import { PrizesSpotlight } from '../components/PrizesSpotlight';
 import { FounderNote } from '../components/FounderNote';
 import { CTA } from '../components/CTA';
 import { Footer } from '../components/Footer';
-import vid from '../../public/WhatsApp Video 2026-09-14 at 00.28.52.mp4'
+import vid from '../../public/VIDEO-2026-11-13-01-51-25.mp4'
 
 export function LandingPage() {
   const { session, loading } = useAuth();
