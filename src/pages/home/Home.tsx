@@ -5,7 +5,8 @@ import { DailyQuiz } from '../../components/DailyQuiz';
 import { StreakLossModal } from '../../components/StreakLossModal';
 import { MilestoneModal } from '../../components/MilestoneModal';
 
-import { useTodaysWord, useTodaysWords, useTodaysFact } from './hooks';
+import { useTodaysWord, useTodaysWords } from './hooks';
+import { useDailyFacts } from '../../hooks/useDailyFacts';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
@@ -17,10 +18,10 @@ import { ShieldSavedNotice } from '../../components/ShieldSavedNotice';
 import { PlanRow, type PlanRowState } from '../../components/PlanRow';
 import { StreakAtRiskBanner } from '../../components/StreakAtRiskBanner';
 import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
+import { RuleXpChip } from '../../components/XpChip';
 import { WeeklyPrizesCard } from '../../components/WeeklyPrizesCard';
 import { PrizeCenter } from '../../components/PrizeCenter';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
-import { isFactOpened } from '../../services/localPrefs';
 
 function SkeletonCard() {
   return (
@@ -45,7 +46,9 @@ export function HomeScreen() {
   const navigate = useNavigate();
   const todaysWord = useTodaysWord();
   const todaysWords = useTodaysWords();
-  const todaysFact = useTodaysFact();
+  const dailyFacts = useDailyFacts();
+  const todaysFacts = dailyFacts.data?.facts ?? [];
+  const todaysFact = { loading: dailyFacts.loading, data: todaysFacts[0] ?? null };
   const { user } = useAuth();
   const {
     commitStreak, currentStreak, shieldCount, shieldsJustUsed, shieldJustEarned,
@@ -101,7 +104,8 @@ export function HomeScreen() {
   // Real done/now/next status for the plan-row overview below.
   const [wordDone, setWordDone] = useState(false);
   const [quizDone, setQuizDone] = useState(false);
-  const factDone = todaysFact.data ? isFactOpened(todaysFact.data.id) : false;
+  // Done only once every fact has been PASSED (server-confirmed), the same rule as words. Opening or failing a fact doesn't count.
+  const factDone = todaysFacts.length > 0 && todaysFacts.every((f) => dailyFacts.data?.passedIds.includes(f.id));
   const quizSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -124,14 +128,16 @@ export function HomeScreen() {
       title: todaysWords.data.length > 1 ? `Today's ${todaysWords.data.length} words` : "Today's word",
       subtitle: todaysWords.data.length > 0 ? todaysWords.data.map((w) => w.word).join(', ') : 'Loading…',
       onAction: () => navigate('/learn/word'),
+      reward: <RuleXpChip rule="quest_learn_words" />,
     },
     {
       key: 'fact',
       done: factDone,
       icon: <Lightbulb size={16} />,
-      title: "Today's fact",
-      subtitle: todaysFact.data?.category || "Today's fact",
+      title: todaysFacts.length > 1 ? `Today's ${todaysFacts.length} facts` : "Today's fact",
+      subtitle: todaysFacts.length > 1 ? todaysFacts.map((f) => f.category).filter(Boolean).slice(0, 3).join(', ') : todaysFact.data?.category || "Today's fact",
       onAction: () => navigate('/learn/fact'),
+      reward: <RuleXpChip rule="quest_learn_facts" />,
     },
     {
       key: 'quiz',
@@ -140,6 +146,7 @@ export function HomeScreen() {
       title: 'Daily quiz',
       subtitle: 'Counts your day',
       onAction: () => quizSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      reward: <RuleXpChip rule="quest_quiz_score" />,
     },
   ];
   let nowAssigned = false;
@@ -182,7 +189,7 @@ export function HomeScreen() {
             <p className="text-ink-500 text-sm font-ui mt-1">
               {[
                 todaysWords.data.length > 0 && `${todaysWords.data.length} word${todaysWords.data.length !== 1 ? 's' : ''}`,
-                todaysFact.data && '1 fact',
+                todaysFacts.length > 0 && `${todaysFacts.length} fact${todaysFacts.length !== 1 ? 's' : ''}`,
                 '1 quiz',
               ].filter(Boolean).join(', ')} · about {3 + todaysWords.data.length} min
             </p>
@@ -201,6 +208,7 @@ export function HomeScreen() {
               icon={row.icon}
               title={row.title}
               subtitle={row.subtitle}
+              reward={row.reward}
               actionLabel="Start"
               onAction={row.onAction}
             />

@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { getDailyQuests, XP_UPDATED_EVENT, type DailyQuests } from '../services/xp';
+import { XpChip } from './XpChip';
+import { getDailyQuests, xpLinesToday, XP_UPDATED_EVENT, type DailyQuests, type XpLine } from '../services/xp';
 
 /** Today's quests, read from `daily_quests`. Refreshes when XP changes (quiz done, word learned). */
 export function DailyQuestsPanel() {
   const [data, setData] = useState<DailyQuests | null>(null);
+  const [lines, setLines] = useState<XpLine[]>([]);
 
   useEffect(() => {
-    const load = () => getDailyQuests().then(setData).catch((e) => console.error('getDailyQuests failed', e));
+    const load = () => {
+      getDailyQuests().then(setData).catch((e) => console.error('getDailyQuests failed', e));
+      // After getDailyQuests has synced, so quest and badge XP are already in the ledger. A failure keeps the last list.
+      xpLinesToday().then(setLines).catch(() => undefined);
+    };
     load();
     window.addEventListener(XP_UPDATED_EVENT, load);
     return () => window.removeEventListener(XP_UPDATED_EVENT, load);
@@ -38,12 +44,27 @@ export function DailyQuestsPanel() {
             <span className={cn('flex-1 text-sm font-medium', q.completed ? 'text-ink-900/50 line-through' : 'text-ink-900')}>
               {q.label}
             </span>
-            <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-2 py-1 rounded-tag flex-shrink-0">
-              +{q.xp} XP
-            </span>
+            <XpChip amount={q.xp} />
           </div>
         ))}
       </div>
+      {lines.length > 0 && (
+        <div className="bg-surface rounded-card border border-line shadow-card px-4 py-3 font-ui" aria-label="XP earned today">
+          <p className="text-xs font-bold uppercase tracking-wider text-ink-500 mb-2">Earned today</p>
+          <ul className="flex flex-col gap-1.5">
+            {lines.map((l) => (
+              <li key={l.label} className="flex items-center justify-between text-sm">
+                <span className="text-ink-900">{l.label}</span>
+                <span className="font-semibold text-gold-700">+{l.amount} XP</span>
+              </li>
+            ))}
+          </ul>
+          <div className="flex items-center justify-between text-sm font-bold border-t border-line mt-2 pt-2">
+            <span>Total</span>
+            <span className="text-gold-700">+{lines.reduce((n, l) => n + l.amount, 0)} XP</span>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

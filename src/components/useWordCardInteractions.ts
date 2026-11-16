@@ -3,28 +3,18 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 
-export function useWordCardInteractions(
-  wordId: string,
-  audioUrl?: string,
-  onSavedChange?: (saved: boolean) => void,
-  word?: string
-) {
+/** Known-state and pronunciation for a word card. Saving to Review lives in hooks/useSaveWord. */
+export function useWordCardInteractions(wordId: string, audioUrl?: string, word?: string) {
   const { user } = useAuth();
-  const [isSaved, setIsSaved] = useState(false);
-  const [saveFlash, setSaveFlash] = useState(false);
   const [isKnown, setIsKnown] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load this word's existing saved/known state whenever the word changes —
-  // e.g. if the user saved this word yesterday and it's back today as
-  // "Old but Gold," the card should reflect that immediately, not reset.
+  // Load this word's existing known state whenever the word changes.
   useEffect(() => {
-    setSaveFlash(false);
     setIsPlaying(false);
 
     if (!user || !wordId) {
-      setIsSaved(false);
       setIsKnown(false);
       return;
     }
@@ -34,7 +24,7 @@ export function useWordCardInteractions(
     async function loadInitialState() {
       const { data, error } = await supabase
         .from('user_word_progress')
-        .select('saved, marked_known')
+        .select('marked_known')
         .eq('user_id', user?.id)
         .eq('word_id', wordId)
         .maybeSingle();
@@ -46,7 +36,6 @@ export function useWordCardInteractions(
         return;
       }
 
-      setIsSaved(data?.saved ?? false);
       setIsKnown(data?.marked_known ?? false);
     }
 
@@ -56,32 +45,6 @@ export function useWordCardInteractions(
       cancelled = true;
     };
   }, [wordId, user]);
-
-  const toggleSave = useCallback(async () => {
-    if (!user || !wordId) return;
-
-    const newSavedState = !isSaved;
-
-    setIsSaved(newSavedState);
-    if (newSavedState) {
-      setSaveFlash(true);
-      setTimeout(() => setSaveFlash(false), 300);
-    }
-    onSavedChange?.(newSavedState);
-
-    const { error } = await supabase
-      .from('user_word_progress')
-      .update({ saved: newSavedState })
-      .eq('user_id', user.id)
-      .eq('word_id', wordId);
-
-    if (error) {
-      console.error('Failed to update saved state:', error.message);
-      // Revert the optimistic update since the write failed
-      setIsSaved(!newSavedState);
-      onSavedChange?.(!newSavedState);
-    }
-  }, [wordId, user, isSaved, onSavedChange]);
 
   // "Known" is earned through a server-graded check (LearnCheckModal); the client can no longer set it.
   const markKnownLocal = useCallback(() => setIsKnown(true), []);
@@ -167,5 +130,5 @@ export function useWordCardInteractions(
     };
   }, []);
 
-  return { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnownLocal, play };
+  return { isKnown, isPlaying, markKnownLocal, play };
 }

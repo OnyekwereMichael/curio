@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { Otter } from '../../components/Otter';
 import { Button } from '../../components/ui/Button';
 import { QuizQuestionCard } from '../../components/QuizQuestionCard';
-import { startQuiz, answerQuiz, type QuizQuestion, type QuizResult } from '../../services/quiz';
+import { startReviewQuiz, answerQuiz, type QuizQuestion, type QuizResult, type ReviewFilter } from '../../services/quiz';
 import { syncXpAndNotify } from '../../services/xp';
 
 type Stage = 'loading' | 'nothing' | 'intro' | 'asking' | 'done';
@@ -14,6 +14,10 @@ type Stage = 'loading' | 'nothing' | 'intro' | 'asking' | 'done';
 /** Spaced-repetition session: the server picks the due words, grades each answer and schedules the next review. */
 export function ReviewSessionPage() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const raw = params.get('filter');
+  const filter: ReviewFilter = raw === 'word' || raw === 'fact' ? raw : 'all';
+  const noun = filter === 'fact' ? 'fact' : filter === 'word' ? 'word' : 'item';
   const [stage, setStage] = useState<Stage>('loading');
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [index, setIndex] = useState(0);
@@ -23,7 +27,7 @@ export function ReviewSessionPage() {
   const finalResult = useRef<QuizResult | null>(null);
 
   useEffect(() => {
-    startQuiz('review')
+    startReviewQuiz(filter)
       .then((s) => {
         sessionId.current = s.session_id;
         setQuestions(s.questions);
@@ -34,12 +38,12 @@ export function ReviewSessionPage() {
         console.error('startQuiz(review) failed', e);
         setStage('nothing');
       });
-  }, []);
+  }, [filter]);
 
   async function grade(option: string) {
-    const graded = await answerQuiz(sessionId.current!, questions[index].idx, option);
+    const graded = await answerQuiz(sessionId.current!, questions[index].idx, option, questions[index].token);
     if (graded.done) finalResult.current = graded.result;
-    return { correct: graded.correct, correctAnswer: graded.correct_answer };
+    return { correct: graded.correct, correctAnswer: graded.correct_answer, explanation: graded.explanation };
   }
 
   function handleAnswered(wasCorrect: boolean) {
@@ -84,7 +88,7 @@ export function ReviewSessionPage() {
           <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
             <Otter mood="sleepy" size={88} />
             <h1 className="font-display text-title font-bold text-ink-900">All caught up</h1>
-            <p className="text-sm text-ink-500 max-w-xs">Nothing is due today. Save a few more words to build your review queue.</p>
+            <p className="text-sm text-ink-500 max-w-xs">Nothing is due today. Save a few more words or facts to build your review queue.</p>
             <Button onClick={() => navigate('/collection')} className="mt-2">
               Back to my pouch
             </Button>
@@ -96,7 +100,7 @@ export function ReviewSessionPage() {
             <Otter mood="thinking" size={88} />
             <h1 className="font-display text-title font-bold text-ink-900">Today's review</h1>
             <p className="text-sm text-ink-500 max-w-xs">
-              {questions.length} saved word{questions.length !== 1 ? 's' : ''} ready to practise. Answer each question; the ones you
+              {questions.length} saved {noun}{questions.length !== 1 ? 's' : ''} ready to practise. Answer each question; the ones you
               get right come back later.
             </p>
             <Button onClick={() => setStage('asking')} className="w-full">
@@ -127,7 +131,7 @@ export function ReviewSessionPage() {
               {correct} of {questions.length} recalled.
             </h1>
             <p className="text-sm text-ink-500 max-w-xs">
-              Words you got right come back later; the ones you missed return tomorrow.
+              Ones you got right come back later; the ones you missed return tomorrow.
               {result && result.xp > 0 ? ` +${result.xp} XP.` : ''}
             </p>
             <Button onClick={() => navigate('/collection')} className="w-full">

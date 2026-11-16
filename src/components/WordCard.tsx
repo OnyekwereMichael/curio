@@ -4,8 +4,12 @@ import { DailyStamp } from './DailyStamp';
 import { cn } from '../lib/utils';
 import { useWordCardInteractions } from './useWordCardInteractions';
 import { ShareCardModal } from './ShareCardModal';
-import { LearnCheckModal } from './LearnCheckModal';
+import { QuizModal } from './QuizModal';
 import { useWordCooldown } from '../hooks/useWordCooldown';
+import { useSaveItem } from '../hooks/useSaveItem';
+import { SaveItemButton, saveHelperText } from './SaveItemButton';
+import { SaveToReviewPrompt } from './SaveToReviewPrompt';
+import { Skeleton } from './ui/Skeleton';
 
 interface WordCardProps {
   id: string;
@@ -20,7 +24,8 @@ interface WordCardProps {
 }
 
 export function WordCard({ id, word, definition, exampleSentence, audioUrl, className, variant = 'new', label, onSavedChange }: WordCardProps) {
-  const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnownLocal, play } = useWordCardInteractions(id, audioUrl, onSavedChange, word);
+  const { isKnown, isPlaying, markKnownLocal, play } = useWordCardInteractions(id, audioUrl, word);
+  const save = useSaveItem('word', id, { source: 'word_card', onChange: onSavedChange });
   const [shareOpen, setShareOpen] = useState(false);
   const [checkOpen, setCheckOpen] = useState(false);
   const cooldown = useWordCooldown(id);
@@ -44,31 +49,51 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
             </div>
           )}
 
-          <div className="flex items-center gap-2">
-            <h3 className="font-display text-word-hero font-semibold text-ink-900 leading-tight">{word}</h3>
-            <button
-              onClick={play}
-              className={cn(
-                "p-2 rounded-full transition-colors flex-shrink-0",
-                isPlaying ? "text-ember-600/70 bg-ember-50 animate-pulse" :
-                  "text-ember-600 hover:bg-ember-50 hover:text-ember-700"
-              )}
-              aria-label="Play pronunciation"
-              type="button"
-            >
-              <Volume2 size={20} strokeWidth={2.5} className="cursor-pointer" />
-            </button>
-          </div>
+          {/* Not rendered at all while the test is open, so the answer can't be read, selected or heard. */}
+          {checkOpen ? (
+            <Skeleton className="h-11 w-48" />
+          ) : (
+            <div className="flex items-center gap-2">
+              <h3 className="font-display text-word-hero font-semibold text-ink-900 leading-tight">{word}</h3>
+              <button
+                onClick={play}
+                className={cn(
+                  "p-2 rounded-full transition-colors flex-shrink-0",
+                  isPlaying ? "text-ember-600/70 bg-ember-50 animate-pulse" :
+                    "text-ember-600 hover:bg-ember-50 hover:text-ember-700"
+                )}
+                aria-label="Play pronunciation"
+                type="button"
+              >
+                <Volume2 size={20} strokeWidth={2.5} className="cursor-pointer" />
+              </button>
+            </div>
+          )}
         </div>
 
         <div>
-          <p className="text-ink-900 leading-relaxed mb-4">{definition}</p>
+          {checkOpen ? (
+            <div className="flex flex-col gap-2 mb-4">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-11/12" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ) : (
+            <p className="text-ink-900 leading-relaxed mb-4">{definition}</p>
+          )}
 
           <div className="text-ink-500 text-xs font-bold uppercase mb-2 font-ui">
             How to use in a sentence
           </div>
           <div className="pl-4 border-l-2 border-ember-500/25">
-            <p className="text-ink-900/80 text-sm leading-relaxed italic">"{exampleSentence}"</p>
+            {checkOpen ? (
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ) : (
+              <p className="text-ink-900/80 text-sm leading-relaxed italic">"{exampleSentence}"</p>
+            )}
           </div>
         </div>
 
@@ -78,7 +103,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
   {/* Primary action: full width on mobile, left-aligned on larger screens */}
   {!isKnown ? (
     <button
-      onClick={() => setCheckOpen(true)}
+      onClick={() => save.requestTest(() => setCheckOpen(true))}
       disabled={cooldown.locked}
       className="w-full sm:w-auto sm:mr-auto h-10 px-5 rounded-control bg-ember-600 text-on-ember text-sm font-semibold whitespace-nowrap hover:brightness-105 active:brightness-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-60 disabled:hover:brightness-100 disabled:cursor-not-allowed tabular-nums"
       type="button"
@@ -106,23 +131,18 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
     Share
   </button>
 
-  <button
-    onClick={toggleSave}
-    className={cn(
-      'flex-1 sm:flex-none h-10 px-4 rounded-control border text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-900/30 cursor-pointer!',
-      saveFlash
-        ? 'border-gold-500 bg-gold-50 text-gold-700'
-        : isSaved
-          ? 'border-ember-500/30 bg-ember-50 text-ember-600 hover:bg-ember-50'
-          : 'border-line-strong text-ink-900 hover:bg-ink-900/5 active:bg-ink-900/10'
-    )}
-    aria-pressed={isSaved}
-    aria-label={isSaved ? 'Remove from collection' : 'Save to collection'}
-    type="button"
-  >
-    {isSaved ? 'Saved' : 'Save'}
-  </button>
+  <SaveItemButton itemType="word"
+    saved={save.isSaved}
+    loading={save.loading}
+    flash={save.saveFlash}
+    onToggle={save.toggle}
+    className="flex-1 sm:flex-none"
+  />
 </div>
+{save.promptOpen && <SaveToReviewPrompt itemType="word" onSaveAndTest={save.saveAndTest} onJustTest={save.justTest} />}
+<p className="text-xs text-ink-500 -mt-1" role="status">
+  {saveHelperText('word', save.isSaved)}
+</p>
 {!isKnown && cooldown.locked && (
   <p className="text-xs text-ink-500 -mt-1" role="status">
     Review the word again and come back when the timer ends.
@@ -142,7 +162,7 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
       />
 
       {checkOpen && (
-        <LearnCheckModal wordId={id} word={word} onClose={() => setCheckOpen(false)} onPassed={markKnownLocal} onFailed={cooldown.startLocal} />
+        <QuizModal itemType="word" itemId={id} name={word} onClose={() => setCheckOpen(false)} onPassed={markKnownLocal} onFailed={cooldown.startLocal} />
       )}
     </>
   );

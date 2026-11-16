@@ -6,7 +6,7 @@ import { Otter } from '../../components/Otter';
 import { Button } from '../../components/ui/Button';
 import { ShareCardModal } from '../../components/ShareCardModal';
 import { getDailyChallenge, submitChallengeAnswer, type DailyChallengeState } from '../../services/dailyChallenge';
-import { syncXpAndNotify } from '../../services/xp';
+import { syncXpAndNotify, xpReasonMessage } from '../../services/xp';
 import { cn } from '../../lib/utils';
 
 const FEEDBACK_MS = 1100;
@@ -21,6 +21,9 @@ export function DailyChallengePage() {
   const [submitting, setSubmitting] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const xpSynced = useRef(false);
+  // XP earned in this sitting (null when resuming a finished challenge: then the 2-per-correct rule is shown instead).
+  const [earned, setEarned] = useState<number | null>(null);
+  const [lastReason, setLastReason] = useState<string | null>(null);
 
   useEffect(() => {
     getDailyChallenge()
@@ -43,20 +46,26 @@ export function DailyChallengePage() {
     const index = state.answered;
     setSubmitting(true);
     try {
-      const result = await submitChallengeAnswer(index, option);
+      const result = await submitChallengeAnswer(index, option, state.token);
       setPicked({ option, correct: result.correct, correctAnswer: result.correctAnswer });
-      setTimeout(() => {
+      setEarned((e) => (e ?? 0) + result.xp);
+      if (result.reason) setLastReason(result.reason);
+      setTimeout(async () => {
+        // The next question comes with its own one-time token; fetching it now also starts its server-side timer.
+        const next = result.completed ? null : await getDailyChallenge().catch(() => null);
         setPicked(null);
         setState((s) =>
-          s
+          next ??
+          (s
             ? {
                 ...s,
                 answered: s.answered + 1,
                 score: result.score,
                 completed: result.completed,
                 streak: result.streak ?? s.streak,
+                token: null,
               }
-            : s
+            : s)
         );
       }, FEEDBACK_MS);
     } catch (e) {
@@ -105,7 +114,8 @@ export function DailyChallengePage() {
   // --- Finished ---
   if (state.completed) {
     const perfect = score === total;
-    const xp = score * 10 + (perfect ? 10 : 0);
+    const xp = earned ?? score * 2;
+    const reasonText = xpReasonMessage(lastReason);
     return shell(
       <>
         {header}
@@ -122,6 +132,7 @@ export function DailyChallengePage() {
           <p className="text-sm text-ink-500 max-w-xs">
             {perfect ? 'A perfect run.' : 'Nicely done.'} A new challenge unlocks tomorrow.
           </p>
+          {reasonText && <p className="text-xs text-ink-500 max-w-xs" role="status">{reasonText}</p>}
           <div className="flex items-center gap-2 font-ui">
             <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-3 py-1.5 rounded-tag">+{xp} XP</span>
             {streak > 0 && (

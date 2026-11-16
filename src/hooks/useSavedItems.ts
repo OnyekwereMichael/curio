@@ -1,3 +1,4 @@
+import { FACT_COLUMNS } from '../lib/factColumns';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import type { Word, Fact } from '../pages/home/hooks'; // adjust this path to wherever your Word/Fact types actually live
@@ -46,7 +47,7 @@ export function useSavedFacts() {
         async function fetchSavedFacts() {
             const { data: rows, error } = await supabase
                 .from('user_fact_progress')
-                .select('*, facts(*)')
+                .select(`*, facts(${FACT_COLUMNS})`)
                 .eq('user_id', user?.id)
                 .eq('saved', true)
                 .order('seen_at', { ascending: false });

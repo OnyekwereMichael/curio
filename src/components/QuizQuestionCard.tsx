@@ -2,18 +2,23 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Button } from './ui/Button';
 
 interface Props {
   question: string;
   options: string[];
   /** Grades the pick on the server; the right answer is only revealed once it comes back. */
-  onSelect: (option: string) => Promise<{ correct: boolean; correctAnswer: string }>;
+  onSelect: (option: string) => Promise<{ correct: boolean; correctAnswer: string; explanation?: string | null }>;
   onAnswered: (wasCorrect: boolean) => void;
+  /** Label for the button that moves on once the explanation has been read. */
+  continueLabel?: string;
 }
 
-export function QuizQuestionCard({ question, options, onSelect, onAnswered }: Props) {
+export function QuizQuestionCard({ question, options, onSelect, onAnswered, continueLabel = 'Next' }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
+  const [explanation, setExplanation] = useState<string | null>(null);
+  const [wasCorrect, setWasCorrect] = useState(false);
   const [error, setError] = useState(false);
 
   async function handleSelect(option: string) {
@@ -23,8 +28,14 @@ export function QuizQuestionCard({ question, options, onSelect, onAnswered }: Pr
     try {
       const graded = await onSelect(option);
       setCorrectAnswer(graded.correctAnswer);
-      // Auto-advance after a beat, whether right or wrong — no extra tap needed.
-      setTimeout(() => onAnswered(graded.correct), 1100);
+      if (graded.explanation) {
+        // There is something to read, so wait for the player instead of moving on by itself.
+        setExplanation(graded.explanation);
+        setWasCorrect(graded.correct);
+      } else {
+        // Auto-advance after a beat, whether right or wrong — no extra tap needed.
+        setTimeout(() => onAnswered(graded.correct), 1100);
+      }
     } catch (e) {
       console.error('answer failed', e);
       setSelected(null);
@@ -76,6 +87,17 @@ export function QuizQuestionCard({ question, options, onSelect, onAnswered }: Pr
           );
         })}
       </div>
+      {explanation && (
+        <div className="mt-4 flex flex-col gap-3" role="status">
+          <p className="text-sm text-ink-900/80 leading-relaxed">
+            <span className="font-semibold text-ink-900">{wasCorrect ? 'Right. ' : 'Not quite. '}</span>
+            {explanation}
+          </p>
+          <Button onClick={() => onAnswered(wasCorrect)} className="w-full min-h-11" autoFocus>
+            {continueLabel}
+          </Button>
+        </div>
+      )}
       {error && <p className="mt-3 text-xs text-ember-600">Couldn't save that answer — check your connection and tap again.</p>}
     </motion.div>
   );

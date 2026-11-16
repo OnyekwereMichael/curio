@@ -244,7 +244,7 @@ export function DailyQuiz({ currentStreak, commitStreak }: Props) {
 
     // The server grades each pick; the right answer only reaches the client after it has answered.
     async function gradeAnswer(option: string) {
-        const graded = await answerQuiz(sessionId.current!, allQuestions[answeredCount].idx, option);
+        const graded = await answerQuiz(sessionId.current!, allQuestions[answeredCount].idx, option, allQuestions[answeredCount].token);
         if (graded.done) setResult(graded.result);
         return { correct: graded.correct, correctAnswer: graded.correct_answer };
     }

@@ -36,6 +36,7 @@ import { CollectionPage } from './pages/collections/CollectionPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminPrizes } from './pages/admin/AdminPrizes';
+import { AdminWinnerReview } from './pages/admin/AdminWinnerReview';
 import { DictionaryPage } from './pages/dictionary/DictionaryPage';
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
               <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
 
               <Route path="/admin/prizes" element={<ProtectedRoute><AdminPrizes /></ProtectedRoute>} />
+              <Route path="/admin/review" element={<ProtectedRoute><AdminWinnerReview /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/activity" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               <Route path="*" element={<NotFoundPage />} />

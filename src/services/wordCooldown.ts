@@ -38,3 +38,15 @@ export async function fetchWordCooldowns(wordIds?: string[]): Promise<Map<string
   }
   return out;
 }
+
+/** Seconds left on a fact's failed-check cooldown (server clock), 0 when there is none. Readable by its owner only (RLS). */
+export async function fetchFactCooldown(factId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from('fact_check_cooldowns')
+    .select('retry_available_at')
+    .eq('fact_id', factId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return 0;
+  return Math.max(0, Math.ceil((new Date(data.retry_available_at as string).getTime() - Date.now()) / 1000));
+}

@@ -11,10 +11,12 @@ interface PlanRowProps {
   subtitle: string;
   actionLabel?: string;
   onAction?: () => void;
+  /** The reward chip (an `XpChip`/`RuleXpChip`), shown on the side of the row. */
+  reward?: React.ReactNode;
 }
 
 /** One row of the home "plan" — a word, a fact, or the quiz — in its done/now/next state. */
-export function PlanRow({ state, icon, title, subtitle, actionLabel, onAction }: PlanRowProps) {
+export function PlanRow({ state, icon, title, subtitle, actionLabel, onAction, reward }: PlanRowProps) {
   return (
     <div
       className={cn(
@@ -38,6 +40,7 @@ export function PlanRow({ state, icon, title, subtitle, actionLabel, onAction }:
         </p>
         <p className="text-xs text-ink-500 font-ui truncate">{subtitle}</p>
       </div>
+      {reward}
       {state === 'now' && actionLabel && (
         <Button variant="primary" className="px-4 py-2 text-xs flex-shrink-0" onClick={onAction}>
           {actionLabel}

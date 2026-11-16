@@ -1,4 +1,5 @@
 import { supabase } from '../lib/superbase';
+import { FACT_COLUMNS } from '../lib/factColumns';
 import type { Word, Fact } from '../pages/home/hooks';
 
 export interface DailyPlan {
@@ -18,7 +19,7 @@ function todayUtc(): string {
 async function legacyPlan(today: string): Promise<DailyPlan> {
   const [w, f] = await Promise.all([
     supabase.from('words').select('*').eq('publish_date', today),
-    supabase.from('facts').select('*').eq('publish_date', today).maybeSingle(),
+    supabase.from('facts').select(FACT_COLUMNS).eq('publish_date', today).maybeSingle(),
   ]);
   if (w.error) throw w.error;
   if (f.error) throw f.error;

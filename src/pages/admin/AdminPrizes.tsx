@@ -121,6 +121,12 @@ export function AdminPrizes() {
           </div>
           <div className="flex items-center gap-3">
             <button
+              onClick={() => navigate('/admin/review')}
+              className="px-3.5 py-2 text-sm rounded-lg bg-ink text-paper hover:opacity-90 transition flex items-center gap-1.5 font-medium"
+            >
+              <ShieldCheck size={16} /> Review winners
+            </button>
+            <button
               onClick={() => navigate('/admin')}
               className="px-3.5 py-2 text-sm rounded-lg border border-ink/15 text-ink hover:bg-ink/5 transition flex items-center gap-1.5 font-medium"
             >
