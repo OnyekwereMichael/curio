@@ -4,6 +4,8 @@ import { DailyStamp } from './DailyStamp';
 import { cn } from '../lib/utils';
 import { useWordCardInteractions } from './useWordCardInteractions';
 import { ShareCardModal } from './ShareCardModal';
+import { LearnCheckModal } from './LearnCheckModal';
+import { useWordCooldown } from '../hooks/useWordCooldown';
 
 interface WordCardProps {
   id: string;
@@ -18,8 +20,10 @@ interface WordCardProps {
 }
 
 export function WordCard({ id, word, definition, exampleSentence, audioUrl, className, variant = 'new', label, onSavedChange }: WordCardProps) {
-  const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnown, play } = useWordCardInteractions(id, audioUrl, onSavedChange, word);
+  const { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnownLocal, play } = useWordCardInteractions(id, audioUrl, onSavedChange, word);
   const [shareOpen, setShareOpen] = useState(false);
+  const [checkOpen, setCheckOpen] = useState(false);
+  const cooldown = useWordCooldown(id);
 
   const labelColor = variant === 'new' ? 'text-ember-600' : 'text-ink-500';
 
@@ -74,11 +78,12 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
   {/* Primary action: full width on mobile, left-aligned on larger screens */}
   {!isKnown ? (
     <button
-      onClick={markKnown}
-      className="w-full sm:w-auto sm:mr-auto h-10 px-5 rounded-control bg-ember-600 text-on-ember text-sm font-semibold whitespace-nowrap hover:brightness-105 active:brightness-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+      onClick={() => setCheckOpen(true)}
+      disabled={cooldown.locked}
+      className="w-full sm:w-auto sm:mr-auto h-10 px-5 rounded-control bg-ember-600 text-on-ember text-sm font-semibold whitespace-nowrap hover:brightness-105 active:brightness-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-60 disabled:hover:brightness-100 disabled:cursor-not-allowed tabular-nums"
       type="button"
     >
-      Got it
+      {cooldown.locked ? `Try again in ${cooldown.label}` : 'Test me'}
     </button>
   ) : (
     <div
@@ -118,6 +123,11 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
     {isSaved ? 'Saved' : 'Save'}
   </button>
 </div>
+{!isKnown && cooldown.locked && (
+  <p className="text-xs text-ink-500 -mt-1" role="status">
+    Review the word again and come back when the timer ends.
+  </p>
+)}
       </div>
 
       <ShareCardModal
@@ -130,6 +140,10 @@ export function WordCard({ id, word, definition, exampleSentence, audioUrl, clas
           exampleSentence,
         }}
       />
+
+      {checkOpen && (
+        <LearnCheckModal wordId={id} word={word} onClose={() => setCheckOpen(false)} onPassed={markKnownLocal} onFailed={cooldown.startLocal} />
+      )}
     </>
   );
 }

@@ -20,7 +20,8 @@ import {
   Activity,
   Mail,
   Zap,
-  MessageSquare
+  MessageSquare,
+  Trophy
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppShell } from '../../components/AppShell';
@@ -412,6 +413,14 @@ export function AdminDashboard() {
             >
               <ArrowLeft size={16} />
               Back to Home
+            </button>
+
+            <button
+              onClick={() => navigate('/admin/prizes')}
+              className="px-3.5 py-2 text-sm rounded-lg bg-paper border border-ink/15 text-ink hover:border-ink/30 transition flex items-center gap-1.5 font-medium shadow-sm"
+            >
+              <Trophy size={16} />
+              <span>Prizes</span>
             </button>
 
             <button

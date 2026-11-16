@@ -5,7 +5,7 @@ import { DailyQuiz } from '../../components/DailyQuiz';
 import { StreakLossModal } from '../../components/StreakLossModal';
 import { MilestoneModal } from '../../components/MilestoneModal';
 
-import { useTodaysWord, useTodaysWords, useOldButGold, useTodaysFact, useOldButGoldFact } from './hooks';
+import { useTodaysWord, useTodaysWords, useTodaysFact } from './hooks';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
 import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
@@ -18,6 +18,7 @@ import { PlanRow, type PlanRowState } from '../../components/PlanRow';
 import { StreakAtRiskBanner } from '../../components/StreakAtRiskBanner';
 import { DailyQuestsPanel } from '../../components/DailyQuestsPanel';
 import { WeeklyPrizesCard } from '../../components/WeeklyPrizesCard';
+import { PrizeCenter } from '../../components/PrizeCenter';
 import { fetchWordProgress, fetchTodayActivity } from '../../services/progress';
 import { isFactOpened } from '../../services/localPrefs';
 
@@ -44,10 +45,8 @@ export function HomeScreen() {
   const navigate = useNavigate();
   const todaysWord = useTodaysWord();
   const todaysWords = useTodaysWords();
-  const oldButGold = useOldButGold();
   const todaysFact = useTodaysFact();
   const { user } = useAuth();
-  const oldButGoldFact = useOldButGoldFact();
   const {
     commitStreak, currentStreak, shieldCount, shieldsJustUsed, shieldJustEarned,
     lostStreak, missedDays, reconcileStreak, recoverStreak, dismissLostStreak,
@@ -169,6 +168,7 @@ export function HomeScreen() {
         onStartFresh={dismissLostStreak}
       />
       <div className="py-5 w-full flex flex-col gap-10">
+        <PrizeCenter />
         <div className="flex items-start gap-4">
           {/* <MascotCompanion
             size={72}
@@ -236,10 +236,6 @@ export function HomeScreen() {
 
         <div ref={quizSectionRef}>
           <DailyQuiz
-            todaysWord={todaysWord.data}
-            oldButGoldWord={oldButGold.data}
-            todaysFact={todaysFact.data}
-            oldButGoldFact={oldButGoldFact.data}
             currentStreak={currentStreak}
             commitStreak={commitStreak}
           />

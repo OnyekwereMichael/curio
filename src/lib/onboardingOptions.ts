@@ -16,6 +16,8 @@ export const WORDS_PER_DAY_OPTIONS = [1, 3, 5];
 
 export const TOPIC_OPTIONS = [
   'Animals',
+  'Plants',
+  'Sports',
   'Space',
   'History',
   'Science',

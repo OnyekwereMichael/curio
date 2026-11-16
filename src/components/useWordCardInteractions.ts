@@ -83,22 +83,8 @@ export function useWordCardInteractions(
     }
   }, [wordId, user, isSaved, onSavedChange]);
 
-  const markKnown = useCallback(async () => {
-    if (!user || !wordId) return;
-
-    setIsKnown(true);
-
-    const { error } = await supabase
-      .from('user_word_progress')
-      .update({ marked_known: true })
-      .eq('user_id', user.id)
-      .eq('word_id', wordId);
-
-    if (error) {
-      console.error('Failed to mark word as known:', error.message);
-      setIsKnown(false);
-    }
-  }, [wordId, user]);
+  // "Known" is earned through a server-graded check (LearnCheckModal); the client can no longer set it.
+  const markKnownLocal = useCallback(() => setIsKnown(true), []);
 
   const playBrowserAudio = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) {
@@ -181,5 +167,5 @@ export function useWordCardInteractions(
     };
   }, []);
 
-  return { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnown, play };
+  return { isSaved, saveFlash, isKnown, isPlaying, toggleSave, markKnownLocal, play };
 }

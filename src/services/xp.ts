@@ -1,5 +1,7 @@
 import { supabase } from '../lib/superbase';
 
+// Amounts are NOT defined here: the server owns them (table xp_rewards: learn 5, quiz 4/5 = 10, review 3 = 6).
+// The quests panel reads each quest's xp from daily_quests and result screens show the XP the server reports back.
 export interface DailyQuest {
   id: string;
   label: string;
@@ -68,12 +70,6 @@ export async function getDailyQuests(): Promise<DailyQuests> {
     completed: !!q.completed_at,
   }));
   return { quests, completedCount: quests.filter((q) => q.completed).length };
-}
-
-/** Mirrors the server's quiz award (5 per correct + 10, +15 for a perfect score). */
-export function estimateQuizXp(correctCount: number, total: number): number {
-  const perfectBonus = total > 0 && correctCount === total ? 15 : 0;
-  return correctCount * 5 + 10 + perfectBonus;
 }
 
 /** XP an XP-bearing streak milestone badge awards (see `badges` table). */

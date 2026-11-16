@@ -226,8 +226,10 @@ export function FriendsPage() {
         {data && (
           <label className="flex items-center justify-between gap-3 text-sm text-ink-900 font-ui bg-surface rounded-card border border-line shadow-card px-4 py-3.5 cursor-pointer">
             <span>
-              Hide me from friends' boards
-              <span className="block text-xs text-ink-500">You can still see yourself and your friends.</span>
+              Hide me from leaderboards
+              <span className="block text-xs text-ink-500">
+                You won't appear on the global or friends' boards, and you can't win weekly prizes while hidden.
+              </span>
             </span>
             <input
               type="checkbox"

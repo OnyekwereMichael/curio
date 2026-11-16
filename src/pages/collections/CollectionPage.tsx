@@ -77,7 +77,10 @@ export function CollectionPage() {
                             </p>
                             <p className="text-xs text-ink-500 mt-0.5">About {Math.max(1, Math.ceil(dueCount / 4))} minute{dueCount > 4 ? 's' : ''}</p>
                         </div>
-                        <ChevronRight size={18} className="text-gold-700 flex-shrink-0" />
+                        <span className="flex items-center gap-1 rounded-control bg-gold-700 px-3.5 py-2 text-xs font-semibold text-white flex-shrink-0">
+                            Start review
+                            <ChevronRight size={14} />
+                        </span>
                     </button>
                 )}
 
