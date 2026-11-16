@@ -7,7 +7,8 @@ import { useTodaysWords, type Word } from '../home/hooks';
 import { useWordCardInteractions } from '../../components/useWordCardInteractions';
 import { ShareCardModal } from '../../components/ShareCardModal';
 import { cn } from '../../lib/utils';
-import { syncXpAndNotify } from '../../services/xp';
+import { LearnCheckModal } from '../../components/LearnCheckModal';
+import { useWordCooldown } from '../../hooks/useWordCooldown';
 
 /**
  * Focused, full-screen reading view for today's words. The daily plan holds
@@ -53,19 +54,21 @@ export function WordFocusScreen() {
 }
 
 function WordFocusCard({ word, index, total, onDone }: { word: Word; index: number; total: number; onDone: () => void }) {
-  const { isSaved, isKnown, isPlaying, toggleSave, markKnown, play } = useWordCardInteractions(
+  const { isSaved, isKnown, isPlaying, toggleSave, markKnownLocal, play } = useWordCardInteractions(
     word.id,
     word.pronunciation_audio_url,
     undefined,
     word.word
   );
   const [shareOpen, setShareOpen] = useState(false);
+  const [checkOpen, setCheckOpen] = useState(false);
+  const cooldown = useWordCooldown(word.id);
   const isLast = index >= total - 1;
 
-  async function handleGotIt() {
-    if (!isKnown) await markKnown();
-    syncXpAndNotify(); // quest progress + badges; never blocks the flow
-    onDone();
+  // "Got it" has to be earned: an unknown word opens a short server-graded check first.
+  function handleGotIt() {
+    if (isKnown) onDone();
+    else setCheckOpen(true);
   }
 
   return (
@@ -120,10 +123,21 @@ function WordFocusCard({ word, index, total, onDone }: { word: Word; index: numb
           >
             <Share2 size={18} />
           </button>
-          <Button onClick={handleGotIt} className="flex-1">
-            {isLast ? (isKnown ? <><Check size={16} /> Got it</> : 'Got it') : 'Got it — next word'}
+          <Button onClick={handleGotIt} disabled={!isKnown && cooldown.locked} className="flex-1 tabular-nums">
+            {isKnown ? (
+              <><Check size={16} /> {isLast ? 'Done' : 'Next word'}</>
+            ) : cooldown.locked ? (
+              `Try again in ${cooldown.label}`
+            ) : (
+              'Test me'
+            )}
           </Button>
         </div>
+        {!isKnown && cooldown.locked && (
+          <p className="text-sm text-ink-500 text-center font-ui" role="status">
+            Review the word again and come back when the timer ends.
+          </p>
+        )}
       </div>
 
       <ShareCardModal
@@ -136,6 +150,20 @@ function WordFocusCard({ word, index, total, onDone }: { word: Word; index: numb
           exampleSentence: word.example_sentence,
         }}
       />
+
+      {checkOpen && (
+        <LearnCheckModal
+          wordId={word.id}
+          word={word.word}
+          onPassed={markKnownLocal}
+          onFailed={cooldown.startLocal}
+          onClose={() => {
+            setCheckOpen(false);
+            // Only move on once the word is learned; after a miss, stay so the word can be reviewed during the cooldown.
+            if (isKnown) onDone();
+          }}
+        />
+      )}
     </>
   );
 }

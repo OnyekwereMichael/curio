@@ -1,20 +1,15 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { QuizQuestionCard } from './QuizQuestionCard';
 import { Otter, type OtterMood } from './Otter';
-import { useWordQuizQuestion } from '../hooks/useWordQuizQuestion';
-import { buildFactQuizQuestions } from '../hooks/useFactQuizQuestions';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/superbase';
 import { createMilestoneImage, shareMilestone } from '../lib/milestoneShare';
-import { estimateQuizXp, syncXpAndNotify } from '../services/xp';
+import { syncXpAndNotify } from '../services/xp';
+import { startQuiz, answerQuiz, type QuizQuestion, type QuizResult } from '../services/quiz';
 import { MascotCompanion } from './MascotCompanion';
 
 interface Props {
-    todaysWord: any;
-    oldButGoldWord: any;
-    todaysFact: any;
-    oldButGoldFact: any;
     currentStreak: number;
     commitStreak: () => Promise<void>; // from useStreak() — called once, on completion
 }
@@ -171,7 +166,7 @@ const cardBase = 'rounded-sheet bg-surface border border-line';
 // ─────────────────────────────────────────────────────────
 // DailyQuiz
 // ─────────────────────────────────────────────────────────
-export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFact, currentStreak, commitStreak }: Props) {
+export function DailyQuiz({ currentStreak, commitStreak }: Props) {
     const { user } = useAuth();
     const [state, setState] = useState<QuizState>('loading');
     const [correctCount, setCorrectCount] = useState(0);
@@ -189,13 +184,11 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
         setShareState(result === 'shared' || result === 'copied' ? result : 'idle');
     }
 
-    const { quiz: todaysWordQuiz } = useWordQuizQuestion(todaysWord);
-    const { quiz: oldWordQuiz } = useWordQuizQuestion(oldButGoldWord);
-
-    const todaysFactQuiz = useMemo(() => buildFactQuizQuestions(todaysFact, 1), [todaysFact]);
-    const oldFactQuiz = useMemo(() => buildFactQuizQuestions(oldButGoldFact, 2), [oldButGoldFact]);
-
-    const allQuestions = [todaysWordQuiz, oldWordQuiz, ...todaysFactQuiz, ...oldFactQuiz].filter(Boolean) as any[];
+    // Questions are built and graded on the server; the client never holds the answers.
+    const [allQuestions, setAllQuestions] = useState<QuizQuestion[]>([]);
+    const [startError, setStartError] = useState<string | null>(null);
+    const [result, setResult] = useState<QuizResult | null>(null);
+    const sessionId = useRef<string | null>(null);
 
     useEffect(() => {
         if (!user) return;
@@ -224,55 +217,49 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
         checkTodayStatus();
     }, [user]);
 
-    function handleStart() {
+    async function handleStart() {
+        setStartError(null);
         setState('starting');
-        setTimeout(() => setState('playing'), 700);
+        try {
+            const [session] = await Promise.all([startQuiz('daily'), new Promise((r) => setTimeout(r, 700))]);
+            sessionId.current = session.session_id;
+            setAllQuestions(session.questions);
+            setAnsweredCount(session.answered);
+            setState('playing');
+        } catch (e) {
+            console.error('startQuiz failed', e);
+            const msg = e instanceof Error ? e.message : '';
+            if (msg.includes('Already done')) {
+                setState('already-done');
+            } else {
+                setStartError(
+                    msg.includes('Nothing to quiz')
+                        ? "Open today's word and fact first, then come back for the quiz."
+                        : "Couldn't start the quiz. Try again."
+                );
+                setState('start');
+            }
+        }
+    }
+
+    // The server grades each pick; the right answer only reaches the client after it has answered.
+    async function gradeAnswer(option: string) {
+        const graded = await answerQuiz(sessionId.current!, allQuestions[answeredCount].idx, option);
+        if (graded.done) setResult(graded.result);
+        return { correct: graded.correct, correctAnswer: graded.correct_answer };
     }
 
     async function handleAnswered(wasCorrect: boolean) {
         const newAnsweredCount = answeredCount + 1;
-        const newCorrectCount = correctCount + (wasCorrect ? 1 : 0);
         setAnsweredCount(newAnsweredCount);
-        setCorrectCount(newCorrectCount);
+        setCorrectCount((c) => c + (wasCorrect ? 1 : 0));
         setResults((prev) => [...prev, wasCorrect]);
 
         if (newAnsweredCount === allQuestions.length) {
             setState('completed');
-            const wasPerfect = newCorrectCount === allQuestions.length;
-
-            if (user) {
-                const today = new Date().toISOString().split('T')[0];
-
-                const { error: updateError, data: updateData } = await supabase
-                    .from('user_activity_log')
-                    .update({
-                        quiz_completed: true,
-                        quiz_score: newCorrectCount,
-                        quiz_perfect: wasPerfect,
-                    })
-                    .eq('user_id', user.id)
-                    .eq('activity_date', today)
-                    .select();
-
-                if (updateError || !updateData || updateData.length === 0) {
-                    await supabase
-                        .from('user_activity_log')
-                        .upsert(
-                            {
-                                user_id: user.id,
-                                activity_date: today,
-                                quiz_completed: true,
-                                quiz_score: newCorrectCount,
-                                quiz_perfect: wasPerfect,
-                            },
-                            { onConflict: 'user_id,activity_date' }
-                        );
-                }
-
-                await commitStreak();
-                // Server recomputes XP, quests and badges from the quiz just saved.
-                await syncXpAndNotify();
-            }
+            // The server already saved the score and awarded XP; this refreshes the streak and XP display.
+            await commitStreak();
+            await syncXpAndNotify();
         }
     }
 
@@ -285,7 +272,6 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
     }
 
     if (state === 'loading') return null;
-    if (allQuestions.length === 0 && state !== 'already-done') return null;
 
     const total = allQuestions.length;
     const isPerfect = total > 0 && correctCount === total;
@@ -350,12 +336,11 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                             </p>
                         </div>
                         <div className="flex flex-wrap items-center justify-center gap-2">
-                            <Chip>
-                                {total} question{total !== 1 ? 's' : ''}
-                            </Chip>
+                            <Chip>5 questions</Chip>
                             <Chip>Under a minute</Chip>
                             <Chip>Keeps your streak</Chip>
                         </div>
+                        {startError && <p className="text-sm text-ember-600 font-ui">{startError}</p>}
                         <PrimaryButton onClick={handleStart}>Start quiz</PrimaryButton>
                     </motion.div>
                 )}
@@ -415,7 +400,7 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                             key={answeredCount}
                             question={allQuestions[answeredCount].question}
                             options={allQuestions[answeredCount].options}
-                            correctAnswer={allQuestions[answeredCount].correctAnswer}
+                            onSelect={gradeAnswer}
                             onAnswered={handleQuestionAnswered}
                         />
 
@@ -452,7 +437,7 @@ export function DailyQuiz({ todaysWord, oldButGoldWord, todaysFact, oldButGoldFa
                             </p>
                         </div>
                         <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-3 py-1.5 rounded-tag font-ui">
-                            +{estimateQuizXp(correctCount, total)} XP
+                            +{result?.xp ?? 0} XP
                         </span>
                         <PrimaryButton onClick={() => setDayFinished(true)}>Finish the day</PrimaryButton>
                     </motion.div>
