@@ -1,3 +1,4 @@
+import { FACT_COLUMNS } from '../../lib/factColumns';
 import { useState, useEffect } from 'react';
 
 import { useAuth } from '../../contexts/AuthContext';
@@ -195,7 +196,7 @@ export function useOldButGoldFact() {
 
         const { data: progress, error: fetchError } = await supabase
           .from('user_fact_progress')
-          .select('*, facts(*)')
+          .select(`*, facts(${FACT_COLUMNS})`)
           .eq('user_id', user.id)
           .lte('seen_at', twoDaysAgo.toISOString())
           .order('times_shown', { ascending: true })

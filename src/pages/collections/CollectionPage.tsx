@@ -28,6 +28,7 @@ export function CollectionPage() {
     const { user } = useAuth();
     const [tab, setTab] = useState<Tab>('words');
     const [wordFilter, setWordFilter] = useState<WordFilter>('all');
+    const [reviewFilter, setReviewFilter] = useState<'all' | 'word' | 'fact'>('all');
     const [words, setWords] = useState<SavedWordRow[]>([]);
     const [facts, setFacts] = useState<SavedFactRow[]>([]);
     const [lists, setLists] = useState<WordList[]>([]);
@@ -47,10 +48,11 @@ export function CollectionPage() {
     }, []);
 
     const now = Date.now();
-    const dueCount = Math.min(
-        words.filter((w) => !w.dueAt || new Date(w.dueAt).getTime() <= now).length,
-        8
-    );
+    const isDue = (d: string | null) => !d || new Date(d).getTime() <= now;
+    const dueWords = words.filter((w) => isDue(w.dueAt)).length;
+    const dueFacts = facts.filter((f) => isDue(f.dueAt)).length;
+    const dueByFilter = { all: dueWords + dueFacts, word: dueWords, fact: dueFacts };
+    const dueCount = Math.min(dueByFilter[reviewFilter], 8);
 
     const filteredWords = words.filter((w) => {
         if (wordFilter === 'new') return w.mastery !== 'mastered';
@@ -66,14 +68,36 @@ export function CollectionPage() {
                     <Search size={20} className="text-ink-500" />
                 </div>
 
+                {(dueWords > 0 || dueFacts > 0) && (
+                    <div className="flex gap-2 font-ui" role="group" aria-label="What to review">
+                        {([
+                            { key: 'all' as const, label: 'All' },
+                            { key: 'word' as const, label: 'Words' },
+                            { key: 'fact' as const, label: 'Facts' },
+                        ]).map((f) => (
+                            <button
+                                key={f.key}
+                                onClick={() => setReviewFilter(f.key)}
+                                aria-pressed={reviewFilter === f.key}
+                                className={cn(
+                                    'px-3 min-h-11 rounded-full text-xs font-semibold transition-colors',
+                                    reviewFilter === f.key ? 'bg-ink-900 text-paper' : 'bg-ink-900/5 text-ink-900 hover:bg-ink-900/10'
+                                )}
+                            >
+                                {f.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {dueCount > 0 && (
                     <button
-                        onClick={() => navigate('/collection/review')}
+                        onClick={() => navigate(`/collection/review?filter=${reviewFilter}`)}
                         className="flex items-center justify-between gap-3 rounded-card bg-gold-50 border border-gold-500/30 px-4 py-3.5 text-left font-ui hover:bg-gold-50/70 transition-colors"
                     >
                         <div>
                             <p className="text-sm font-semibold text-gold-700">
-                                {dueCount} word{dueCount !== 1 ? 's' : ''} ready to review
+                                {dueCount} {reviewFilter === 'word' ? 'word' : reviewFilter === 'fact' ? 'fact' : 'item'}{dueCount !== 1 ? 's' : ''} ready to review
                             </p>
                             <p className="text-xs text-ink-500 mt-0.5">About {Math.max(1, Math.ceil(dueCount / 4))} minute{dueCount > 4 ? 's' : ''}</p>
                         </div>
@@ -129,7 +153,7 @@ export function CollectionPage() {
                     <p className="text-ink-500 text-sm font-ui">Loading…</p>
                 ) : tab === 'words' ? (
                     filteredWords.length === 0 ? (
-                        <EmptyState message="You haven't saved any words yet — tap the bookmark on a word to keep it here." />
+                        <EmptyState message="You haven't saved any words yet — tap “Save word” on a word to keep it here and in your Review." />
                     ) : (
                         <div className="bg-surface rounded-card border border-line shadow-card divide-y divide-line">
                             {filteredWords.map(({ word, mastery }) => (

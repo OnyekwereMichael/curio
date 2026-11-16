@@ -5,6 +5,8 @@ import { AppShell } from '../../../components/AppShell';
 import { Button } from '../../../components/ui/Button';
 import { getLearningPlan, updateLearningPlan, type LearningPlan } from '../../../services/learningPlan';
 import { cn } from '../../../lib/utils';
+import { DailyCountPicker } from '../../../components/DailyCountPicker';
+import { FACTS_PER_DAY_OPTIONS } from '../../../services/dailyFacts';
 
 import { WORDS_PER_DAY_OPTIONS, TOPIC_OPTIONS } from '../../../lib/onboardingOptions';
 
@@ -69,23 +71,15 @@ export function LearningPlanSettingsPage() {
           </button>
         </div>
 
-        <div className="bg-surface rounded-card border border-line shadow-card p-4 font-ui">
-          <p className="text-sm font-semibold text-ink-900 mb-3">Words per day</p>
-          <div className="flex rounded-control border border-line-strong p-0.5">
-            {WORDS_PER_DAY_OPTIONS.map((n) => (
-              <button
-                key={n}
-                onClick={() => setPlan({ ...plan, wordsPerDay: n })}
-                className={cn(
-                  'flex-1 py-2 rounded-tag text-sm font-semibold transition-colors',
-                  plan.wordsPerDay === n ? 'bg-ink-900 text-paper' : 'text-ink-500 hover:text-ink-900'
-                )}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-        </div>
+        <DailyCountPicker label="Words per day" options={WORDS_PER_DAY_OPTIONS} value={plan.wordsPerDay} onChange={(n) => setPlan({ ...plan, wordsPerDay: n })} />
+
+        <DailyCountPicker
+          label="Facts per day"
+          options={FACTS_PER_DAY_OPTIONS}
+          value={plan.factsPerDay}
+          onChange={(n) => setPlan({ ...plan, factsPerDay: n })}
+          hint="A change starts tomorrow. Today's facts stay as they are."
+        />
 
         <div className="bg-surface rounded-card border border-line shadow-card p-4 font-ui">
           <p className="text-sm font-semibold text-ink-900 mb-3">Fact topics</p>

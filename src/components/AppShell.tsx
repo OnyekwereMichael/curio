@@ -11,6 +11,8 @@ import { useStreak } from './useStreak';
 import logo from '../../public/icon-192.png'
 import { Search } from 'lucide-react';
 import { DictionaryModal } from './DictionaryModal';
+import { XpTodayChip } from './XpTodayChip';
+import { XpToast } from './XpToast';
 
 
 interface AppShellProps {
@@ -66,6 +68,8 @@ const { currentStreak, justIncremented, shieldCount } = useStreak();
         <Search size={22} />
       </button>
 
+      <XpTodayChip />
+
      <StreakCounter count={currentStreak} shieldCount={shieldCount} justIncremented={justIncremented} />
 
       <div className="hidden sm:flex items-center gap-1.5 bg-ink-900/[0.04] border border-line rounded-full px-4 py-1.5">
@@ -100,6 +104,8 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
+        // No dictionary lookups while a modal (e.g. a word test) is open.
+        if (document.documentElement.dataset.modalOpen) return;
         setDictionaryOpen((prev) => !prev);
       }
     };
@@ -134,6 +140,7 @@ export function AppShell({ children, title = 'Home' }: AppShellProps) {
       <BottomNav />
 
       <DictionaryModal isOpen={dictionaryOpen} onClose={() => setDictionaryOpen(false)} />
+      <XpToast />
     </div>
   );
 }

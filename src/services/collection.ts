@@ -40,12 +40,14 @@ export async function fetchSavedWordsWithStatus(userId: string): Promise<SavedWo
 
 export interface SavedFactRow {
   fact: Fact;
+  /** null = never reviewed, so due now. */
+  dueAt: string | null;
 }
 
 export async function fetchSavedFactsWithStatus(userId: string): Promise<SavedFactRow[]> {
   const { data, error } = await supabase
     .from('user_fact_progress')
-    .select('facts(*)')
+    .select('due_at, facts(id, image_url, hook_line, context_line, bullet_1, bullet_2, bullet_3, bullet_4, category, publish_date, created_at)')
     .eq('user_id', userId)
     .eq('saved', true)
     .order('seen_at', { ascending: false });
@@ -55,6 +57,6 @@ export async function fetchSavedFactsWithStatus(userId: string): Promise<SavedFa
     return [];
   }
 
-  const rows = (data ?? []) as unknown as { facts: Fact | null }[];
-  return rows.filter((r) => r.facts).map((r) => ({ fact: r.facts as Fact }));
+  const rows = (data ?? []) as unknown as { due_at: string | null; facts: Fact | null }[];
+  return rows.filter((r) => r.facts).map((r) => ({ fact: r.facts as Fact, dueAt: r.due_at }));
 }

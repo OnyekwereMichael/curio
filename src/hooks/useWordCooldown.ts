@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fetchWordCooldowns, formatCountdown, remainingSeconds, snapshot, type CooldownSnapshot } from '../services/wordCooldown';
+import { fetchFactCooldown, fetchWordCooldowns, formatCountdown, remainingSeconds, snapshot, type CooldownSnapshot } from '../services/wordCooldown';
 
 /**
  * Live "try again in m:ss" for one word's failed check.
@@ -7,19 +7,19 @@ import { fetchWordCooldowns, formatCountdown, remainingSeconds, snapshot, type C
  * when the window regains focus, so it survives navigation, refreshes, logouts and other devices.
  * Between fetches it counts down on the monotonic clock.
  */
-export function useWordCooldown(wordId: string) {
+export function useItemCooldown(itemType: 'word' | 'fact', itemId: string) {
   const [snap, setSnap] = useState<CooldownSnapshot | null>(null);
   const [, setTick] = useState(0);
 
   const refresh = useCallback(async () => {
     try {
-      const seconds = (await fetchWordCooldowns([wordId])).get(wordId);
+      const seconds = itemType === 'fact' ? await fetchFactCooldown(itemId) : (await fetchWordCooldowns([itemId])).get(itemId);
       setSnap(seconds ? snapshot(seconds) : null);
     } catch (e) {
       // If we can't reach the server the button stays enabled; the server still rejects an early start.
       console.error('word cooldown fetch failed', e);
     }
-  }, [wordId]);
+  }, [itemType, itemId]);
 
   useEffect(() => {
     refresh();
@@ -52,3 +52,6 @@ export function useWordCooldown(wordId: string) {
     refresh,
   };
 }
+
+/** Live "try again in m:ss" for one word's failed check. */
+export const useWordCooldown = (wordId: string) => useItemCooldown('word', wordId);

@@ -250,7 +250,7 @@ export function SettingsPage() {
               <div>
                 <h3 className="font-semibold">My learning plan</h3>
                 <p className="text-sm opacity-70 mt-0.5">
-                  {plan.wordsPerDay} words · {plan.factTopics.length > 0 ? '1 fact' : 'no facts'} · {plan.weeklyGoalDays} days a week
+                  {plan.wordsPerDay} words · {plan.factsPerDay} fact{plan.factsPerDay !== 1 ? 's' : ''} · {plan.weeklyGoalDays} days a week
                 </p>
               </div>
               <ChevronRight size={18} className="opacity-60 flex-shrink-0" />

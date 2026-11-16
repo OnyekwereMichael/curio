@@ -1,9 +1,11 @@
 import { supabase } from '../lib/superbase';
+import { clearDailyPlanCache } from './dailyPlan';
 
 export interface LearningPlan {
   wordStyle: string;
   level: string;
   wordsPerDay: number;
+  factsPerDay: number;
   factTopics: string[];
   weeklyGoalDays: number;
   reminderTime: string;
@@ -16,6 +18,7 @@ const DEFAULT_PLAN: LearningPlan = {
   wordStyle: 'A mix',
   level: 'Intermediate',
   wordsPerDay: 3,
+  factsPerDay: 1,
   factTopics: [],
   weeklyGoalDays: 5,
   reminderTime: 'Morning',
@@ -27,6 +30,7 @@ type Row = {
   word_style: string | null;
   level: string | null;
   words_per_day: number;
+  facts_per_day: number | null;
   fact_topics: string[];
   weekly_goal: number;
   reminder_time: string | null;
@@ -39,6 +43,7 @@ function fromRow(r: Row): LearningPlan {
     wordStyle: r.word_style ?? DEFAULT_PLAN.wordStyle,
     level: r.level ?? DEFAULT_PLAN.level,
     wordsPerDay: r.words_per_day,
+    factsPerDay: r.facts_per_day ?? DEFAULT_PLAN.factsPerDay,
     factTopics: r.fact_topics ?? [],
     weeklyGoalDays: r.weekly_goal,
     reminderTime: r.reminder_time ?? DEFAULT_PLAN.reminderTime,
@@ -52,6 +57,7 @@ function toRow(p: Partial<LearningPlan>): Record<string, unknown> {
   if (p.wordStyle !== undefined) out.word_style = p.wordStyle;
   if (p.level !== undefined) out.level = p.level;
   if (p.wordsPerDay !== undefined) out.words_per_day = p.wordsPerDay;
+  if (p.factsPerDay !== undefined) out.facts_per_day = p.factsPerDay;
   if (p.factTopics !== undefined) out.fact_topics = p.factTopics;
   if (p.weeklyGoalDays !== undefined) out.weekly_goal = p.weeklyGoalDays;
   if (p.reminderTime !== undefined) out.reminder_time = p.reminderTime;
@@ -71,7 +77,7 @@ export async function getLearningPlan(): Promise<LearningPlan> {
   const userId = await currentUserId();
   const { data, error } = await supabase
     .from('user_preferences')
-    .select('word_style, level, words_per_day, fact_topics, weekly_goal, reminder_time, evening_nudge, weekly_recap_email')
+    .select('word_style, level, words_per_day, facts_per_day, fact_topics, weekly_goal, reminder_time, evening_nudge, weekly_recap_email')
     .eq('user_id', userId)
     .maybeSingle();
   if (error) throw error;
@@ -88,6 +94,9 @@ export async function updateLearningPlan(
     .from('user_preferences')
     .upsert({ user_id: userId, ...toRow(patch), ...extra }, { onConflict: 'user_id' });
   if (error) throw error;
+  // Today's plan is cached in memory; drop it so Home/Word/Fact re-read it and
+  // the server re-fits it to the new preferences (words per day, fact topics).
+  clearDailyPlanCache();
   return getLearningPlan();
 }
 

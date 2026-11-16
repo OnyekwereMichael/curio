@@ -10,7 +10,6 @@ import {
   type MascotLine,
   type MascotMood,
 } from '../lib/mascotConfig';
-import { speakAloud, stopSpeaking } from '../lib/mascotVoice';
 import { getSoundsHapticsPref } from '../services/localPrefs';
 
 export interface MascotView {
@@ -71,7 +70,6 @@ export function useMascotBehavior({ active, context }: Options) {
   /** Show a mood + bubble (+ body effect), then settle back after a few seconds. */
   const speak = useCallback((mood: MascotMood, message: string | null, effect: MascotEffect | null = null) => {
     clearTimeout(timers.current.hide);
-    if (message && getSoundsHapticsPref()) speakAloud(message, mood);
     setView((v) => ({ mood, message, bubbleKey: v.bubbleKey + 1, effect, effectKey: effect ? v.effectKey + 1 : v.effectKey }));
     timers.current.hide = setTimeout(
       () => setView((v) => ({ ...v, mood: sleeping.current ? 'sleepy' : 'happy', message: null, effect: null })),
@@ -123,7 +121,6 @@ export function useMascotBehavior({ active, context }: Options) {
       clearTimeout(greet);
       clearTimeout(timers.current.hide);
       clearTimeout(timers.current.sleep);
-      stopSpeaking();
       setView((v) => ({ ...v, mood: sleeping.current ? 'sleepy' : 'happy', message: null, effect: null }));
     };
   }, [active, speak, pick, armSleep]);
