@@ -15,12 +15,15 @@ const PEBBLE_COLORS: Record<string, string> = {
   gold: 'bg-gold-500 text-night',
 };
 
+const SHELF_PREVIEW = 4;
+
 export function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentStreak, longestStreak } = useStreak();
   const [wordStats, setWordStats] = useState<WordStats>({ wordsLearned: 0, topicsExplored: 0 });
   const [extras, setExtras] = useState<ProfileExtras | null>(null);
+  const [shelfExpanded, setShelfExpanded] = useState(false);
 
   useEffect(() => {
     if (user) fetchWordStats(user.id).then(setWordStats);
@@ -107,13 +110,20 @@ export function ProfilePage() {
           <div className="w-full text-left">
             <div className="flex items-baseline justify-between mb-2">
               <h2 className="font-display text-heading font-bold text-ink-900">Pebble shelf</h2>
-              <span className="text-xs text-ink-500 font-ui">See all {extras.pebbleShelfTotal}</span>
+              {extras.pebbleShelfTotal > SHELF_PREVIEW && (
+                <button
+                  onClick={() => setShelfExpanded((v) => !v)}
+                  className="text-xs text-ink-500 font-ui hover:text-ink-900 cursor-pointer"
+                >
+                  {shelfExpanded ? 'Show less' : `See all ${extras.pebbleShelfTotal}`}
+                </button>
+              )}
             </div>
             {extras.pebbleShelf.length === 0 && (
               <p className="text-xs text-ink-500 font-ui">Keep your streak going and finish quizzes to earn your first pebble.</p>
             )}
             <div className="grid grid-cols-4 gap-2">
-              {extras.pebbleShelf.map((p) => (
+              {(shelfExpanded ? extras.pebbleShelf : extras.pebbleShelf.slice(0, SHELF_PREVIEW)).map((p) => (
                 <div key={p.id} className="flex flex-col items-center gap-1.5">
                   <div className={cn('w-12 h-12 rounded-full flex items-center justify-center', PEBBLE_COLORS[p.colorToken])} />
                   <span className="text-[10px] text-ink-500 text-center font-ui">{p.label}</span>

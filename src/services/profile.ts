@@ -54,16 +54,14 @@ export async function getProfileExtras(): Promise<ProfileExtras> {
   const userId = sessionData.session?.user.id;
   if (!userId) throw new Error('Not signed in');
 
-  const [friendsCount, userRes, earnedRes, badgeCountRes] = await Promise.all([
+  const [friendsCount, userRes, earnedRes] = await Promise.all([
     getFriendsCount().catch(() => 0),
     supabase.from('users').select('total_xp, level').eq('id', userId).single(),
     supabase
       .from('user_badges')
       .select('earned_at, badges(key, name, color)')
       .eq('user_id', userId)
-      .order('earned_at', { ascending: false })
-      .limit(4),
-    supabase.from('badges').select('key', { count: 'exact', head: true }),
+      .order('earned_at', { ascending: false }),
   ]);
   if (userRes.error) throw userRes.error;
   if (earnedRes.error) throw earnedRes.error;
@@ -89,7 +87,7 @@ export async function getProfileExtras(): Promise<ProfileExtras> {
     pebbleShelf: earned
       .filter((e) => e.badges)
       .map((e) => ({ id: e.badges!.key, label: e.badges!.name, colorToken: e.badges!.color })),
-    pebbleShelfTotal: badgeCountRes.count ?? 0,
+    pebbleShelfTotal: earned.filter((e) => e.badges).length,
     // Profile shows "best streak" in this slot until the user has friends.
     friendsCount: friendsCount > 0 ? friendsCount : null,
   };
