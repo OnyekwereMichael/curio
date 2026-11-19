@@ -1,0 +1,65 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Curi FAQ post</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,800&family=Sora:wght@500;600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1350px;overflow:hidden}
+body{background:#FBE9DF;font-family:'Sora',sans-serif;position:relative}
+.wm{position:absolute;left:-150px;top:760px;font-family:'Fraunces',serif;font-weight:800;font-size:520px;line-height:1;color:#F3C9B6;opacity:.3;letter-spacing:-20px}
+.glow{position:absolute;left:50%;top:640px;width:1100px;height:760px;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(232,71,42,.16),rgba(232,71,42,0));}
+.faq{position:absolute;left:0;right:0;top:92px;text-align:center;font-weight:800;font-size:230px;line-height:1;letter-spacing:-8px;color:#C73B20}
+.faq i{display:block;width:96px;height:10px;border-radius:5px;background:#12191F;margin:22px auto 0}
+.brush{position:absolute;left:0;top:400px}
+.copy{position:absolute;left:170px;top:640px;width:728px;color:#fff}
+.copy h2{font-weight:800;font-size:68px;line-height:1.12;letter-spacing:-2px;margin-bottom:38px}
+.copy p{font-weight:500;font-size:37px;line-height:1.42;color:#FFF1EA}
+.copy b{white-space:nowrap;font-weight:800;color:#fff;background:rgba(18,25,31,.28);padding:1px 10px;border-radius:10px}
+.foot{position:absolute;bottom:56px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:20px}
+.foot img{width:64px;height:64px;border-radius:16px;box-shadow:0 6px 18px rgba(199,59,32,.25)}
+.foot span{font-weight:600;font-size:34px;color:#C73B20;letter-spacing:.5px}
+</style></head><body>
+<div class="wm">Curi</div>
+<div class="glow"></div>
+<div class="faq">FAQ<i></i></div>
+
+<svg class="brush" width="1080" height="860" viewBox="0 0 1080 860">
+  <defs>
+    <!-- ragged brush edge: stretched noise displaces the shape, extra grain breaks up the ends into bristles -->
+    <filter id="rough" x="-10%" y="-15%" width="120%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.028" numOctaves="3" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="85" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="rough2" x="-10%" y="-15%" width="120%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.006 0.04" numOctaves="3" seed="21" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="64" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.22" numOctaves="3" seed="3" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.6 -0.62"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8472A"/><stop offset=".55" stop-color="#D8401F"/><stop offset="1" stop-color="#B73218"/>
+    </linearGradient>
+    <clipPath id="c"><rect x="0" y="0" width="1080" height="860"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <!-- soft shadow -->
+    <g filter="url(#rough)" opacity=".18"><rect x="104" y="130" width="880" height="620" fill="#7A1F0C" transform="translate(8 22)"/></g>
+    <!-- light under-wash -->
+    <g filter="url(#rough2)"><rect x="92" y="108" width="896" height="640" fill="#F0674A" opacity=".9"/></g>
+    <!-- main body -->
+    <g filter="url(#rough)"><rect x="104" y="132" width="872" height="610" fill="url(#red)"/></g>
+    <!-- bristle streak highlights -->
+    <g filter="url(#rough)"><rect x="104" y="132" width="872" height="610" fill="#fff" filter="url(#grain)" opacity=".13"/></g>
+    <g filter="url(#rough2)" opacity=".28"><rect x="130" y="190" width="800" height="12" rx="6" fill="#fff"/><rect x="150" y="690" width="760" height="10" rx="5" fill="#8E230F"/></g>
+  </g>
+</svg>
+
+<div class="copy">
+  <h2>How do I get paid if I win?</h2>
+  <p>Finish in the weekly top 3 and we’ll let you know in the app. Add your bank details and your prize is sent by bank transfer within <b>14 days</b>.</p>
+</div>
+
+<div class="foot"><img src="../public/icon-512.png"><span>www.trycuri.app</span></div>
+</body></html>
