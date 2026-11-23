@@ -154,6 +154,8 @@ function ReviewCard({ row, weekStart, minXp, onDecided }: { row: ReviewRow; week
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState<UserDetail | null>(null);
   const [notes, setNotes] = useState('');
+  const [dqOpen, setDqOpen] = useState(false);
+  const [dqReason, setDqReason] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const top3 = row.rank <= 3;
@@ -172,16 +174,24 @@ function ReviewCard({ row, weekStart, minXp, onDecided }: { row: ReviewRow; week
 
   async function decide(decision: ReviewDecision) {
     if (!row.winner) return;
+    const disqualifying = decision === 'disqualified';
+    const reason = dqReason.trim();
+    if (disqualifying && reason.length < 5) {
+      setErr('Write a short reason first. The player will see it.');
+      return;
+    }
     const verb = decision === 'approved' ? 'Approve' : decision === 'rejected' ? 'Reject' : 'Disqualify';
     const warn = decision === 'approved'
       ? 'They will be told they won and can submit their bank details.'
-      : 'They will not be paid and the next eligible player takes the place. This is logged.';
+      : 'They will not be paid. The place stays empty and nobody moves up. This is logged.';
     if (!window.confirm(`${verb} ${row.name ?? 'this player'} (${ORDINAL[row.winner.rank]} place)?\n\n${warn}`)) return;
     setBusy(true);
     setErr(null);
     try {
-      await adminReviewWinner(row.winner.id, decision, notes);
+      await adminReviewWinner(row.winner.id, decision, disqualifying ? reason : notes);
       setNotes('');
+      setDqReason('');
+      setDqOpen(false);
       onDecided();
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Could not save the decision');
@@ -308,8 +318,35 @@ function ReviewCard({ row, weekStart, minXp, onDecided }: { row: ReviewRow; week
               <div className="flex flex-wrap gap-2">
                 <button disabled={busy} onClick={() => decide('approved')} className="px-4 py-2 text-sm rounded-lg bg-moss text-paper font-semibold disabled:opacity-60">Approve</button>
                 <button disabled={busy} onClick={() => decide('rejected')} className="px-4 py-2 text-sm rounded-lg border border-ink/15 text-ink font-medium hover:bg-ink/5 disabled:opacity-60">Reject</button>
-                <button disabled={busy} onClick={() => decide('disqualified')} className="px-4 py-2 text-sm rounded-lg border border-ember-500/40 text-ember-600 font-medium hover:bg-ember-50 disabled:opacity-60">Disqualify</button>
+                <button disabled={busy} onClick={() => { setErr(null); setDqOpen(!dqOpen); }} aria-expanded={dqOpen} className="px-4 py-2 text-sm rounded-lg border border-ember-500/40 text-ember-600 font-medium hover:bg-ember-50 disabled:opacity-60">Disqualify</button>
               </div>
+              {dqOpen && (
+                <div className="rounded-lg border border-ember-500/30 bg-ember-50 p-3 flex flex-col gap-2">
+                  <label htmlFor={`dq-${row.userId}`} className="text-xs font-semibold text-ember-600">
+                    Reason for disqualifying {row.name ?? 'this player'}
+                  </label>
+                  <textarea
+                    id={`dq-${row.userId}`}
+                    value={dqReason}
+                    onChange={(e) => setDqReason(e.target.value)}
+                    rows={3}
+                    maxLength={300}
+                    placeholder="e.g. Two accounts used on the same network. This breaks our one-account-per-person rule."
+                    className="w-full text-sm rounded-lg border border-ink/15 bg-paper px-3 py-2 text-ink"
+                  />
+                  <p className="text-xs text-ink-500">
+                    <strong>The player will see this reason</strong> on their screen, with a note to check their email. Keep it brief and polite, and send the full explanation by email yourself.
+                  </p>
+                  <div className="flex gap-2">
+                    <button disabled={busy || dqReason.trim().length < 5} onClick={() => decide('disqualified')} className="px-4 py-2 text-sm rounded-lg bg-ember-600 text-paper font-semibold disabled:opacity-50">
+                      Confirm disqualify
+                    </button>
+                    <button disabled={busy} onClick={() => { setDqOpen(false); setErr(null); }} className="px-4 py-2 text-sm rounded-lg border border-ink/15 text-ink font-medium hover:bg-ink/5">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
           {err && <p role="alert" className="text-xs text-ember-600">{err}</p>}

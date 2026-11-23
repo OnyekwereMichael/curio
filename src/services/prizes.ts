@@ -23,6 +23,8 @@ export interface WeekResult {
   /** XP of whoever finished 3rd, for "you were N XP away". Null if fewer than 3 people played. */
   thirdXp: number | null;
   winner: WinnerBlock | null;
+  /** Set when an admin disqualified this player for the week; `reason` is the admin's brief note. */
+  removal: { reason: string | null } | null;
 }
 
 /** A prize the user won and may still need to act on (or has been paid). */
@@ -69,6 +71,7 @@ export async function getMyResults(): Promise<MyResults> {
           currency: u.currency,
           thirdXp: u.third_xp ?? null,
           winner: toWinner(u.winner),
+          removal: u.removal ? { reason: u.removal.reason ?? null } : null,
         }
       : null,
     claims: ((data?.claims ?? []) as any[]).map((c) => ({

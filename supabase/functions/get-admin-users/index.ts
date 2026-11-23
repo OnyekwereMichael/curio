@@ -2,80 +2,97 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 // Service role client bypasses RLS and can list all auth accounts + profile records
 const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+// Echo back whatever headers the browser's preflight asks for. A fixed list
+// breaks whenever supabase-js starts sending a new x-supabase-* header, which
+// shows up in the app as "Failed to send a request to the Edge Function".
+function corsHeaders(req: Request) {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers":
+      req.headers.get("Access-Control-Request-Headers") ??
+      "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Max-Age": "86400",
+  };
+}
+
+function json(req: Request, body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders(req), "Content-Type": "application/json" },
+  });
+}
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight request
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders(req) });
   }
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Missing authorization" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!authHeader) return json(req, { error: "Missing authorization" }, 401);
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await adminClient.auth.getUser(token);
-
     if (userError || !userData?.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized access" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json(req, { error: "Unauthorized access" }, 401);
     }
 
-    // 1. Fetch public.users profiles (custom tracking, goes forward from now)
+    // Admin-only: ask the database as the caller (is_admin() reads auth.uid()).
+    const asCaller = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: isAdmin, error: adminErr } = await asCaller.rpc("is_admin");
+    if (adminErr || isAdmin !== true) {
+      return json(req, { error: "Admins only" }, 403);
+    }
+
+    // 1. Fetch public.users profiles
     const { data: profiles, error: profileError } = await adminClient
       .from("users")
       .select("*");
-
     if (profileError) throw profileError;
 
-    // 2. Fetch auth.users — this has the accurate last_sign_in_at tracked by Supabase itself
-    const { data: authUsers, error: authError } = await adminClient.auth.admin.listUsers();
+    // 2. Fetch auth.users — accurate last_sign_in_at tracked by Supabase itself
+    // listUsers() returns only 50 per page by default, so walk every page.
+    const allAuthUsers: any[] = [];
+    for (let page = 1; page <= 200; page++) {
+      const { data, error: authError } = await adminClient.auth.admin.listUsers({
+        page,
+        perPage: 1000,
+      });
+      if (authError) throw authError;
+      const batch = data?.users ?? [];
+      allAuthUsers.push(...batch);
+      if (batch.length < 1000) break;
+    }
 
-    if (authError) throw authError;
-
-    // Create a map of profiles by user id
     const profileMap = new Map();
     (profiles || []).forEach((p) => profileMap.set(p.id, p));
 
-    // Combine auth users & public profiles
-    const combinedUsers = (authUsers?.users || []).map((authUser) => {
+    const combinedUsers = allAuthUsers.map((authUser) => {
       const profile = profileMap.get(authUser.id) || {};
 
-      // Determine the most accurate "last seen" timestamp:
-      // - authUser.last_sign_in_at: Supabase built-in, accurate for every login event
-      // - profile.last_seen_at: our custom tracker, only populated when user opens the app
-      //   (but may be NULL if they haven't opened since we added the column)
-      // Use whichever is MORE RECENT, falling back to last_sign_in_at as the primary source.
       const customTime = profile.last_seen_at ? new Date(profile.last_seen_at).getTime() : 0;
       const authTime = authUser.last_sign_in_at ? new Date(authUser.last_sign_in_at).getTime() : 0;
       const accurateLastSeen = customTime > authTime
-        ? profile.last_seen_at   // they've visited the app AFTER their last auth (e.g. persistent session)
-        : authUser.last_sign_in_at; // use Supabase's own accurate sign-in record
+        ? profile.last_seen_at
+        : authUser.last_sign_in_at;
 
       const fullName =
         profile.full_name ||
         profile.name ||
         authUser.user_metadata?.full_name ||
         authUser.user_metadata?.name ||
-        `${profile.first_name || ''} ${profile.last_name || ''}`.trim() ||
-        authUser.email?.split('@')[0] ||
-        'Learner';
+        `${profile.first_name || ""} ${profile.last_name || ""}`.trim() ||
+        authUser.email?.split("@")[0] ||
+        "Learner";
 
       return {
         id: authUser.id,
@@ -83,9 +100,7 @@ Deno.serve(async (req) => {
         full_name: fullName,
         first_name: profile.first_name || authUser.user_metadata?.first_name,
         last_name: profile.last_name || authUser.user_metadata?.last_name,
-        // Accurate last seen — whichever of our tracker or Supabase auth is more recent
         last_seen_at: accurateLastSeen || null,
-        // Keep raw values for debugging if needed
         last_sign_in_at: authUser.last_sign_in_at,
         created_at: profile.created_at || authUser.created_at,
         notifications_enabled: profile.notifications_enabled ?? false,
@@ -93,21 +108,15 @@ Deno.serve(async (req) => {
       };
     });
 
-    // Sort by last_seen_at descending (most recently active first)
     combinedUsers.sort((a, b) => {
       const tA = a.last_seen_at ? new Date(a.last_seen_at).getTime() : 0;
       const tB = b.last_seen_at ? new Date(b.last_seen_at).getTime() : 0;
       return tB - tA;
     });
 
-    return new Response(JSON.stringify({ users: combinedUsers, total: combinedUsers.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json(req, { users: combinedUsers, total: combinedUsers.length });
   } catch (err: any) {
     console.error("Failed to fetch admin users:", err.message);
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json(req, { error: err.message }, 500);
   }
 });

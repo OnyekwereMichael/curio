@@ -29,13 +29,15 @@ interface Props {
   onClose: () => void;
   /** Called once the server has accepted the details. */
   onSubmitted: () => void;
+  /** Replaces the real server call. Only the admin flow preview passes this, so nothing is saved. */
+  submit?: typeof submitPayoutDetails;
 }
 
 const fieldClass =
   'w-full bg-surface border border-line-strong rounded-control px-4 py-3 text-ink-900 text-sm placeholder:text-ink-500/60 focus:outline-none focus:ring-2 focus:border-ink-900/50 focus:ring-ink-900/10 transition-all font-ui';
 
 /** Where a winner tells us where to send the money. Bank details go straight to the server and are never shown back in full. */
-export function PayoutForm({ target, onClose, onSubmitted }: Props) {
+export function PayoutForm({ target, onClose, onSubmitted, submit = submitPayoutDetails }: Props) {
   const [bank, setBank] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [accountName, setAccountName] = useState('');
@@ -66,7 +68,7 @@ export function PayoutForm({ target, onClose, onSubmitted }: Props) {
     setBusy(true);
     setServerError(null);
     try {
-      const res = await submitPayoutDetails(target.id, { bank, accountNumber: cleanAccountNumber(accountNumber), accountName });
+      const res = await submit(target.id, { bank, accountNumber: cleanAccountNumber(accountNumber), accountName });
       setDone(res.accountLast4);
       onSubmitted();
     } catch (err) {
