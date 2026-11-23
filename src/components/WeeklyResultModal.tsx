@@ -69,7 +69,28 @@ export function WeeklyResultModal({ result, onClose, onClaim }: Props) {
             transition={{ type: 'spring', stiffness: 340, damping: 28 }}
             className={`w-full max-w-sm bg-paper rounded-sheet border-2 ${place?.ring ?? 'border-line'} shadow-raised p-6 font-ui text-center flex flex-col items-center`}
           >
-            {winner && place ? (
+            {result?.removal ? (
+              <>
+                <Otter mood="supportive" size={84} className="mb-3" />
+                <p className="text-xs font-bold uppercase tracking-wider text-ember-600 mb-1">Last week's results</p>
+                <h2 id="week-result-title" className="font-display text-title font-bold text-ink-900 mb-3">
+                  Your result was removed
+                </h2>
+                <p className="text-sm text-ink-500 mb-3">
+                  Your account has been disqualified from last week's prize, so it won't be paid.
+                </p>
+                {result.removal.reason && (
+                  <div className="rounded-control bg-ember-50 px-4 py-3 mb-3 w-full text-left">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-ember-600 mb-1">Reason</p>
+                    <p className="text-sm text-ink-900 leading-relaxed whitespace-pre-line">{result.removal.reason}</p>
+                  </div>
+                )}
+                <p className="text-sm text-ink-900/80 mb-5">
+                  Please <strong>check your email</strong> for the full details and how to respond. Look in spam if you can't find it.
+                </p>
+                <Button className="w-full" onClick={onClose}>I understand</Button>
+              </>
+            ) : winner && place ? (
               <>
                 <div className="text-5xl mb-1" aria-hidden="true">{place.medal}</div>
                 <Otter mood={place.mood} size={84} className="mb-3" />
