@@ -61,11 +61,15 @@ export class FofVoice {
   private snap: VoiceSnapshot = EMPTY;
   private gen = 0; // bumps on every join/leave so late async callbacks can tell they are stale
 
-  constructor(
-    private roomId: string,
-    private userId: string,
-    private onChange: (s: VoiceSnapshot) => void,
-  ) {}
+  private roomId: string;
+  private userId: string;
+  private onChange: (s: VoiceSnapshot) => void;
+
+  constructor(roomId: string, userId: string, onChange: (s: VoiceSnapshot) => void) {
+    this.roomId = roomId;
+    this.userId = userId;
+    this.onChange = onChange;
+  }
 
   private set(patch: Partial<VoiceSnapshot>) {
     this.snap = { ...this.snap, ...patch };
@@ -229,7 +233,7 @@ export class FofVoice {
         if (!peer || peer.pc.signalingState !== 'have-local-offer') return;
         await peer.pc.setRemoteDescription(sig.sdp);
         await this.flushIce(peer);
-      } else {
+      } else if (sig.kind === 'ice') {
         const peer = this.peers.get(sig.from);
         if (!peer) return;
         if (peer.pc.remoteDescription) await peer.pc.addIceCandidate(sig.candidate);
