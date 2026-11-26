@@ -91,6 +91,7 @@ const REASON_MESSAGES: Record<string, string> = {
   halved: "You're past today's full XP, so this paid half.",
   already_awarded: 'You already earned XP for this today.',  not_todays_word: "XP is for today's word. This one was marked known, just no XP.",
   not_todays_fact: "XP is for today's facts. This one was from an earlier day, so no XP.",
+  party_cap: "You've hit today's limit for party-game XP. Wins still count for bragging rights!",
   too_fast: 'That was a little too quick to count for XP. Take your time with the question.',
 };
 
@@ -198,6 +199,7 @@ function lineLabel(source: string, refKey: string | null): string {
     case 'badge': return 'New badge';
     case 'streak': return 'Streak bonus';
     case 'review': return 'Review';
+    case 'party': return 'Party game win';
     default: return 'XP';
   }
 }

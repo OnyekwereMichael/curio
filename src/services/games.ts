@@ -7,12 +7,14 @@ export interface PlayMode {
   playersLabel: string;
   action: 'play' | 'host';
   available: boolean;
+  /** Where the Play button goes. `new` creates a room, then the page moves to its code. */
+  route: string;
 }
 
 const PLAY_MODES: PlayMode[] = [
-  { id: 'word-duel', name: 'Word Duel', description: '1 vs 1 · pick the word for the definition · 2 min', playersLabel: '1 vs 1', action: 'play', available: true },
-  { id: 'fact-or-fiction', name: 'Fact or Fiction', description: '2 to 8 players · vote true or false together', playersLabel: '2-8', action: 'host', available: false },
-  { id: 'bluff', name: 'Bluff the Definition', description: '3 to 8 · write fake meanings, spot the real one', playersLabel: '3-8', action: 'host', available: false },
+  { id: 'word-duel', name: 'Word Duel', description: '1 vs 1 · pick the word for the definition · 2 min', playersLabel: '1 vs 1', action: 'play', available: true, route: '/play/new' },
+  { id: 'fact-or-fiction', name: 'Fact or Fiction', description: '2 to 8 players · vote true or false together', playersLabel: '2-8', action: 'host', available: true, route: '/play/fof/new' },
+  { id: 'bluff', name: 'Bluff the Definition', description: '3 to 8 · write fake meanings, spot the real one', playersLabel: '3-8', action: 'host', available: false, route: '/play' },
 ];
 
 export function getPlayModes(): PlayMode[] {

@@ -25,6 +25,7 @@ import { PlanSummaryPage } from './pages/onboarding/PlanSummary';
 import { ReviewSessionPage } from './pages/review/ReviewSession';
 import { PlayHubPage } from './pages/play/PlayHub';
 import { WordDuelPage } from './pages/play/WordDuel';
+import { FactOrFictionPage } from './pages/play/FactOrFiction';
 import { DailyChallengePage } from './pages/play/DailyChallenge';
 import { FriendsPage } from './pages/friends/Friends';
 import { LeaderboardPage } from './pages/leaderboard/Leaderboard';
@@ -76,6 +77,7 @@ function App() {
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/play" element={<ProtectedRoute><PlayHubPage /></ProtectedRoute>} />
               <Route path="/play/daily" element={<ProtectedRoute><DailyChallengePage /></ProtectedRoute>} />
+              <Route path="/play/fof/:code" element={<ProtectedRoute><FactOrFictionPage /></ProtectedRoute>} />
               <Route path="/play/:code" element={<ProtectedRoute><WordDuelPage /></ProtectedRoute>} />
               <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
               <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />

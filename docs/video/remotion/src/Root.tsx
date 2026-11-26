@@ -3,6 +3,7 @@ import { Walkthrough } from './Walkthrough';
 import { CuriTruck } from './CuriTruck';
 import { CuriWord } from './CuriWord';
 import { CuriTour, TOUR_FRAMES } from './CuriTour';
+import { FactOrFictionPromo, FOF_PROMO_FRAMES } from './FactOrFictionPromo';
 import { FPS } from './brand';
 import storyboard from './generated/storyboard.json';
 
@@ -15,6 +16,7 @@ export const RemotionRoot = () => (
     <Composition id="CuriTruck" component={CuriTruck} durationInFrames={300} fps={FPS} width={1080} height={1920} />
     <Composition id="CuriWord" component={CuriWord} durationInFrames={420} fps={FPS} width={1080} height={1920} />
     <Composition id="CuriTour" component={CuriTour} durationInFrames={TOUR_FRAMES} fps={FPS} width={1080} height={1920} />
+    <Composition id="FactOrFictionPromo" component={FactOrFictionPromo} durationInFrames={FOF_PROMO_FRAMES} fps={FPS} width={1080} height={1920} />
     <Composition id="WalkthroughVertical" component={Walkthrough} durationInFrames={DURATION} fps={FPS} width={1080} height={1920} defaultProps={{ vertical: true }} />
   </>
 );

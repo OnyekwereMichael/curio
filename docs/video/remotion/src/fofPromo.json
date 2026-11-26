@@ -1,0 +1,115 @@
+{
+  "fps": 30,
+  "total": 57.5,
+  "event": {
+    "friday": "FRIDAY",
+    "date": "27 NOV",
+    "time": "8:00 PM",
+    "zone": "WAT",
+    "where": "LINK IN BIO"
+  },
+  "scenes": {
+    "hook": [
+      0,
+      5
+    ],
+    "reveal": [
+      5,
+      10
+    ],
+    "create": [
+      10,
+      14.5
+    ],
+    "join": [
+      14.5,
+      20.5
+    ],
+    "start": [
+      20.5,
+      24
+    ],
+    "vote": [
+      24,
+      31.3
+    ],
+    "answer": [
+      31.3,
+      36.3
+    ],
+    "score": [
+      36.3,
+      44.3
+    ],
+    "finish": [
+      44.3,
+      49.3
+    ],
+    "cta": [
+      49.3,
+      57.5
+    ]
+  },
+  "vo": [
+    {
+      "id": "hook",
+      "at": 0.35,
+      "text": "Curi has a secret... guess what's dropping?",
+      "say": "Curi has a secret... guess what's dropping?"
+    },
+    {
+      "id": "reveal",
+      "at": 5.3,
+      "text": "Fact or Fiction. Brand new. Two to eight players.",
+      "say": "Fact or Fiction. Brand new. Two to eight players."
+    },
+    {
+      "id": "create",
+      "at": 10.2,
+      "text": "Create a room and get a four-letter code.",
+      "say": "Create a room, and get a four letter code."
+    },
+    {
+      "id": "join",
+      "at": 14.7,
+      "text": "Friends join with just the code and a name. Watch the lobby fill up.",
+      "say": "Friends join with just the code and a name. Watch the lobby fill up!"
+    },
+    {
+      "id": "start",
+      "at": 20.8,
+      "text": "The host starts the game.",
+      "say": "Then the host starts the game."
+    },
+    {
+      "id": "vote",
+      "at": 24.2,
+      "text": "A statement appears. Everyone votes Fact or Fiction before the 15 second timer runs out.",
+      "say": "A statement appears. Everyone votes fact, or fiction, before the fifteen second timer runs out."
+    },
+    {
+      "id": "answer",
+      "at": 31.5,
+      "text": "Then the answer is revealed, with a quick explanation.",
+      "say": "Then the answer is revealed, with a quick explanation."
+    },
+    {
+      "id": "score",
+      "at": 36.5,
+      "text": "Right answer, a hundred points. Answer fast for a speed bonus. Keep your streak for even more.",
+      "say": "Right answer, a hundred points. Answer fast, for a speed bonus. Keep your streak going, for even more."
+    },
+    {
+      "id": "finish",
+      "at": 44.5,
+      "text": "Ten rounds, then the podium, the leaderboard, and play again.",
+      "say": "Ten rounds, then the podium, the leaderboard, and play again."
+    },
+    {
+      "id": "cta",
+      "at": 49.5,
+      "text": "Rolling out Friday. Live game night Friday at 8 PM. Bring your squad.",
+      "say": "Rolling out Friday. Live game night, Friday at eight P M. Bring your squad!"
+    }
+  ]
+}
