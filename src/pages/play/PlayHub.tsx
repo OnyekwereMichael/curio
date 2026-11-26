@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Swords, CheckCircle2, EyeOff, Users, ChevronRight, CalendarCheck } from 'lucide-react';
 import { AppShell } from '../../components/AppShell';
 import { getPlayModes } from '../../services/games';
+import { fofRoomExists } from '../../services/factOrFiction';
 import { getDailyChallenge, type DailyChallengeState } from '../../services/dailyChallenge';
 
 const ICONS: Record<string, React.ElementType> = {
@@ -23,8 +24,11 @@ export function PlayHubPage() {
     getDailyChallenge().then(setChallenge).catch((e) => console.warn('getDailyChallenge failed', e));
   }, []);
 
-  function handleJoin() {
-    if (roomCode.trim().length === 4) navigate(`/play/${roomCode.trim().toUpperCase()}`);
+  // The same 4-letter box joins either game: a Fact or Fiction room if one is open with that code, otherwise a Word Duel.
+  async function handleJoin() {
+    const code = roomCode.trim().toUpperCase();
+    if (code.length !== 4) return;
+    navigate((await fofRoomExists(code)) ? `/play/fof/${code}` : `/play/${code}`);
   }
 
   return (
@@ -87,7 +91,7 @@ export function PlayHubPage() {
                 </div>
                 {mode.available ? (
                   <button
-                    onClick={() => navigate('/play/new')}
+                    onClick={() => navigate(mode.route)}
                     className="px-4 py-2 rounded-control bg-ember-600 text-on-ember text-sm font-semibold hover:brightness-105 transition-all flex-shrink-0"
                   >
                     Play
