@@ -9,7 +9,6 @@ import { useTodaysWord, useTodaysWords } from './hooks';
 import { useDailyFacts } from '../../hooks/useDailyFacts';
 import { useAuth } from '../../contexts/AuthContext';
 import { AppShell } from '../../components/AppShell';
-import { NotificationReEnableBanner } from '../../components/NotificationReEnableBanner';
 import { useStreak } from '../../components/useStreak';
 import { supabase } from '../../lib/superbase';
 import { StreakCalendar } from '../../components/Streakcalendar';
@@ -164,7 +163,6 @@ export function HomeScreen() {
 
   return (
     <AppShell title="Home">
-      <NotificationReEnableBanner />
       <ShieldSavedNotice shieldsUsed={shieldsJustUsed} shieldsLeft={shieldCount} />
       <MilestoneModal milestone={milestoneReached} shieldEarned={shieldJustEarned} onClose={dismissMilestone} />
       <StreakLossModal
